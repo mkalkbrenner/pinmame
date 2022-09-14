@@ -8,7 +8,8 @@
 
 #ifndef HASH_H
 #define HASH_H
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
@@ -16,18 +17,18 @@
 extern "C" {
 #endif
 
-#define HASH_INFO_NO_DUMP	0
-#define HASH_INFO_BAD_DUMP	1
+#define HASH_INFO_NO_DUMP  0
+#define HASH_INFO_BAD_DUMP 1
 
-#define HASH_CRC    (1 << 0)
-#define HASH_SHA1   (1 << 1)
-#define HASH_MD5    (1 << 2)
+#define HASH_CRC           (1 << 0)
+#define HASH_SHA1          (1 << 1)
+#define HASH_MD5           (1 << 2)
 
-#define HASH_NUM_FUNCTIONS  3
+#define HASH_NUM_FUNCTIONS 3
 
 // Standard size of a hash data buffer, all the manipulated buffers
 //  must respect this size
-#define HASH_BUF_SIZE       256
+#define HASH_BUF_SIZE      256
 
 // Get function name of the specified function
 const char* hash_function_name(unsigned int function);
@@ -74,10 +75,10 @@ unsigned int hash_data_used_functions(const char* d);
 void hash_compute(char* dst, const unsigned char* data, unsigned long length, unsigned int functions);
 
 // Verifies that a hash string is valid
-int hash_verify_string(const char *hash);
+int hash_verify_string(const char* hash);
 
 #ifdef __cplusplus
 }
 #endif
-	
+
 #endif

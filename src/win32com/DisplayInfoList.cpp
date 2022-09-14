@@ -1,14 +1,14 @@
 #include "StdAfx.h"
 
 #if _MSC_VER >= 1700
- #ifdef inline
-  #undef inline
- #endif
+#ifdef inline
+#undef inline
+#endif
 #endif
 
 #include ".\DisplayInfoList.h"
 #ifndef DISABLE_DX7
- #include <ddraw.h>
+#include <ddraw.h>
 #endif
 
 #ifdef _MSC_VER
@@ -16,8 +16,8 @@
 #endif
 
 #ifndef DISABLE_DX7
-static BOOL WINAPI DDEnumCallbackEx(GUID FAR *lpGUID, LPSTR lpDriverDescription, LPSTR lpDriverName, LPVOID lpContext, HMONITOR hm)
-{
+static BOOL WINAPI
+DDEnumCallbackEx(GUID FAR* lpGUID, LPSTR lpDriverDescription, LPSTR lpDriverName, LPVOID lpContext, HMONITOR hm) {
     // Context is a pointer to a display list
     CDisplayInfoList* displayList = (CDisplayInfoList*)lpContext;
 
@@ -28,8 +28,8 @@ static BOOL WINAPI DDEnumCallbackEx(GUID FAR *lpGUID, LPSTR lpDriverDescription,
     return TRUE;
 }
 
-static BOOL WINAPI DDEnumCallback(GUID FAR *lpGUID, LPSTR lpDriverDescription, LPSTR lpDriverName, LPVOID lpContext)
-{
+static BOOL WINAPI
+DDEnumCallback(GUID FAR* lpGUID, LPSTR lpDriverDescription, LPSTR lpDriverName, LPVOID lpContext) {
     return DDEnumCallbackEx(lpGUID, lpDriverDescription, lpDriverName, lpContext, NULL);
 }
 #endif
@@ -37,110 +37,105 @@ static BOOL WINAPI DDEnumCallback(GUID FAR *lpGUID, LPSTR lpDriverDescription, L
 /************************************************
  * Constructors
  ***********************************************/
-CDisplayInfoList::CDisplayInfoList(void)
-{
-	// Enumerate the list
-	Enumerate();	
+CDisplayInfoList::CDisplayInfoList(void) {
+    // Enumerate the list
+    Enumerate();
 }
 
 /************************************************
  * Destructors
  ***********************************************/
-CDisplayInfoList::~CDisplayInfoList(void)
-{
-	// Cleanup displays
-	//for(size_t i=0; i < Count(); i++)
-	//{
-	//	Item(i)->Cleanup();
-	//}
+CDisplayInfoList::~CDisplayInfoList(void) {
+    // Cleanup displays
+    //for(size_t i=0; i < Count(); i++)
+    //{
+    //	Item(i)->Cleanup();
+    //}
 
-	// Release displays
-	mDisplays.clear();
+    // Release displays
+    mDisplays.clear();
 }
 
 /************************************************
  * Methods
  ***********************************************/
-void CDisplayInfoList::AddDisplay(GUID FAR *lpGuid, LPSTR lpDriverDesc, LPSTR lpDriverName)
-{
-	CDisplayInfo di = CDisplayInfo(lpGuid, lpDriverDesc, lpDriverName);
-    mDisplays.push_back( di );
+void
+CDisplayInfoList::AddDisplay(GUID FAR* lpGuid, LPSTR lpDriverDesc, LPSTR lpDriverName) {
+    CDisplayInfo di = CDisplayInfo(lpGuid, lpDriverDesc, lpDriverName);
+    mDisplays.push_back(di);
 }
 
-BOOL CDisplayInfoList::Enumerate()
-{
+BOOL
+CDisplayInfoList::Enumerate() {
 #ifndef DISABLE_DX7
-	// Get to DirectDraw
-	HINSTANCE hDDraw = LoadLibrary("ddraw.dll");
+    // Get to DirectDraw
+    HINSTANCE hDDraw = LoadLibrary("ddraw.dll");
 
-	// If ddraw.dll doesn't exist in the search path,
-	// then DirectX probably isn't installed, so fail.
-	if (!hDDraw) return FALSE;
+    // If ddraw.dll doesn't exist in the search path,
+    // then DirectX probably isn't installed, so fail.
+    if (!hDDraw)
+        return FALSE;
 
-	// Note that you must know which version of the
-	// function to retrieve (see the following text).
-	// For this example, we use the ANSI version.
-	LPDIRECTDRAWENUMERATEEX lpDDEnumEx = (LPDIRECTDRAWENUMERATEEX) GetProcAddress(hDDraw,"DirectDrawEnumerateExA");
+    // Note that you must know which version of the
+    // function to retrieve (see the following text).
+    // For this example, we use the ANSI version.
+    LPDIRECTDRAWENUMERATEEX lpDDEnumEx = (LPDIRECTDRAWENUMERATEEX)GetProcAddress(hDDraw, "DirectDrawEnumerateExA");
 
-	// Enumeration results placeholder
-	HRESULT result;
+    // Enumeration results placeholder
+    HRESULT result;
 
-	// If the function is there, call it to enumerate all display
-	// devices attached to the desktop, and any non-display DirectDraw
-	// devices.
-	if (lpDDEnumEx) 
-	{
-		result = lpDDEnumEx(DDEnumCallbackEx, this, DDENUM_ATTACHEDSECONDARYDEVICES | DDENUM_DETACHEDSECONDARYDEVICES);
-	}
-	else
-	{
-		/*
+    // If the function is there, call it to enumerate all display
+    // devices attached to the desktop, and any non-display DirectDraw
+    // devices.
+    if (lpDDEnumEx) {
+        result = lpDDEnumEx(DDEnumCallbackEx, this, DDENUM_ATTACHEDSECONDARYDEVICES | DDENUM_DETACHEDSECONDARYDEVICES);
+    } else {
+        /*
 		* We must be running on an old version of DirectDraw.
 		* Therefore MultiMon isn't supported. Fall back on
 		* DirectDrawEnumerate to enumerate standard devices on a
 		* single-monitor system.
 		*/
-		result = DirectDrawEnumerate(DDEnumCallback,this);
-	}
+        result = DirectDrawEnumerate(DDEnumCallback, this);
+    }
 
-	// If the library was loaded by calling LoadLibrary(),
-	// then you must use FreeLibrary() to let go of it.
-	FreeLibrary(hDDraw);
+    // If the library was loaded by calling LoadLibrary(),
+    // then you must use FreeLibrary() to let go of it.
+    FreeLibrary(hDDraw);
 
-	// Make sure enumeration was a success
-	if (result != DD_OK)
-	{
-		// Place to hold the message
-		char buff[MAX_PATH];
+    // Make sure enumeration was a success
+    if (result != DD_OK) {
+        // Place to hold the message
+        char buff[MAX_PATH];
 
-		// Copy message into buffer
-		snprintf(buff, MAX_PATH, "Error enumerating displays: %08x\n", (UINT32)result);
+        // Copy message into buffer
+        snprintf(buff, MAX_PATH, "Error enumerating displays: %08x\n", (UINT32)result);
 
-		// Show error
-		MessageBox(NULL, (LPCTSTR)buff, NULL, MB_OK);
+        // Show error
+        MessageBox(NULL, (LPCTSTR)buff, NULL, MB_OK);
 
-		// Indicate failure
-		return FALSE;
-	}
+        // Indicate failure
+        return FALSE;
+    }
 
-	// Indicate Success
-	return TRUE;
+    // Indicate Success
+    return TRUE;
 #else
-	MessageBox(NULL, "This build does not support enumerating displays (yet)", NULL, MB_OK);
+    MessageBox(NULL, "This build does not support enumerating displays (yet)", NULL, MB_OK);
 
-	return FALSE;
+    return FALSE;
 #endif
 }
 
 /************************************************
  * Properties
  ***********************************************/
-size_t CDisplayInfoList::Count(void) const
-{
+size_t
+CDisplayInfoList::Count(void) const {
     return mDisplays.size();
 }
 
-CDisplayInfo* CDisplayInfoList::Item(size_t index)
-{
-    return &mDisplays.at( index );
+CDisplayInfo*
+CDisplayInfoList::Item(size_t index) {
+    return &mDisplays.at(index);
 }

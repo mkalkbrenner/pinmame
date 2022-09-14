@@ -25,7 +25,8 @@
 
 #ifndef ARM7_H
 #define ARM7_H
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
@@ -42,22 +43,22 @@ extern int arm7_ICount;
  ***************************************************************************************************/
 
 extern void arm7_init(void);
-extern void arm7_reset(void *param);
+extern void arm7_reset(void* param);
 extern void arm7_exit(void);
 extern int arm7_execute(int cycles);
-extern unsigned arm7_get_context(void *dst);
-extern void arm7_set_context(void *src);
+extern unsigned arm7_get_context(void* dst);
+extern void arm7_set_context(void* src);
 extern unsigned arm7_get_pc(void);
 extern void arm7_set_pc(unsigned val);
 extern unsigned arm7_get_sp(void);
 extern void arm7_set_sp(unsigned val);
 extern unsigned arm7_get_reg(int regnum);
 extern void arm7_set_reg(int regnum, unsigned val);
-extern void arm7_interrupt( int type );
+extern void arm7_interrupt(int type);
 extern void arm7_set_nmi_line(int state);
 extern void arm7_set_irq_line(int irqline, int state);
 extern void arm7_set_irq_callback(int (*callback)(int irqline));
-extern const char *arm7_info(void *context, int regnum);
-extern unsigned arm7_dasm(char *buffer, unsigned pc);
+extern const char* arm7_info(void* context, int regnum);
+extern unsigned arm7_dasm(char* buffer, unsigned pc);
 
 #endif /* ARM7_H */

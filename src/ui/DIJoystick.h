@@ -12,7 +12,8 @@
 
 #ifndef DIJOYSTICK_H
 #define DIJOYSTICK_H
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
@@ -35,41 +36,37 @@
     Joy:    1 for Mouse/track buttons
 
 */
-#define JOYCODE(joy, stick, axis_or_button, dir) \
-        ((((dir)            & 0x03) << 14) |     \
-         (((axis_or_button) & 0x3f) <<  8) |     \
-         (((stick)          & 0x1f) <<  3) |     \
-         (((joy)            & 0x07) <<  0))
+#define JOYCODE(joy, stick, axis_or_button, dir)                                                                       \
+    ((((dir)&0x03) << 14) | (((axis_or_button)&0x3f) << 8) | (((stick)&0x1f) << 3) | (((joy)&0x07) << 0))
 
 #define GET_JOYCODE_JOY(code)    (((code) >> 0) & 0x07)
 #define GET_JOYCODE_STICK(code)  (((code) >> 3) & 0x1f)
 #define GET_JOYCODE_AXIS(code)   (((code) >> 8) & 0x3f)
 #define GET_JOYCODE_BUTTON(code) GET_JOYCODE_AXIS(code)
-#define GET_JOYCODE_DIR(code)    (((code) >>14) & 0x03)
+#define GET_JOYCODE_DIR(code)    (((code) >> 14) & 0x03)
 
-#define JOYCODE_STICK_BTN    0
-#define JOYCODE_STICK_AXIS   1
-#define JOYCODE_STICK_POV    2
+#define JOYCODE_STICK_BTN        0
+#define JOYCODE_STICK_AXIS       1
+#define JOYCODE_STICK_POV        2
 
-#define JOYCODE_DIR_BTN      0
-#define JOYCODE_DIR_NEG      1
-#define JOYCODE_DIR_POS      2
+#define JOYCODE_DIR_BTN          0
+#define JOYCODE_DIR_NEG          1
+#define JOYCODE_DIR_POS          2
 
-struct OSDJoystick
-{
-	int  (*init)(void);
-	void (*exit)(void);
-	int  (*is_joy_pressed)(int joycode);
-	void (*poll_joysticks)(void);
-	BOOL (*Available)(void);
+struct OSDJoystick {
+    int (*init)(void);
+    void (*exit)(void);
+    int (*is_joy_pressed)(int joycode);
+    void (*poll_joysticks)(void);
+    BOOL (*Available)(void);
 };
 
 extern struct OSDJoystick DIJoystick;
 
-extern int   DIJoystick_GetNumPhysicalJoysticks(void);
+extern int DIJoystick_GetNumPhysicalJoysticks(void);
 extern char* DIJoystick_GetPhysicalJoystickName(int num_joystick);
 
-extern int   DIJoystick_GetNumPhysicalJoystickAxes(int num_joystick);
+extern int DIJoystick_GetNumPhysicalJoystickAxes(int num_joystick);
 extern char* DIJoystick_GetPhysicalJoystickAxisName(int num_joystick, int num_axis);
 
 #endif

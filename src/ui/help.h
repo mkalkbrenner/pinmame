@@ -12,17 +12,17 @@
 
 #ifndef HELP_H
 #define HELP_H
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
 #include <htmlhelp.h>
 
-typedef struct
-{
-	int		nMenuItem;
-	BOOL	bIsHtmlHelp;
-	LPCSTR	lpFile;
+typedef struct {
+    int nMenuItem;
+    BOOL bIsHtmlHelp;
+    LPCSTR lpFile;
 } MAMEHELPINFO;
 
 extern const MAMEHELPINFO g_helpInfo[];

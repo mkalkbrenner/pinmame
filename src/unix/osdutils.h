@@ -1,11 +1,11 @@
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <fcntl.h>
 
-#define strcmpi		strcasecmp
-#define strncmpi	strncasecmp
+#define strcmpi        strcasecmp
+#define strncmpi       strncasecmp
 
-#define osd_mkdir(dir)	mkdir(dir, 0)
+#define osd_mkdir(dir) mkdir(dir, 0)
 
 #define PATH_SEPARATOR '/'
-#define EOLN "\n"
+#define EOLN           "\n"

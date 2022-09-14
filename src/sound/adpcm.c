@@ -31,42 +31,40 @@
  *
  **********************************************************************************************/
 
-
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
+#include "adpcm.h"
 #include "driver.h"
 #include "state.h"
-#include "adpcm.h"
 
 #include "../ext/vgm/vgmwrite.h"
 
 //#define VERBOSE
 
 #ifdef VERBOSE
-#define LOG(x)	logerror x
+#define LOG(x) logerror x
 //define LOG(x)	printf x
 #else
 #define LOG(x)
 #endif
 
 /* struct describing a single playing ADPCM voice */
-struct ADPCMVoice
-{
-	int stream;				/* which stream are we playing on? */
-	UINT8 playing;			/* 1 if we are actively playing */
+struct ADPCMVoice {
+    int stream;    /* which stream are we playing on? */
+    UINT8 playing; /* 1 if we are actively playing */
 
-	UINT8 *region_base;		/* pointer to the base of the region */
-	UINT8 *base;			/* pointer to the base memory location */
-	UINT32 sample;			/* current sample number */
-	UINT32 count;			/* total samples to play */
+    UINT8* region_base; /* pointer to the base of the region */
+    UINT8* base;        /* pointer to the base memory location */
+    UINT32 sample;      /* current sample number */
+    UINT32 count;       /* total samples to play */
 
-	UINT32 signal;			/* current ADPCM signal */
-	UINT32 step;			/* current ADPCM step */
-	UINT32 volume;			/* output volume */
+    UINT32 signal; /* current ADPCM signal */
+    UINT32 step;   /* current ADPCM step */
+    UINT32 volume; /* output volume */
 #ifdef PINMAME
-	int is6376;
+    int is6376;
 #endif
 };
 
@@ -75,10 +73,10 @@ static UINT8 num_voices;
 static struct ADPCMVoice adpcm[MAX_ADPCM];
 
 /* step size index shift table */
-static int index_shift[8] = { -1, -1, -1, -1, 2, 4, 6, 8 };
+static int index_shift[8] = {-1, -1, -1, -1, 2, 4, 6, 8};
 
 /* lookup table for the precomputed difference */
-static int diff_lookup[49*16];
+static int diff_lookup[49 * 16];
 
 /* volume lookup table */
 //static UINT32 volume_table[16];
@@ -86,24 +84,17 @@ static int diff_lookup[49*16];
 // volume lookup table. The manual lists only 9 steps, ~3dB per step. Given the dB values,
 // that seems to map to a 5-bit volume control. Any volume parameter beyond the 9th index
 // results in silent playback.
-const UINT8 okim6295_volume_table[16] =
-{
-	0x20,   //   0 dB
-	0x16,   //  -3.2 dB
-	0x10,   //  -6.0 dB
-	0x0b,   //  -9.2 dB
-	0x08,   // -12.0 dB
-	0x06,   // -14.5 dB
-	0x04,   // -18.0 dB
-	0x03,   // -20.5 dB
-	0x02,   // -24.0 dB
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
+const UINT8 okim6295_volume_table[16] = {
+    0x20, //   0 dB
+    0x16, //  -3.2 dB
+    0x10, //  -6.0 dB
+    0x0b, //  -9.2 dB
+    0x08, // -12.0 dB
+    0x06, // -14.5 dB
+    0x04, // -18.0 dB
+    0x03, // -20.5 dB
+    0x02, // -24.0 dB
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
 /**********************************************************************************************
@@ -112,47 +103,40 @@ const UINT8 okim6295_volume_table[16] =
 
 ***********************************************************************************************/
 
-static void compute_tables(void)
-{
-	/* nibble to bit map */
-	static int nbl2bit[16][4] =
-	{
-		{ 1, 0, 0, 0}, { 1, 0, 0, 1}, { 1, 0, 1, 0}, { 1, 0, 1, 1},
-		{ 1, 1, 0, 0}, { 1, 1, 0, 1}, { 1, 1, 1, 0}, { 1, 1, 1, 1},
-		{-1, 0, 0, 0}, {-1, 0, 0, 1}, {-1, 0, 1, 0}, {-1, 0, 1, 1},
-		{-1, 1, 0, 0}, {-1, 1, 0, 1}, {-1, 1, 1, 0}, {-1, 1, 1, 1}
-	};
+static void
+compute_tables(void) {
+    /* nibble to bit map */
+    static int nbl2bit[16][4] = {{1, 0, 0, 0},  {1, 0, 0, 1},  {1, 0, 1, 0},  {1, 0, 1, 1},
+                                 {1, 1, 0, 0},  {1, 1, 0, 1},  {1, 1, 1, 0},  {1, 1, 1, 1},
+                                 {-1, 0, 0, 0}, {-1, 0, 0, 1}, {-1, 0, 1, 0}, {-1, 0, 1, 1},
+                                 {-1, 1, 0, 0}, {-1, 1, 0, 1}, {-1, 1, 1, 0}, {-1, 1, 1, 1}};
 
-	int step, nib;
+    int step, nib;
 
-	/* loop over all possible steps */
-	for (step = 0; step <= 48; step++)
-	{
-		/* compute the step value */
-		int stepval = (int)floor(16.0 * pow(11.0 / 10.0, (double)step));
+    /* loop over all possible steps */
+    for (step = 0; step <= 48; step++) {
+        /* compute the step value */
+        int stepval = (int)floor(16.0 * pow(11.0 / 10.0, (double)step));
 
-		/* loop over all nibbles and compute the difference */
-		for (nib = 0; nib < 16; nib++)
-		{
-			diff_lookup[step*16 + nib] = nbl2bit[nib][0] *
-				(stepval   * nbl2bit[nib][1] +
-				 stepval/2 * nbl2bit[nib][2] +
-				 stepval/4 * nbl2bit[nib][3] +
-				 stepval/8);
-		}
-	}
+        /* loop over all nibbles and compute the difference */
+        for (nib = 0; nib < 16; nib++) {
+            diff_lookup[step * 16 + nib] = nbl2bit[nib][0]
+                                           * (stepval * nbl2bit[nib][1] + stepval / 2 * nbl2bit[nib][2]
+                                              + stepval / 4 * nbl2bit[nib][3] + stepval / 8);
+        }
+    }
 
-	/* generate the OKI6295 volume table */
-	//for (step = 0; step < 16; step++)
-	//{
-	//	double out = 256.0;
-	//	int vol = step;
-	//
-	//	/* 3dB per step */
-	//	while (vol-- > 0)
-	//		out /= 1.412537545;	/* = 10 ^ (3/20) = 3dB */
-	//	volume_table[step] = (UINT32)out;
-	//}
+    /* generate the OKI6295 volume table */
+    //for (step = 0; step < 16; step++)
+    //{
+    //	double out = 256.0;
+    //	int vol = step;
+    //
+    //	/* 3dB per step */
+    //	while (vol-- > 0)
+    //		out /= 1.412537545;	/* = 10 ^ (3/20) = 3dB */
+    //	volume_table[step] = (UINT32)out;
+    //}
 }
 
 /**********************************************************************************************
@@ -161,30 +145,30 @@ static void compute_tables(void)
 
 ***********************************************************************************************/
 
-static INT16 clock_adpcm(struct ADPCMVoice *voice, UINT8 nibble)
-{
-	int signal = voice->signal;
-	int step = voice->step;
+static INT16
+clock_adpcm(struct ADPCMVoice* voice, UINT8 nibble) {
+    int signal = voice->signal;
+    int step = voice->step;
 
-	signal += diff_lookup[step * 16 + (nibble & 15)];
+    signal += diff_lookup[step * 16 + (nibble & 15)];
 
-	/* clamp to the maximum 12bit */
-	if (signal > 2047)
-		signal = 2047;
-	else if (signal < -2048)
-		signal = -2048;
+    /* clamp to the maximum 12bit */
+    if (signal > 2047)
+        signal = 2047;
+    else if (signal < -2048)
+        signal = -2048;
 
-	/* adjust the step size and clamp */
-	step += index_shift[nibble & 7];
-	if (step > 48)
-		step = 48;
-	else if (step < 0)
-		step = 0;
+    /* adjust the step size and clamp */
+    step += index_shift[nibble & 7];
+    if (step > 48)
+        step = 48;
+    else if (step < 0)
+        step = 0;
 
-	voice->signal = signal;
-	voice->step = step;
+    voice->signal = signal;
+    voice->step = step;
 
-	return signal;
+    return signal;
 }
 
 /**********************************************************************************************
@@ -193,107 +177,96 @@ static INT16 clock_adpcm(struct ADPCMVoice *voice, UINT8 nibble)
 
 ***********************************************************************************************/
 
-static void generate_adpcm(struct ADPCMVoice *voice, INT16 *buffer, int samples)
-{
-	float last_sample = 0;
+static void
+generate_adpcm(struct ADPCMVoice* voice, INT16* buffer, int samples) {
+    float last_sample = 0;
 
-	/* if this voice is active */
-	if (voice->playing)
-	{
-		UINT8 *base = voice->base;
-		int sample = voice->sample;
-		int count = voice->count;
+    /* if this voice is active */
+    if (voice->playing) {
+        UINT8* base = voice->base;
+        int sample = voice->sample;
+        int count = voice->count;
 
-		/* loop while we still have samples to generate */
-		while (samples)
-		{
-			/* compute the new amplitude and update the current step */
-			int nibble = base[sample / 2] >> (((sample & 1) << 2) ^ 4);
+        /* loop while we still have samples to generate */
+        while (samples) {
+            /* compute the new amplitude and update the current step */
+            int nibble = base[sample / 2] >> (((sample & 1) << 2) ^ 4);
 
-			/* output to the buffer, scaling by the volume */
-			*buffer++ = (INT32)clock_adpcm(voice, nibble) * (INT32)voice->volume / 2;
-			samples--;
+            /* output to the buffer, scaling by the volume */
+            *buffer++ = (INT32)clock_adpcm(voice, nibble) * (INT32)voice->volume / 2;
+            samples--;
 
-			/* next! */
-			if (++sample >= count)
-			{
-				last_sample = *(buffer-1);
-				voice->playing = 0;
-				break;
-			}
-		}
+            /* next! */
+            if (++sample >= count) {
+                last_sample = *(buffer - 1);
+                voice->playing = 0;
+                break;
+            }
+        }
 
-		/* update the parameters */
-		voice->sample = sample;
-	}
+        /* update the parameters */
+        voice->sample = sample;
+    }
 
-	/* for the rest: fade to silence */ //!! correct??
-	while (samples--)
-	{
-		last_sample *= 0.95f;
-		*buffer++ = (INT16)last_sample;
-	}
+    /* for the rest: fade to silence */ //!! correct??
+    while (samples--) {
+        last_sample *= 0.95f;
+        *buffer++ = (INT16)last_sample;
+    }
 }
 
 #ifdef PINMAME
-static void generate_adpcm_6376(struct ADPCMVoice *voice, INT16 *buffer, int samples)
-{
-	float last_sample = 0;
+static void
+generate_adpcm_6376(struct ADPCMVoice* voice, INT16* buffer, int samples) {
+    float last_sample = 0;
 
-	/* if this voice is active */
-	if (voice->playing)
-	{
-		UINT8 *base = voice->base;
-		int sample = voice->sample;
-		int count = voice->count;
+    /* if this voice is active */
+    if (voice->playing) {
+        UINT8* base = voice->base;
+        int sample = voice->sample;
+        int count = voice->count;
 
-		/* loop while we still have samples to generate */
-		while (samples)
-		{
-			int nibble;
+        /* loop while we still have samples to generate */
+        while (samples) {
+            int nibble;
 
-			if (count == 0)
-			{
-				/* get the number of samples to play */
-				count = (base[sample / 2] & 0x7f) << 1;
+            if (count == 0) {
+                /* get the number of samples to play */
+                count = (base[sample / 2] & 0x7f) << 1;
 
-				/* end of voice marker */
-				if (count == 0)
-				{
-					last_sample = *(buffer-1);
-					voice->playing = 0;
-					break;
-				}
-				else
-				{
-					/* step past the count byte */
-					sample += 2;
-				}
-			}
+                /* end of voice marker */
+                if (count == 0) {
+                    last_sample = *(buffer - 1);
+                    voice->playing = 0;
+                    break;
+                } else {
+                    /* step past the count byte */
+                    sample += 2;
+                }
+            }
 
-			/* compute the new amplitude and update the current step */
-			nibble = base[sample / 2] >> (((sample & 1) << 2) ^ 4);
+            /* compute the new amplitude and update the current step */
+            nibble = base[sample / 2] >> (((sample & 1) << 2) ^ 4);
 
-			/* output to the buffer, scaling by the volume */
-			/* signal in range -2048..2047, volume in range 2..32 => signal * volume / 2 in range -32768..32767 */
-			*buffer++ = (INT32)clock_adpcm(voice, nibble) * (INT32)voice->volume / 2;
+            /* output to the buffer, scaling by the volume */
+            /* signal in range -2048..2047, volume in range 2..32 => signal * volume / 2 in range -32768..32767 */
+            *buffer++ = (INT32)clock_adpcm(voice, nibble) * (INT32)voice->volume / 2;
 
-			++sample;
-			--count;
-			--samples;
-		}
+            ++sample;
+            --count;
+            --samples;
+        }
 
-		/* update the parameters */
-		voice->sample = sample;
-		voice->count = count;
-	}
+        /* update the parameters */
+        voice->sample = sample;
+        voice->count = count;
+    }
 
-	/* for the rest: fade to silence */ //!! correct??
-	while (samples--)
-	{
-		last_sample *= 0.95f;
-		*buffer++ = (INT16)last_sample;
-	}
+    /* for the rest: fade to silence */ //!! correct??
+    while (samples--) {
+        last_sample *= 0.95f;
+        *buffer++ = (INT16)last_sample;
+    }
 }
 #endif
 
@@ -303,20 +276,18 @@ static void generate_adpcm_6376(struct ADPCMVoice *voice, INT16 *buffer, int sam
 
 ***********************************************************************************************/
 
-static void adpcm_update(int num, INT16 *buffer, int length)
-{
-	struct ADPCMVoice *voice = &adpcm[num];
+static void
+adpcm_update(int num, INT16* buffer, int length) {
+    struct ADPCMVoice* voice = &adpcm[num];
 
-	/* generate them into our buffer */
+    /* generate them into our buffer */
 #ifdef PINMAME
-	if (voice->is6376)
-		generate_adpcm_6376(voice, buffer, length);
-	else
+    if (voice->is6376)
+        generate_adpcm_6376(voice, buffer, length);
+    else
 #endif
-	generate_adpcm(voice, buffer, length);
+        generate_adpcm(voice, buffer, length);
 }
-
-
 
 /**********************************************************************************************
 
@@ -325,53 +296,50 @@ static void adpcm_update(int num, INT16 *buffer, int length)
 ***********************************************************************************************/
 
 static UINT32 voice_base_offset[MAX_ADPCM]; /*we cannot save the pointer - this is a workaround*/
-static void adpcm_state_save_base_store (void)
-{
-	int i;
-	struct ADPCMVoice *voice;
 
-	for (i=0; i<num_voices; i++)
-	{
-		voice = &adpcm[i];
-		voice_base_offset[i] = (UINT32)(voice->base - voice->region_base);
-	}
+static void
+adpcm_state_save_base_store(void) {
+    int i;
+    struct ADPCMVoice* voice;
+
+    for (i = 0; i < num_voices; i++) {
+        voice = &adpcm[i];
+        voice_base_offset[i] = (UINT32)(voice->base - voice->region_base);
+    }
 }
 
-static void adpcm_state_save_base_refresh (void)
-{
-	int i;
-	struct ADPCMVoice *voice;
+static void
+adpcm_state_save_base_refresh(void) {
+    int i;
+    struct ADPCMVoice* voice;
 
-	for (i=0; i<num_voices; i++)
-	{
-		voice = &adpcm[i];
-		voice->base = &voice->region_base[ voice_base_offset[i] ];
-	}
+    for (i = 0; i < num_voices; i++) {
+        voice = &adpcm[i];
+        voice->base = &voice->region_base[voice_base_offset[i]];
+    }
 }
 
-static void adpcm_state_save_register( void )
-{
-	int i;
-	char buf[20];
-	struct ADPCMVoice *voice;
+static void
+adpcm_state_save_register(void) {
+    int i;
+    char buf[20];
+    struct ADPCMVoice* voice;
 
+    sprintf(buf, "ADPCM");
 
-	sprintf(buf,"ADPCM");
+    for (i = 0; i < num_voices; i++) {
+        voice = &adpcm[i];
 
-	for (i=0; i<num_voices; i++)
-	{
-		voice = &adpcm[i];
-
-		state_save_register_UINT8  (buf, i, "playing", &voice->playing, 1);
-		state_save_register_UINT32 (buf, i, "base_offset" , &voice_base_offset[i],  1);
-		state_save_register_UINT32 (buf, i, "sample" , &voice->sample,  1);
-		state_save_register_UINT32 (buf, i, "count"  , &voice->count,   1);
-		state_save_register_UINT32 (buf, i, "signal" , &voice->signal,  1);
-		state_save_register_UINT32 (buf, i, "step"   , &voice->step,    1);
-		state_save_register_UINT32 (buf, i, "volume" , &voice->volume,  1);
-	}
-	state_save_register_func_presave(adpcm_state_save_base_store);
-	state_save_register_func_postload(adpcm_state_save_base_refresh);
+        state_save_register_UINT8(buf, i, "playing", &voice->playing, 1);
+        state_save_register_UINT32(buf, i, "base_offset", &voice_base_offset[i], 1);
+        state_save_register_UINT32(buf, i, "sample", &voice->sample, 1);
+        state_save_register_UINT32(buf, i, "count", &voice->count, 1);
+        state_save_register_UINT32(buf, i, "signal", &voice->signal, 1);
+        state_save_register_UINT32(buf, i, "step", &voice->step, 1);
+        state_save_register_UINT32(buf, i, "volume", &voice->volume, 1);
+    }
+    state_save_register_func_presave(adpcm_state_save_base_store);
+    state_save_register_func_postload(adpcm_state_save_base_refresh);
 }
 
 /**********************************************************************************************
@@ -380,39 +348,36 @@ static void adpcm_state_save_register( void )
 
 ***********************************************************************************************/
 
-int ADPCM_sh_start(const struct MachineSound *msound)
-{
-	const struct ADPCMinterface *intf = msound->sound_interface;
-	char stream_name[40];
-	int i;
+int
+ADPCM_sh_start(const struct MachineSound* msound) {
+    const struct ADPCMinterface* intf = msound->sound_interface;
+    char stream_name[40];
+    int i;
 
-	/* reset the ADPCM system */
-	num_voices = intf->num;
-	compute_tables();
+    /* reset the ADPCM system */
+    num_voices = intf->num;
+    compute_tables();
 
-	/* initialize the voices */
-	memset(adpcm, 0, sizeof(adpcm));
-	for (i = 0; i < num_voices; i++)
-	{
-		/* generate the name and create the stream */
-		sprintf(stream_name, "%s #%d", sound_name(msound), i);
-		adpcm[i].stream = stream_init(stream_name, intf->mixing_level[i], intf->frequency, i, adpcm_update);
-		if (adpcm[i].stream == -1)
-			return 1;
+    /* initialize the voices */
+    memset(adpcm, 0, sizeof(adpcm));
+    for (i = 0; i < num_voices; i++) {
+        /* generate the name and create the stream */
+        sprintf(stream_name, "%s #%d", sound_name(msound), i);
+        adpcm[i].stream = stream_init(stream_name, intf->mixing_level[i], intf->frequency, i, adpcm_update);
+        if (adpcm[i].stream == -1)
+            return 1;
 
-		/* initialize the rest of the structure */
-		adpcm[i].region_base = memory_region(intf->region);
-		adpcm[i].volume = 0x20;
-		adpcm[i].signal = -2;
-	}
+        /* initialize the rest of the structure */
+        adpcm[i].region_base = memory_region(intf->region);
+        adpcm[i].volume = 0x20;
+        adpcm[i].signal = -2;
+    }
 
-	adpcm_state_save_register();
+    adpcm_state_save_register();
 
-	/* success */
-	return 0;
+    /* success */
+    return 0;
 }
-
-
 
 /**********************************************************************************************
 
@@ -420,11 +385,8 @@ int ADPCM_sh_start(const struct MachineSound *msound)
 
 ***********************************************************************************************/
 
-void ADPCM_sh_stop(void)
-{
-}
-
-
+void
+ADPCM_sh_stop(void) {}
 
 /**********************************************************************************************
 
@@ -432,11 +394,8 @@ void ADPCM_sh_stop(void)
 
 ***********************************************************************************************/
 
-void ADPCM_sh_update(void)
-{
-}
-
-
+void
+ADPCM_sh_update(void) {}
 
 /**********************************************************************************************
 
@@ -444,36 +403,33 @@ void ADPCM_sh_update(void)
 
 ***********************************************************************************************/
 
-void ADPCM_play(int num, int offset, int length)
-{
-	struct ADPCMVoice *voice = &adpcm[num];
+void
+ADPCM_play(int num, int offset, int length) {
+    struct ADPCMVoice* voice = &adpcm[num];
 
-	/* bail if we're not playing anything */
-	if (Machine->sample_rate == 0)
-		return;
+    /* bail if we're not playing anything */
+    if (Machine->sample_rate == 0)
+        return;
 
-	/* range check the numbers */
-	if (num >= num_voices)
-	{
-		LOG(("error: ADPCM_trigger() called with channel = %d, but only %d channels allocated\n", num, num_voices));
-		return;
-	}
+    /* range check the numbers */
+    if (num >= num_voices) {
+        LOG(("error: ADPCM_trigger() called with channel = %d, but only %d channels allocated\n", num, num_voices));
+        return;
+    }
 
-	/* update the ADPCM voice */
-	stream_update(voice->stream, 0);
+    /* update the ADPCM voice */
+    stream_update(voice->stream, 0);
 
-	/* set up the voice to play this sample */
-	voice->playing = 1;
-	voice->base = &voice->region_base[offset];
-	voice->sample = 0;
-	voice->count = length;
+    /* set up the voice to play this sample */
+    voice->playing = 1;
+    voice->base = &voice->region_base[offset];
+    voice->sample = 0;
+    voice->count = length;
 
-	/* also reset the ADPCM parameters */
-	voice->signal = -2;
-	voice->step = 0;
+    /* also reset the ADPCM parameters */
+    voice->signal = -2;
+    voice->step = 0;
 }
-
-
 
 /**********************************************************************************************
 
@@ -481,29 +437,26 @@ void ADPCM_play(int num, int offset, int length)
 
 ***********************************************************************************************/
 
-void ADPCM_stop(int num)
-{
-	struct ADPCMVoice *voice = &adpcm[num];
+void
+ADPCM_stop(int num) {
+    struct ADPCMVoice* voice = &adpcm[num];
 
-	/* bail if we're not playing anything */
-	if (Machine->sample_rate == 0)
-		return;
+    /* bail if we're not playing anything */
+    if (Machine->sample_rate == 0)
+        return;
 
-	/* range check the numbers */
-	if (num >= num_voices)
-	{
-		LOG(("error: ADPCM_stop() called with channel = %d, but only %d channels allocated\n", num, num_voices));
-		return;
-	}
+    /* range check the numbers */
+    if (num >= num_voices) {
+        LOG(("error: ADPCM_stop() called with channel = %d, but only %d channels allocated\n", num, num_voices));
+        return;
+    }
 
-	/* update the ADPCM voice */
-	stream_update(voice->stream, 0);
+    /* update the ADPCM voice */
+    stream_update(voice->stream, 0);
 
-	/* stop playback */
-	voice->playing = 0;
+    /* stop playback */
+    voice->playing = 0;
 }
-
-
 
 /**********************************************************************************************
 
@@ -511,27 +464,24 @@ void ADPCM_stop(int num)
 
 ***********************************************************************************************/
 
-void ADPCM_setvol(int num, int vol)
-{
-	struct ADPCMVoice *voice = &adpcm[num];
+void
+ADPCM_setvol(int num, int vol) {
+    struct ADPCMVoice* voice = &adpcm[num];
 
-	/* bail if we're not playing anything */
-	if (Machine->sample_rate == 0)
-		return;
+    /* bail if we're not playing anything */
+    if (Machine->sample_rate == 0)
+        return;
 
-	/* range check the numbers */
-	if (num >= num_voices)
-	{
-		LOG(("error: ADPCM_setvol() called with channel = %d, but only %d channels allocated\n", num, num_voices));
-		return;
-	}
+    /* range check the numbers */
+    if (num >= num_voices) {
+        LOG(("error: ADPCM_setvol() called with channel = %d, but only %d channels allocated\n", num, num_voices));
+        return;
+    }
 
-	/* update the ADPCM voice */
-	stream_update(voice->stream, 0);
-	voice->volume = vol;
+    /* update the ADPCM voice */
+    stream_update(voice->stream, 0);
+    voice->volume = vol;
 }
-
-
 
 /**********************************************************************************************
 
@@ -539,27 +489,24 @@ void ADPCM_setvol(int num, int vol)
 
 ***********************************************************************************************/
 
-int ADPCM_playing(int num)
-{
-	struct ADPCMVoice *voice = &adpcm[num];
+int
+ADPCM_playing(int num) {
+    struct ADPCMVoice* voice = &adpcm[num];
 
-	/* bail if we're not playing anything */
-	if (Machine->sample_rate == 0)
-		return 0;
+    /* bail if we're not playing anything */
+    if (Machine->sample_rate == 0)
+        return 0;
 
-	/* range check the numbers */
-	if (num >= num_voices)
-	{
-		LOG(("error: ADPCM_playing() called with channel = %d, but only %d channels allocated\n", num, num_voices));
-		return 0;
-	}
+    /* range check the numbers */
+    if (num >= num_voices) {
+        LOG(("error: ADPCM_playing() called with channel = %d, but only %d channels allocated\n", num, num_voices));
+        return 0;
+    }
 
-	/* update the ADPCM voice */
-	stream_update(voice->stream, 0);
-	return voice->playing;
+    /* update the ADPCM voice */
+    stream_update(voice->stream, 0);
+    return voice->playing;
 }
-
-
 
 /**********************************************************************************************
  *
@@ -589,12 +536,11 @@ static INT32 okim6295_command[MAX_OKIM6295];
 static INT32 okim6295_base[MAX_OKIM6295][4];
 static unsigned short okim6295_vgm_idx[MAX_OKIM6295];
 #else
-#define OKIM6295_VOICES		4
+#define OKIM6295_VOICES 4
 
 static INT32 okim6295_command[MAX_OKIM6295];
 static INT32 okim6295_base[MAX_OKIM6295][OKIM6295_VOICES];
 #endif
-
 
 /**********************************************************************************************
 
@@ -602,29 +548,25 @@ static INT32 okim6295_base[MAX_OKIM6295][OKIM6295_VOICES];
 
 ***********************************************************************************************/
 
-static void okim6295_state_save_register(void)
-{
-	int i,j;
-	int chips;
-	char buf[20];
-	char buf2[20];
+static void
+okim6295_state_save_register(void) {
+    int i, j;
+    int chips;
+    char buf[20];
+    char buf2[20];
 
-	adpcm_state_save_register();
-	sprintf(buf,"OKIM6295");
+    adpcm_state_save_register();
+    sprintf(buf, "OKIM6295");
 
-	chips = num_voices / OKIM6295_VOICES;
-	for (i = 0; i < chips; i++)
-	{
-		state_save_register_INT32  (buf, i, "command", &okim6295_command[i], 1);
-		for (j = 0; j < OKIM6295_VOICES; j++)
-		{
-			sprintf(buf2,"base_voice_%1i",j);
-			state_save_register_INT32  (buf, i, buf2, &okim6295_base[i][j], 1);
-		}
-	}
+    chips = num_voices / OKIM6295_VOICES;
+    for (i = 0; i < chips; i++) {
+        state_save_register_INT32(buf, i, "command", &okim6295_command[i], 1);
+        for (j = 0; j < OKIM6295_VOICES; j++) {
+            sprintf(buf2, "base_voice_%1i", j);
+            state_save_register_INT32(buf, i, buf2, &okim6295_base[i][j], 1);
+        }
+    }
 }
-
-
 
 /**********************************************************************************************
 
@@ -632,71 +574,72 @@ static void okim6295_state_save_register(void)
 
 ***********************************************************************************************/
 
-int OKIM6295_sh_start(const struct MachineSound *msound)
-{
-	const struct OKIM6295interface *intf = msound->sound_interface;
-	char stream_name[40];
-	int i;
+int
+OKIM6295_sh_start(const struct MachineSound* msound) {
+    const struct OKIM6295interface* intf = msound->sound_interface;
+    char stream_name[40];
+    int i;
 
-	/* reset the ADPCM system */
+    /* reset the ADPCM system */
 #ifdef PINMAME // OKI6376 has only 2 voices per chip, activated by num <= 0!
-	if (intf->num < 1) { OKIM6295_VOICES = 2; num_voices = 2; } else
+    if (intf->num < 1) {
+        OKIM6295_VOICES = 2;
+        num_voices = 2;
+    } else
 #endif
-	num_voices = intf->num * OKIM6295_VOICES;
-	compute_tables();
+        num_voices = intf->num * OKIM6295_VOICES;
+    compute_tables();
 
-	/* initialize the voices */
-	memset(adpcm, 0, sizeof(adpcm));
-	for (i = 0; i < num_voices; i++)
-	{
-		int chip = i / OKIM6295_VOICES;
-		int voice = i % OKIM6295_VOICES;
+    /* initialize the voices */
+    memset(adpcm, 0, sizeof(adpcm));
+    for (i = 0; i < num_voices; i++) {
+        int chip = i / OKIM6295_VOICES;
+        int voice = i % OKIM6295_VOICES;
 
-		/* reset the OKI-specific parameters */
-		okim6295_command[chip] = -1;
-		okim6295_base[chip][voice] = 0;
+        /* reset the OKI-specific parameters */
+        okim6295_command[chip] = -1;
+        okim6295_base[chip][voice] = 0;
 
-		/* generate the name and create the stream */
+        /* generate the name and create the stream */
 #ifdef PINMAME
-		if (intf->num < 1) {
-			adpcm[i].is6376 = 1;
-			sprintf(stream_name, "MSM6376 #%d (voice %d)", chip, voice);
-		}
-		else
+        if (intf->num < 1) {
+            adpcm[i].is6376 = 1;
+            sprintf(stream_name, "MSM6376 #%d (voice %d)", chip, voice);
+        } else
 #endif
-		sprintf(stream_name, "%s #%d (voice %d)", sound_name(msound), chip, voice);
-		adpcm[i].stream = stream_init(stream_name, intf->mixing_level[chip], intf->frequency[chip], i, adpcm_update); // freq = clock/divisor // int divisor = pin7 ? 132 : 165;
-		if (adpcm[i].stream == -1)
-			return 1;
+            sprintf(stream_name, "%s #%d (voice %d)", sound_name(msound), chip, voice);
+        adpcm[i].stream = stream_init(stream_name, intf->mixing_level[chip], intf->frequency[chip], i,
+                                      adpcm_update); // freq = clock/divisor // int divisor = pin7 ? 132 : 165;
+        if (adpcm[i].stream == -1)
+            return 1;
 
-		/* initialize the rest of the structure */
-		adpcm[i].region_base = memory_region(intf->region[chip]);
-		adpcm[i].volume = 0x20;
-		adpcm[i].signal = -2;
-	}
+        /* initialize the rest of the structure */
+        adpcm[i].region_base = memory_region(intf->region[chip]);
+        adpcm[i].volume = 0x20;
+        adpcm[i].signal = -2;
+    }
 
 #ifdef PINMAME
-	if (intf->num < 1) {
-		okim6295_vgm_idx[0] = vgm_open(VGMC_OKIM6295, intf->frequency[0]*132.); //!! so far all machines use a divisor of 132 initially (pin7=1)
-		vgm_header_set(okim6295_vgm_idx[0], 0x00, 1); //!! pin7); //!! dto.	//PIN7_LOW = 0, PIN7_HIGH = 1
-		vgm_dump_sample_rom(okim6295_vgm_idx[0], 0x01, intf->region[0]);
-	} else
+    if (intf->num < 1) {
+        okim6295_vgm_idx[0] = vgm_open(
+            VGMC_OKIM6295, intf->frequency[0] * 132.); //!! so far all machines use a divisor of 132 initially (pin7=1)
+        vgm_header_set(okim6295_vgm_idx[0], 0x00, 1);  //!! pin7); //!! dto.	//PIN7_LOW = 0, PIN7_HIGH = 1
+        vgm_dump_sample_rom(okim6295_vgm_idx[0], 0x01, intf->region[0]);
+    } else
 #else
-	for (i = 0; i < intf->num; i++)
-	{
-		okim6295_vgm_idx[i] = vgm_open(VGMC_OKIM6295, intf->frequency[i]*132.); //!! so far all machines use a divisor of 132 initially (pin7=1)
-		vgm_header_set(okim6295_vgm_idx[i], 0x00, 1); //!! pin7); //!! dto.	//PIN7_LOW = 0, PIN7_HIGH = 1
-		vgm_dump_sample_rom(okim6295_vgm_idx[i], 0x01, intf->region[i]);
-	}
+    for (i = 0; i < intf->num; i++) {
+        okim6295_vgm_idx[i] = vgm_open(
+            VGMC_OKIM6295, intf->frequency[i] * 132.); //!! so far all machines use a divisor of 132 initially (pin7=1)
+        vgm_header_set(okim6295_vgm_idx[i], 0x00, 1);  //!! pin7); //!! dto.	//PIN7_LOW = 0, PIN7_HIGH = 1
+        vgm_dump_sample_rom(okim6295_vgm_idx[i], 0x01, intf->region[i]);
+    }
 #endif
 
-	okim6295_state_save_register();
+        okim6295_state_save_register();
 
-	/* success */
-	return 0;
+    /* success */
+    return 0;
 }
-
-
 
 /**********************************************************************************************
 
@@ -704,11 +647,8 @@ int OKIM6295_sh_start(const struct MachineSound *msound)
 
 ***********************************************************************************************/
 
-void OKIM6295_sh_stop(void)
-{
-}
-
-
+void
+OKIM6295_sh_stop(void) {}
 
 /**********************************************************************************************
 
@@ -716,11 +656,8 @@ void OKIM6295_sh_stop(void)
 
 ***********************************************************************************************/
 
-void OKIM6295_sh_update(void)
-{
-}
-
-
+void
+OKIM6295_sh_update(void) {}
 
 /**********************************************************************************************
 
@@ -728,21 +665,22 @@ void OKIM6295_sh_update(void)
 
 ***********************************************************************************************/
 
-void OKIM6295_set_bank_base(int which, int base)
-{
-	int channel;
+void
+OKIM6295_set_bank_base(int which, int base) {
+    int channel;
 
-	for (channel = 0; channel < OKIM6295_VOICES; channel++)
-	{
-		struct ADPCMVoice *voice = &adpcm[which * OKIM6295_VOICES + channel];
+    for (channel = 0; channel < OKIM6295_VOICES; channel++) {
+        struct ADPCMVoice* voice = &adpcm[which * OKIM6295_VOICES + channel];
 
-		/* update the stream and set the new base */
-		stream_update(voice->stream, 0);
-		okim6295_base[which][channel] = base;
-	}
+        /* update the stream and set the new base */
+        stream_update(voice->stream, 0);
+        okim6295_base[which][channel] = base;
+    }
 
-	vgm_write(okim6295_vgm_idx[which], 0x00, 0x0F, (base/0x40000) & 0xFF); //!! ?? see below, seems to work though (e.g. Barbwire)
+    vgm_write(okim6295_vgm_idx[which], 0x00, 0x0F,
+              (base / 0x40000) & 0xFF); //!! ?? see below, seems to work though (e.g. Barbwire)
 }
+
 /*void okim6295_device::set_rom_bank(int bank)
 {
 	// let's just hope overriding works properly for all drivers
@@ -750,36 +688,32 @@ void OKIM6295_set_bank_base(int which, int base)
 	vgm_write(m_vgm_idx, 0x00, 0x0F, bank & 0xFF);
 }*/
 
-
-
 /**********************************************************************************************
 
      OKIM6295_set_pin7 -- dynamically adjusts the frequency of a given ADPCM voice
 
 ***********************************************************************************************/
 
-void OKIM6295_set_pin7(int which, double clock, unsigned char pin7)
-{
-	const int divisor = pin7 ? 132 : 165;
-	const unsigned int val = (unsigned int)(clock+0.5);
+void
+OKIM6295_set_pin7(int which, double clock, unsigned char pin7) {
+    const int divisor = pin7 ? 132 : 165;
+    const unsigned int val = (unsigned int)(clock + 0.5);
 
-	int channel;
-	for (channel = 0; channel < OKIM6295_VOICES; channel++)
-	{
-		struct ADPCMVoice *voice = &adpcm[which * OKIM6295_VOICES + channel];
+    int channel;
+    for (channel = 0; channel < OKIM6295_VOICES; channel++) {
+        struct ADPCMVoice* voice = &adpcm[which * OKIM6295_VOICES + channel];
 
-		/* update the stream and set the new base */
-		stream_update(voice->stream, 0);
-		stream_set_sample_rate(voice->stream, clock/divisor);
-	}
+        /* update the stream and set the new base */
+        stream_update(voice->stream, 0);
+        stream_set_sample_rate(voice->stream, clock / divisor);
+    }
 
-	vgm_write(okim6295_vgm_idx[which], 0x00, 0x0C, pin7 ? 1 : 0);
-	vgm_write(okim6295_vgm_idx[which], 0x00, 0x08, (val >>  0) & 0xFF);
-	vgm_write(okim6295_vgm_idx[which], 0x00, 0x09, (val >>  8) & 0xFF);
-	vgm_write(okim6295_vgm_idx[which], 0x00, 0x0A, (val >> 16) & 0xFF);
-	vgm_write(okim6295_vgm_idx[which], 0x00, 0x0B, (val >> 24) & 0xFF);
+    vgm_write(okim6295_vgm_idx[which], 0x00, 0x0C, pin7 ? 1 : 0);
+    vgm_write(okim6295_vgm_idx[which], 0x00, 0x08, (val >> 0) & 0xFF);
+    vgm_write(okim6295_vgm_idx[which], 0x00, 0x09, (val >> 8) & 0xFF);
+    vgm_write(okim6295_vgm_idx[which], 0x00, 0x0A, (val >> 16) & 0xFF);
+    vgm_write(okim6295_vgm_idx[which], 0x00, 0x0B, (val >> 24) & 0xFF);
 }
-
 
 /**********************************************************************************************
 
@@ -787,35 +721,32 @@ void OKIM6295_set_pin7(int which, double clock, unsigned char pin7)
 
 ***********************************************************************************************/
 
-static int OKIM6295_status_r(int num)
-{
-	int i, result;
+static int
+OKIM6295_status_r(int num) {
+    int i, result;
 
-	/* range check the numbers */
-	if (num >= num_voices / OKIM6295_VOICES)
-	{
-		LOG(("error: OKIM6295_status_r() called with chip = %d, but only %d chips allocated\n",num, num_voices / OKIM6295_VOICES));
-		return 0xff;
-	}
+    /* range check the numbers */
+    if (num >= num_voices / OKIM6295_VOICES) {
+        LOG(("error: OKIM6295_status_r() called with chip = %d, but only %d chips allocated\n", num,
+             num_voices / OKIM6295_VOICES));
+        return 0xff;
+    }
 
-	result = 0xf0;	/* naname expects bits 4-7 to be 1 */
-	/* set the bit to 1 if something is playing on a given channel */
-	for (i = 0; i < OKIM6295_VOICES; i++)
-	{
-		struct ADPCMVoice *voice = &adpcm[num * OKIM6295_VOICES + i];
+    result = 0xf0; /* naname expects bits 4-7 to be 1 */
+    /* set the bit to 1 if something is playing on a given channel */
+    for (i = 0; i < OKIM6295_VOICES; i++) {
+        struct ADPCMVoice* voice = &adpcm[num * OKIM6295_VOICES + i];
 
-		/* update the stream */
-		stream_update(voice->stream, 0);
+        /* update the stream */
+        stream_update(voice->stream, 0);
 
-		/* set the bit if it's playing */
-		if (voice->playing)
-			result |= 1 << i;
-	}
+        /* set the bit if it's playing */
+        if (voice->playing)
+            result |= 1 << i;
+    }
 
-	return result;
+    return result;
 }
-
-
 
 /**********************************************************************************************
 
@@ -823,114 +754,108 @@ static int OKIM6295_status_r(int num)
 
 ***********************************************************************************************/
 
-static void OKIM6295_data_w(int num, int data)
-{
-	/* range check the numbers */
-	if (num >= num_voices / OKIM6295_VOICES)
-	{
-		LOG(("error: OKIM6295_data_w() called with chip = %d, but only %d chips allocated\n", num, num_voices / OKIM6295_VOICES));
-		return;
-	}
+static void
+OKIM6295_data_w(int num, int data) {
+    /* range check the numbers */
+    if (num >= num_voices / OKIM6295_VOICES) {
+        LOG(("error: OKIM6295_data_w() called with chip = %d, but only %d chips allocated\n", num,
+             num_voices / OKIM6295_VOICES));
+        return;
+    }
 
-	vgm_write(okim6295_vgm_idx[num], 0x00, 0x00, data);
+    vgm_write(okim6295_vgm_idx[num], 0x00, 0x00, data);
 
-	/* if a command is pending, process the second half */
-	if (okim6295_command[num] != -1)
-	{
-		// the manual explicitly says that it's not possible to start multiple voices at the same time
-		int voicemask = data >> 4, i;
+    /* if a command is pending, process the second half */
+    if (okim6295_command[num] != -1) {
+        // the manual explicitly says that it's not possible to start multiple voices at the same time
+        int voicemask = data >> 4, i;
 
-		/* determine which voice(s) (voice is set by a 1 bit in the upper 4 bits of the second byte) */
-		for (i = 0; i < OKIM6295_VOICES; i++, voicemask >>= 1)
-		{
-			if (voicemask & 1)
-			{
-				struct ADPCMVoice *voice = &adpcm[num * OKIM6295_VOICES + i];
-				unsigned char *base;
-				int start, stop;
+        /* determine which voice(s) (voice is set by a 1 bit in the upper 4 bits of the second byte) */
+        for (i = 0; i < OKIM6295_VOICES; i++, voicemask >>= 1) {
+            if (voicemask & 1) {
+                struct ADPCMVoice* voice = &adpcm[num * OKIM6295_VOICES + i];
+                unsigned char* base;
+                int start, stop;
 
-				/* update the stream */
-				stream_update(voice->stream, 0);
+                /* update the stream */
+                stream_update(voice->stream, 0);
 
-				if (Machine->sample_rate == 0) return;
+                if (Machine->sample_rate == 0)
+                    return;
 
-				/* determine the start/stop positions */
-				base = &voice->region_base[okim6295_base[num][i] + okim6295_command[num] * 8];
-				/*if ((int)base < 0x400) { // avoid access violations // this cannot work like this, was supposed to "fix" Caribbean Cruise
+                /* determine the start/stop positions */
+                base = &voice->region_base[okim6295_base[num][i] + okim6295_command[num] * 8];
+                /*if ((int)base < 0x400) { // avoid access violations // this cannot work like this, was supposed to "fix" Caribbean Cruise
 					start = stop = 0x40000;
 				} else {*/
-					start = (base[0] << 16) + (base[1] << 8) + base[2];
-					stop = (base[3] << 16) + (base[4] << 8) + base[5];
-					//start &= 0x3ffff;
-					//stop &= 0x3ffff;
-				//}
-				LOG(("OKIM6295:%d playing sample %02x [%05x:%05x] on voice #%x\n", num, okim6295_command[num], start, stop, i+1));
-				/* set up the voice to play this sample */
-				if (start >= stop) {
-					LOG(("OKIM6295:%d empty data - ignore\n", num));
-					//voice->playing = 0; // needed?
-				} else if (start < 0x40000 && stop < 0x40000) {
-					if (!voice->playing) /* fixes Got-cha and Steel Force */
-					{
-						voice->playing = 1;
-						voice->base = &voice->region_base[okim6295_base[num][i] + start];
-						voice->sample = 0;
-						voice->count = 2 * (stop - start + 1);
+                start = (base[0] << 16) + (base[1] << 8) + base[2];
+                stop = (base[3] << 16) + (base[4] << 8) + base[5];
+                //start &= 0x3ffff;
+                //stop &= 0x3ffff;
+                //}
+                LOG(("OKIM6295:%d playing sample %02x [%05x:%05x] on voice #%x\n", num, okim6295_command[num], start,
+                     stop, i + 1));
+                /* set up the voice to play this sample */
+                if (start >= stop) {
+                    LOG(("OKIM6295:%d empty data - ignore\n", num));
+                    //voice->playing = 0; // needed?
+                } else if (start < 0x40000 && stop < 0x40000) {
+                    if (!voice->playing) /* fixes Got-cha and Steel Force */
+                    {
+                        voice->playing = 1;
+                        voice->base = &voice->region_base[okim6295_base[num][i] + start];
+                        voice->sample = 0;
+                        voice->count = 2 * (stop - start + 1);
 
-						/* also reset the ADPCM parameters */
-						voice->signal = -2;
-						voice->step = 0;
-						voice->volume = okim6295_volume_table[data & 0x0f];
-					}
-					else
-					{
-						LOG(("OKIM6295:%d requested to play sample %02x on non-stopped voice #%x\n",num,okim6295_command[num],i+1));
-					}
-				}
-				/* invalid samples go here */
-				else
-				{
-					LOG(("OKIM6295:%d requested to play invalid sample %02x on voice #%x\n",num,okim6295_command[num],i+1));
-					voice->playing = 0;
-				}
-			}
-		}
+                        /* also reset the ADPCM parameters */
+                        voice->signal = -2;
+                        voice->step = 0;
+                        voice->volume = okim6295_volume_table[data & 0x0f];
+                    } else {
+                        LOG(("OKIM6295:%d requested to play sample %02x on non-stopped voice #%x\n", num,
+                             okim6295_command[num], i + 1));
+                    }
+                }
+                /* invalid samples go here */
+                else {
+                    LOG(("OKIM6295:%d requested to play invalid sample %02x on voice #%x\n", num, okim6295_command[num],
+                         i + 1));
+                    voice->playing = 0;
+                }
+            }
+        }
 
-		/* reset the command */
-		okim6295_command[num] = -1;
-	}
+        /* reset the command */
+        okim6295_command[num] = -1;
+    }
 
-	/* if this is the start of a command, remember the sample number for next time */
-	else if (data & 0x80)
-	{
-		okim6295_command[num] = data & 0x7f;
-	}
+    /* if this is the start of a command, remember the sample number for next time */
+    else if (data & 0x80) {
+        okim6295_command[num] = data & 0x7f;
+    }
 
-	/* otherwise, this is a silence command */
-	else
-	{
-		int voicemask = data >> 3, i;
-		// TODO either mute all channels or only one - fixes some sound in GTS3 games!?
-		if (voicemask == 0x0f || voicemask == 0x08 || voicemask == 0x04 || voicemask == 0x02 || voicemask == 0x01) {
-			/* determine which voice(s) (voice is set by a 1 bit in bits 3-6 of the command */
-			for (i = 0; i < 4; i++, voicemask >>= 1)
-			{
-				if (voicemask & 1)
-				{
-					struct ADPCMVoice *voice = &adpcm[num * OKIM6295_VOICES + i];
-					LOG(("OKIM6295:%d mute voice #%x\n", num, i+1));
-					if (voice->playing) {
+    /* otherwise, this is a silence command */
+    else {
+        int voicemask = data >> 3, i;
+        // TODO either mute all channels or only one - fixes some sound in GTS3 games!?
+        if (voicemask == 0x0f || voicemask == 0x08 || voicemask == 0x04 || voicemask == 0x02 || voicemask == 0x01) {
+            /* determine which voice(s) (voice is set by a 1 bit in bits 3-6 of the command */
+            for (i = 0; i < 4; i++, voicemask >>= 1) {
+                if (voicemask & 1) {
+                    struct ADPCMVoice* voice = &adpcm[num * OKIM6295_VOICES + i];
+                    LOG(("OKIM6295:%d mute voice #%x\n", num, i + 1));
+                    if (voice->playing) {
 
-						/* update the stream, then turn it off */
-						stream_update(voice->stream, 0);
-						voice->playing = 0;
-					}
-				}
-			}
-		} else {
-			LOG(("OKIM6295:%d ignoring mute command 0x%02x\n", num, data));
-		}
-	}
+                        /* update the stream, then turn it off */
+                        stream_update(voice->stream, 0);
+                        voice->playing = 0;
+                    }
+                }
+            }
+        } else {
+            LOG(("OKIM6295:%d ignoring mute command 0x%02x\n", num, data));
+        }
+    }
 }
 
 #ifdef PINMAME
@@ -940,85 +865,74 @@ static void OKIM6295_data_w(int num, int data)
 
 ***********************************************************************************************/
 
-static void OKIM6376_data_w(int num, int data)
-{
-	/* if a command is pending, process the second half */
-	if (okim6295_command[num] != -1)
-	{
-		int temp = data >> 4, i, start;
-		unsigned char *base;
+static void
+OKIM6376_data_w(int num, int data) {
+    /* if a command is pending, process the second half */
+    if (okim6295_command[num] != -1) {
+        int temp = data >> 4, i, start;
+        unsigned char* base;
 
-		/* determine which voice(s) (voice is set by a 1 bit in the upper 4 bits of the second byte) */
-		for (i = 0; i < OKIM6295_VOICES; i++, temp >>= 1)
-		{
-			if (temp & 1)
-			{
-				struct ADPCMVoice *voice = &adpcm[num * OKIM6295_VOICES + i];
+        /* determine which voice(s) (voice is set by a 1 bit in the upper 4 bits of the second byte) */
+        for (i = 0; i < OKIM6295_VOICES; i++, temp >>= 1) {
+            if (temp & 1) {
+                struct ADPCMVoice* voice = &adpcm[num * OKIM6295_VOICES + i];
 
-				/* update the stream */
-				stream_update(voice->stream, 0);
+                /* update the stream */
+                stream_update(voice->stream, 0);
 
-				if (Machine->sample_rate == 0) return;
+                if (Machine->sample_rate == 0)
+                    return;
 
-				/* determine the start position, max address space is 16Mbit */
-				base = &voice->region_base[ okim6295_base[num][i] + okim6295_command[num] * 4];
-				start = ((base[0] << 16) + (base[1] << 8) + base[2]) & 0x1fffff;
+                /* determine the start position, max address space is 16Mbit */
+                base = &voice->region_base[okim6295_base[num][i] + okim6295_command[num] * 4];
+                start = ((base[0] << 16) + (base[1] << 8) + base[2]) & 0x1fffff;
 
-				if (start == 0)
-				{
-					voice->playing = 0;
-				}
-				else
-				{
-					/* set up the voice to play this sample */
-					if (!voice->playing)
-					{
-						voice->playing = 1;
-						voice->base = &voice->region_base[okim6295_base[num][i] + start];
-						voice->sample = 0;
-						voice->count = 0;
+                if (start == 0) {
+                    voice->playing = 0;
+                } else {
+                    /* set up the voice to play this sample */
+                    if (!voice->playing) {
+                        voice->playing = 1;
+                        voice->base = &voice->region_base[okim6295_base[num][i] + start];
+                        voice->sample = 0;
+                        voice->count = 0;
 
-						/* also reset the ADPCM parameters */
-						voice->signal = -2;
-						voice->step = 0;
-						voice->volume = 0x20;
-					}
-					else
-					{
-						LOG(("OKIM6376:%d requested to play sample %02x on non-stopped voice #%x\n",num,okim6295_command[num],i+1));
-					}
-				}
-			}
-		}
+                        /* also reset the ADPCM parameters */
+                        voice->signal = -2;
+                        voice->step = 0;
+                        voice->volume = 0x20;
+                    } else {
+                        LOG(("OKIM6376:%d requested to play sample %02x on non-stopped voice #%x\n", num,
+                             okim6295_command[num], i + 1));
+                    }
+                }
+            }
+        }
 
-		/* reset the command */
-		okim6295_command[num] = -1;
-	}
+        /* reset the command */
+        okim6295_command[num] = -1;
+    }
 
-	/* if this is the start of a command, remember the sample number for next time */
-	else if (data & 0x80)
-	{
-		// FIX: maximum adpcm words are 111, there are other 8 commands to generate BEEP tone (0x70 to 0x77),
-		// and others for internal testing, that manual explicitly says not to use (0x78 to 0x7f)
-		okim6295_command[num] = data & 0x7f;
-	}
+    /* if this is the start of a command, remember the sample number for next time */
+    else if (data & 0x80) {
+        // FIX: maximum adpcm words are 111, there are other 8 commands to generate BEEP tone (0x70 to 0x77),
+        // and others for internal testing, that manual explicitly says not to use (0x78 to 0x7f)
+        okim6295_command[num] = data & 0x7f;
+    }
 
-	/* otherwise, see if this is a silence command */
-	else
-	{
-		int temp = data >> 3, i;
+    /* otherwise, see if this is a silence command */
+    else {
+        int temp = data >> 3, i;
 
-		/* determine which voice(s) (voice is set by a 1 bit in bits 3-6 of the command */
-		for (i = 0; i < OKIM6295_VOICES; i++, temp >>= 1)
-		{
-			if (temp & 1)
-			{
-				struct ADPCMVoice *voice = &adpcm[num * OKIM6295_VOICES + i];
+        /* determine which voice(s) (voice is set by a 1 bit in bits 3-6 of the command */
+        for (i = 0; i < OKIM6295_VOICES; i++, temp >>= 1) {
+            if (temp & 1) {
+                struct ADPCMVoice* voice = &adpcm[num * OKIM6295_VOICES + i];
 
-				voice->playing = 0;
-			}
-		}
-	}
+                voice->playing = 0;
+            }
+        }
+    }
 }
 #endif
 
@@ -1029,52 +943,23 @@ static void OKIM6376_data_w(int num, int data)
 
 ***********************************************************************************************/
 
-READ_HANDLER( OKIM6295_status_0_r )
-{
-	return OKIM6295_status_r(0);
-}
+READ_HANDLER(OKIM6295_status_0_r) { return OKIM6295_status_r(0); }
 
-READ_HANDLER( OKIM6295_status_1_r )
-{
-	return OKIM6295_status_r(1);
-}
+READ_HANDLER(OKIM6295_status_1_r) { return OKIM6295_status_r(1); }
 
-READ_HANDLER( OKIM6295_status_2_r )
-{
-	return OKIM6295_status_r(2);
-}
+READ_HANDLER(OKIM6295_status_2_r) { return OKIM6295_status_r(2); }
 
-READ16_HANDLER( OKIM6295_status_0_lsb_r )
-{
-	return OKIM6295_status_r(0);
-}
+READ16_HANDLER(OKIM6295_status_0_lsb_r) { return OKIM6295_status_r(0); }
 
-READ16_HANDLER( OKIM6295_status_1_lsb_r )
-{
-	return OKIM6295_status_r(1);
-}
+READ16_HANDLER(OKIM6295_status_1_lsb_r) { return OKIM6295_status_r(1); }
 
-READ16_HANDLER( OKIM6295_status_2_lsb_r )
-{
-	return OKIM6295_status_r(2);
-}
+READ16_HANDLER(OKIM6295_status_2_lsb_r) { return OKIM6295_status_r(2); }
 
-READ16_HANDLER( OKIM6295_status_0_msb_r )
-{
-	return OKIM6295_status_r(0) << 8;
-}
+READ16_HANDLER(OKIM6295_status_0_msb_r) { return OKIM6295_status_r(0) << 8; }
 
-READ16_HANDLER( OKIM6295_status_1_msb_r )
-{
-	return OKIM6295_status_r(1) << 8;
-}
+READ16_HANDLER(OKIM6295_status_1_msb_r) { return OKIM6295_status_r(1) << 8; }
 
-READ16_HANDLER( OKIM6295_status_2_msb_r )
-{
-	return OKIM6295_status_r(2) << 8;
-}
-
-
+READ16_HANDLER(OKIM6295_status_2_msb_r) { return OKIM6295_status_r(2) << 8; }
 
 /**********************************************************************************************
 
@@ -1083,59 +968,41 @@ READ16_HANDLER( OKIM6295_status_2_msb_r )
 
 ***********************************************************************************************/
 
-WRITE_HANDLER( OKIM6295_data_0_w )
-{
-	OKIM6295_data_w(0, data);
+WRITE_HANDLER(OKIM6295_data_0_w) { OKIM6295_data_w(0, data); }
+
+WRITE_HANDLER(OKIM6295_data_1_w) { OKIM6295_data_w(1, data); }
+
+WRITE_HANDLER(OKIM6295_data_2_w) { OKIM6295_data_w(2, data); }
+
+WRITE16_HANDLER(OKIM6295_data_0_lsb_w) {
+    if (ACCESSING_LSB)
+        OKIM6295_data_w(0, data & 0xff);
 }
 
-WRITE_HANDLER( OKIM6295_data_1_w )
-{
-	OKIM6295_data_w(1, data);
+WRITE16_HANDLER(OKIM6295_data_1_lsb_w) {
+    if (ACCESSING_LSB)
+        OKIM6295_data_w(1, data & 0xff);
 }
 
-WRITE_HANDLER( OKIM6295_data_2_w )
-{
-	OKIM6295_data_w(2, data);
+WRITE16_HANDLER(OKIM6295_data_2_lsb_w) {
+    if (ACCESSING_LSB)
+        OKIM6295_data_w(2, data & 0xff);
 }
 
-WRITE16_HANDLER( OKIM6295_data_0_lsb_w )
-{
-	if (ACCESSING_LSB)
-		OKIM6295_data_w(0, data & 0xff);
+WRITE16_HANDLER(OKIM6295_data_0_msb_w) {
+    if (ACCESSING_MSB)
+        OKIM6295_data_w(0, data >> 8);
 }
 
-WRITE16_HANDLER( OKIM6295_data_1_lsb_w )
-{
-	if (ACCESSING_LSB)
-		OKIM6295_data_w(1, data & 0xff);
+WRITE16_HANDLER(OKIM6295_data_1_msb_w) {
+    if (ACCESSING_MSB)
+        OKIM6295_data_w(1, data >> 8);
 }
 
-WRITE16_HANDLER( OKIM6295_data_2_lsb_w )
-{
-	if (ACCESSING_LSB)
-		OKIM6295_data_w(2, data & 0xff);
-}
-
-WRITE16_HANDLER( OKIM6295_data_0_msb_w )
-{
-	if (ACCESSING_MSB)
-		OKIM6295_data_w(0, data >> 8);
-}
-
-WRITE16_HANDLER( OKIM6295_data_1_msb_w )
-{
-	if (ACCESSING_MSB)
-		OKIM6295_data_w(1, data >> 8);
-}
-
-WRITE16_HANDLER( OKIM6295_data_2_msb_w )
-{
-	if (ACCESSING_MSB)
-		OKIM6295_data_w(2, data >> 8);
+WRITE16_HANDLER(OKIM6295_data_2_msb_w) {
+    if (ACCESSING_MSB)
+        OKIM6295_data_w(2, data >> 8);
 }
 #ifdef PINMAME
-WRITE_HANDLER( OKIM6376_data_0_w )
-{
-	OKIM6376_data_w(0, data);
-}
+WRITE_HANDLER(OKIM6376_data_0_w) { OKIM6376_data_w(0, data); }
 #endif

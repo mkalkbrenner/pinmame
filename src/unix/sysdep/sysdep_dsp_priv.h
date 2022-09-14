@@ -20,33 +20,32 @@
 #ifndef __SYSDEP_DSP_PRIV_H
 #define __SYSDEP_DSP_PRIV_H
 
-#include "misc.h"
 #include "begin_code.h"
+#include "misc.h"
 
 struct sysdep_dsp_info {
-   int samplerate;
-   int type;
-   int bufsize;
+    int samplerate;
+    int type;
+    int bufsize;
 };
 
 struct sysdep_dsp_struct {
-   struct sysdep_dsp_info hw_info;
-   struct sysdep_dsp_info emu_info;
-   unsigned char *convert_buf;
-   uclock_t last_update;
-   void *_priv;
-   int (*get_freespace)(struct sysdep_dsp_struct *dsp);
-   int (*write)(struct sysdep_dsp_struct *dsp, unsigned char *data,
-      int count);
-   void (*destroy)(struct sysdep_dsp_struct *dsp);
+    struct sysdep_dsp_info hw_info;
+    struct sysdep_dsp_info emu_info;
+    unsigned char* convert_buf;
+    uclock_t last_update;
+    void* _priv;
+    int (*get_freespace)(struct sysdep_dsp_struct* dsp);
+    int (*write)(struct sysdep_dsp_struct* dsp, unsigned char* data, int count);
+    void (*destroy)(struct sysdep_dsp_struct* dsp);
 };
 
 struct sysdep_dsp_create_params {
-   float bufsize;
-   const char *device;
-   int samplerate;
-   int type;
-   int flags;
+    float bufsize;
+    const char* device;
+    int samplerate;
+    int type;
+    int flags;
 };
 
 #include "end_code.h"

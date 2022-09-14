@@ -1,13 +1,13 @@
 #ifndef M68KOPS__HEADER
 #define M68KOPS__HEADER
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
 /* ======================================================================== */
 /* ============================ OPCODE HANDLERS =========================== */
 /* ======================================================================== */
-
 
 void m68k_op_1010(void);
 void m68k_op_1111(void);
@@ -1977,11 +1977,8 @@ void m68ki_build_opcode_table(void);
 extern void (*m68ki_instruction_jump_table[0x10000])(void); /* opcode handler jump table */
 extern unsigned char m68ki_cycles[][0x10000];
 
-
 /* ======================================================================== */
 /* ============================== END OF FILE ============================= */
 /* ======================================================================== */
 
 #endif /* M68KOPS__HEADER */
-
-

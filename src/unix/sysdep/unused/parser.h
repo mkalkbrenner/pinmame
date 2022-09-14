@@ -22,31 +22,28 @@
 
 #include "begin_code.h"
 
-struct parser_element
-{
-   const char *name;
-   const char *shortname;
-   int (*function)(const char *arg[], void *flags);
-   int arg_count;
-   void *flags;
+struct parser_element {
+    const char* name;
+    const char* shortname;
+    int (*function)(const char* arg[], void* flags);
+    int arg_count;
+    void* flags;
 };
 
-struct parser_struct
-{
-   const struct parser_element **element;
+struct parser_struct {
+    const struct parser_element** element;
 };
 
-struct parser_struct *parser_create(const struct parser_element *element[]);
+struct parser_struct* parser_create(const struct parser_element* element[]);
 
-void parser_destroy(struct parser_struct *parser);
+void parser_destroy(struct parser_struct* parser);
 
-int parser_parse_string(struct parser_struct *parser, char *string);
+int parser_parse_string(struct parser_struct* parser, char* string);
 
-int parser_parse_tokens(struct parser_struct *parser, const char *command,
-   int tokenc, const char *tokenv[], int *tokens_used);
-   
-int parser_get_arg_count(struct parser_struct *parser, const char *command,
-   int *arg_count);
+int parser_parse_tokens(struct parser_struct* parser, const char* command, int tokenc, const char* tokenv[],
+                        int* tokens_used);
+
+int parser_get_arg_count(struct parser_struct* parser, const char* command, int* arg_count);
 
 #include "end_code.h"
 #endif /* ifndef __PARSER_H */

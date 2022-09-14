@@ -69,7 +69,8 @@
 
 #ifndef PALETTE_H
 #define PALETTE_H
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
@@ -77,57 +78,48 @@
 extern "C" {
 #endif
 
-
 /*-------------------------------------------------
 	TYPE DEFINITIONS
 -------------------------------------------------*/
 
-struct mame_display;		/* declared elsewhere */
+struct mame_display; /* declared elsewhere */
 
 typedef UINT32 pen_t;
 typedef UINT32 rgb_t;
-
-
 
 /*-------------------------------------------------
 	CONSTANTS
 -------------------------------------------------*/
 
-#define PALETTE_DEFAULT_SHADOW_FACTOR (0.6)
-#define PALETTE_DEFAULT_HIGHLIGHT_FACTOR (1/PALETTE_DEFAULT_SHADOW_FACTOR)
+#define PALETTE_DEFAULT_SHADOW_FACTOR      (0.6)
+#define PALETTE_DEFAULT_HIGHLIGHT_FACTOR   (1 / PALETTE_DEFAULT_SHADOW_FACTOR)
 
-#define PALETTE_DEFAULT_SHADOW_FACTOR32 (0.6)
-#define PALETTE_DEFAULT_HIGHLIGHT_FACTOR32 (1/PALETTE_DEFAULT_SHADOW_FACTOR32)
-
-
+#define PALETTE_DEFAULT_SHADOW_FACTOR32    (0.6)
+#define PALETTE_DEFAULT_HIGHLIGHT_FACTOR32 (1 / PALETTE_DEFAULT_SHADOW_FACTOR32)
 
 /*-------------------------------------------------
 	MACROS
 -------------------------------------------------*/
 
-#define MAKE_RGB(r,g,b) 	((((r) & 0xff) << 16) | (((g) & 0xff) << 8) | ((b) & 0xff))
-#define MAKE_ARGB(a,r,g,b)	(MAKE_RGB(r,g,b) | (((a) & 0xff) << 24))
-#define RGB_ALPHA(rgb)		(((rgb) >> 24) & 0xff)
-#define RGB_RED(rgb)		(((rgb) >> 16) & 0xff)
-#define RGB_GREEN(rgb)		(((rgb) >> 8) & 0xff)
-#define RGB_BLUE(rgb)		((rgb) & 0xff)
-
-
+#define MAKE_RGB(r, g, b)                  ((((r)&0xff) << 16) | (((g)&0xff) << 8) | ((b)&0xff))
+#define MAKE_ARGB(a, r, g, b)              (MAKE_RGB(r, g, b) | (((a)&0xff) << 24))
+#define RGB_ALPHA(rgb)                     (((rgb) >> 24) & 0xff)
+#define RGB_RED(rgb)                       (((rgb) >> 16) & 0xff)
+#define RGB_GREEN(rgb)                     (((rgb) >> 8) & 0xff)
+#define RGB_BLUE(rgb)                      ((rgb)&0xff)
 
 /*-------------------------------------------------
 	GLOBAL VARIABLES
 -------------------------------------------------*/
 
 extern UINT32 direct_rgb_components[3];
-extern UINT16 *palette_shadow_table;
+extern UINT16* palette_shadow_table;
 
-extern data8_t *paletteram;
-extern data8_t *paletteram_2;	/* use when palette RAM is split in two parts */
-extern data16_t *paletteram16;
-extern data16_t *paletteram16_2;
-extern data32_t *paletteram32;
-
-
+extern data8_t* paletteram;
+extern data8_t* paletteram_2; /* use when palette RAM is split in two parts */
+extern data16_t* paletteram16;
+extern data16_t* paletteram16_2;
+extern data32_t* paletteram32;
 
 /*-------------------------------------------------
 	PROTOTYPES
@@ -137,11 +129,11 @@ int palette_start(void);
 int palette_init(void);
 int palette_get_total_colors_with_ui(void);
 
-void palette_update_display(struct mame_display *display);
+void palette_update_display(struct mame_display* display);
 
 void palette_set_color(pen_t pen, UINT8 r, UINT8 g, UINT8 b);
-void palette_get_color(pen_t pen, UINT8 *r, UINT8 *g, UINT8 *b);
-void palette_set_colors(pen_t color_base, const UINT8 *colors, int color_count);
+void palette_get_color(pen_t pen, UINT8* r, UINT8* g, UINT8* b);
+void palette_set_colors(pen_t color_base, const UINT8* colors, int color_count);
 
 void palette_set_brightness(pen_t pen, double bright);
 void palette_set_shadow_factor(double factor);
@@ -181,21 +173,20 @@ double palette_get_global_brightness(void);
 
 pen_t get_black_pen(void);
 
-
 /* here are some functions to handle commonly used palette layouts, so you don't
    have to write your own paletteram_w() function. */
 
-READ_HANDLER( paletteram_r );
-READ_HANDLER( paletteram_2_r );
-READ16_HANDLER( paletteram16_word_r );
-READ16_HANDLER( paletteram16_2_word_r );
-READ32_HANDLER( paletteram32_r );
+READ_HANDLER(paletteram_r);
+READ_HANDLER(paletteram_2_r);
+READ16_HANDLER(paletteram16_word_r);
+READ16_HANDLER(paletteram16_2_word_r);
+READ32_HANDLER(paletteram32_r);
 
-WRITE_HANDLER( paletteram_BBGGGRRR_w );
-WRITE_HANDLER( paletteram_RRRGGGBB_w );
-WRITE_HANDLER( paletteram_BBBGGGRR_w );
-WRITE_HANDLER( paletteram_IIBBGGRR_w );
-WRITE_HANDLER( paletteram_BBGGRRII_w );
+WRITE_HANDLER(paletteram_BBGGGRRR_w);
+WRITE_HANDLER(paletteram_RRRGGGBB_w);
+WRITE_HANDLER(paletteram_BBBGGGRR_w);
+WRITE_HANDLER(paletteram_IIBBGGRR_w);
+WRITE_HANDLER(paletteram_BBGGRRII_w);
 
 /* _w       least significant byte first */
 /* _swap_w  most significant byte first */
@@ -203,45 +194,44 @@ WRITE_HANDLER( paletteram_BBGGRRII_w );
 /* _word_w  use with 16 bit CPU */
 /* R, G, B are bits, r, g, b are bytes */
 /*                        MSB          LSB */
-WRITE_HANDLER( paletteram_xxxxBBBBGGGGRRRR_w );
-WRITE_HANDLER( paletteram_xxxxBBBBGGGGRRRR_swap_w );
-WRITE_HANDLER( paletteram_xxxxBBBBGGGGRRRR_split1_w );	/* uses paletteram[] */
-WRITE_HANDLER( paletteram_xxxxBBBBGGGGRRRR_split2_w );	/* uses paletteram_2[] */
-WRITE16_HANDLER( paletteram16_xxxxBBBBGGGGRRRR_word_w );
-WRITE_HANDLER( paletteram_xxxxBBBBRRRRGGGG_w );
-WRITE_HANDLER( paletteram_xxxxBBBBRRRRGGGG_swap_w );
-WRITE_HANDLER( paletteram_xxxxBBBBRRRRGGGG_split1_w );	/* uses paletteram[] */
-WRITE_HANDLER( paletteram_xxxxBBBBRRRRGGGG_split2_w );	/* uses paletteram_2[] */
-WRITE16_HANDLER( paletteram16_xxxxBBBBRRRRGGGG_word_w );
-WRITE_HANDLER( paletteram_xxxxRRRRBBBBGGGG_split1_w );	/* uses paletteram[] */
-WRITE_HANDLER( paletteram_xxxxRRRRBBBBGGGG_split2_w );	/* uses paletteram_2[] */
-WRITE_HANDLER( paletteram_xxxxRRRRGGGGBBBB_w );
-WRITE_HANDLER( paletteram_xxxxRRRRGGGGBBBB_swap_w );
-WRITE16_HANDLER( paletteram16_xxxxRRRRGGGGBBBB_word_w );
-WRITE_HANDLER( paletteram_RRRRGGGGBBBBxxxx_swap_w );
-WRITE_HANDLER( paletteram_RRRRGGGGBBBBxxxx_split1_w );	/* uses paletteram[] */
-WRITE_HANDLER( paletteram_RRRRGGGGBBBBxxxx_split2_w );	/* uses paletteram_2[] */
-WRITE16_HANDLER( paletteram16_RRRRGGGGBBBBxxxx_word_w );
-WRITE_HANDLER( paletteram_BBBBGGGGRRRRxxxx_swap_w );
-WRITE_HANDLER( paletteram_BBBBGGGGRRRRxxxx_split1_w );	/* uses paletteram[] */
-WRITE_HANDLER( paletteram_BBBBGGGGRRRRxxxx_split2_w );	/* uses paletteram_2[] */
-WRITE16_HANDLER( paletteram16_BBBBGGGGRRRRxxxx_word_w );
-WRITE_HANDLER( paletteram_xBBBBBGGGGGRRRRR_w );
-WRITE_HANDLER( paletteram_xBBBBBGGGGGRRRRR_swap_w );
-WRITE_HANDLER( paletteram_xBBBBBGGGGGRRRRR_split1_w );	/* uses paletteram[] */
-WRITE_HANDLER( paletteram_xBBBBBGGGGGRRRRR_split2_w );	/* uses paletteram_2[] */
-WRITE16_HANDLER( paletteram16_xBBBBBGGGGGRRRRR_word_w );
-WRITE_HANDLER( paletteram_xRRRRRGGGGGBBBBB_w );
-WRITE16_HANDLER( paletteram16_xRRRRRGGGGGBBBBB_word_w );
-WRITE16_HANDLER( paletteram16_xGGGGGRRRRRBBBBB_word_w );
-WRITE16_HANDLER( paletteram16_xGGGGGBBBBBRRRRR_word_w );
-WRITE_HANDLER( paletteram_RRRRRGGGGGBBBBBx_w );
-WRITE16_HANDLER( paletteram16_RRRRRGGGGGBBBBBx_word_w );
-WRITE16_HANDLER( paletteram16_IIIIRRRRGGGGBBBB_word_w );
-WRITE16_HANDLER( paletteram16_RRRRGGGGBBBBIIII_word_w );
-WRITE16_HANDLER( paletteram16_xrgb_word_w );
-WRITE16_HANDLER( paletteram16_RRRRGGGGBBBBRGBx_word_w );
-
+WRITE_HANDLER(paletteram_xxxxBBBBGGGGRRRR_w);
+WRITE_HANDLER(paletteram_xxxxBBBBGGGGRRRR_swap_w);
+WRITE_HANDLER(paletteram_xxxxBBBBGGGGRRRR_split1_w); /* uses paletteram[] */
+WRITE_HANDLER(paletteram_xxxxBBBBGGGGRRRR_split2_w); /* uses paletteram_2[] */
+WRITE16_HANDLER(paletteram16_xxxxBBBBGGGGRRRR_word_w);
+WRITE_HANDLER(paletteram_xxxxBBBBRRRRGGGG_w);
+WRITE_HANDLER(paletteram_xxxxBBBBRRRRGGGG_swap_w);
+WRITE_HANDLER(paletteram_xxxxBBBBRRRRGGGG_split1_w); /* uses paletteram[] */
+WRITE_HANDLER(paletteram_xxxxBBBBRRRRGGGG_split2_w); /* uses paletteram_2[] */
+WRITE16_HANDLER(paletteram16_xxxxBBBBRRRRGGGG_word_w);
+WRITE_HANDLER(paletteram_xxxxRRRRBBBBGGGG_split1_w); /* uses paletteram[] */
+WRITE_HANDLER(paletteram_xxxxRRRRBBBBGGGG_split2_w); /* uses paletteram_2[] */
+WRITE_HANDLER(paletteram_xxxxRRRRGGGGBBBB_w);
+WRITE_HANDLER(paletteram_xxxxRRRRGGGGBBBB_swap_w);
+WRITE16_HANDLER(paletteram16_xxxxRRRRGGGGBBBB_word_w);
+WRITE_HANDLER(paletteram_RRRRGGGGBBBBxxxx_swap_w);
+WRITE_HANDLER(paletteram_RRRRGGGGBBBBxxxx_split1_w); /* uses paletteram[] */
+WRITE_HANDLER(paletteram_RRRRGGGGBBBBxxxx_split2_w); /* uses paletteram_2[] */
+WRITE16_HANDLER(paletteram16_RRRRGGGGBBBBxxxx_word_w);
+WRITE_HANDLER(paletteram_BBBBGGGGRRRRxxxx_swap_w);
+WRITE_HANDLER(paletteram_BBBBGGGGRRRRxxxx_split1_w); /* uses paletteram[] */
+WRITE_HANDLER(paletteram_BBBBGGGGRRRRxxxx_split2_w); /* uses paletteram_2[] */
+WRITE16_HANDLER(paletteram16_BBBBGGGGRRRRxxxx_word_w);
+WRITE_HANDLER(paletteram_xBBBBBGGGGGRRRRR_w);
+WRITE_HANDLER(paletteram_xBBBBBGGGGGRRRRR_swap_w);
+WRITE_HANDLER(paletteram_xBBBBBGGGGGRRRRR_split1_w); /* uses paletteram[] */
+WRITE_HANDLER(paletteram_xBBBBBGGGGGRRRRR_split2_w); /* uses paletteram_2[] */
+WRITE16_HANDLER(paletteram16_xBBBBBGGGGGRRRRR_word_w);
+WRITE_HANDLER(paletteram_xRRRRRGGGGGBBBBB_w);
+WRITE16_HANDLER(paletteram16_xRRRRRGGGGGBBBBB_word_w);
+WRITE16_HANDLER(paletteram16_xGGGGGRRRRRBBBBB_word_w);
+WRITE16_HANDLER(paletteram16_xGGGGGBBBBBRRRRR_word_w);
+WRITE_HANDLER(paletteram_RRRRRGGGGGBBBBBx_w);
+WRITE16_HANDLER(paletteram16_RRRRRGGGGGBBBBBx_word_w);
+WRITE16_HANDLER(paletteram16_IIIIRRRRGGGGBBBB_word_w);
+WRITE16_HANDLER(paletteram16_RRRRGGGGBBBBIIII_word_w);
+WRITE16_HANDLER(paletteram16_xrgb_word_w);
+WRITE16_HANDLER(paletteram16_RRRRGGGGBBBBRGBx_word_w);
 
 /******************************************************************************
 
@@ -249,8 +239,8 @@ WRITE16_HANDLER( paletteram16_RRRRGGGGBBBBRGBx_word_w );
 
 ******************************************************************************/
 
-void palette_init_black_and_white(UINT16 *colortable, const UINT8 *color_prom);
-void palette_init_RRRR_GGGG_BBBB(UINT16 *colortable, const UINT8 *color_prom);
+void palette_init_black_and_white(UINT16* colortable, const UINT8* color_prom);
+void palette_init_RRRR_GGGG_BBBB(UINT16* colortable, const UINT8* color_prom);
 
 #ifdef __cplusplus
 }

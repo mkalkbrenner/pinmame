@@ -8,7 +8,8 @@
  */
 #ifndef _DIRENT_H_
 #define _DIRENT_H_
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
@@ -17,36 +18,35 @@
 #ifndef WIN32_LEAN_AND_MEAN
 //#define WIN32_LEAN_AND_MEAN
 #endif
-#include <windows.h>
 #include <direct.h>
 #include <sys/types.h>
+#include <windows.h>
 
 #if !defined(__GNUC__)
 /* Convienience macros used with stat structures */
-#define S_ISDIR(x) ((x) & _S_IFDIR)
-#define S_ISREG(x) ((x) & _S_IFREG)
+#define S_ISDIR(x) ((x)&_S_IFDIR)
+#define S_ISREG(x) ((x)&_S_IFREG)
 #endif
 
 /* Structure to keep track of the current directory status */
 typedef struct my_dir {
-    HANDLE          handle;
+    HANDLE handle;
     WIN32_FIND_DATA findFileData;
-    BOOLEAN         firstTime;
-    char            pathName[MAX_PATH];
+    BOOLEAN firstTime;
+    char pathName[MAX_PATH];
 } DIR;
 
 /* Standard directory name entry returned by readdir() */
 struct dirent {
-  unsigned int d_namlen;
-  char d_name[MAX_PATH];
+    unsigned int d_namlen;
+    char d_name[MAX_PATH];
 };
 
 /* function prototypes */
-int		        closedir(DIR *dirp);
-DIR *		    opendir(const char *dirname);
-struct dirent *	readdir(DIR *dirp);
-void		    rewinddir(DIR *dirp);
+int closedir(DIR* dirp);
+DIR* opendir(const char* dirname);
+struct dirent* readdir(DIR* dirp);
+void rewinddir(DIR* dirp);
 
 #endif
 #endif
-

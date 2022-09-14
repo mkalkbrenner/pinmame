@@ -46,36 +46,37 @@
 /* modified for use in MAME */
 
 /* Period parameters */
-#define N 624
-#define M 397
-#define MATRIX_A 0x9908b0dfUL   /* constant vector a */
-#define UMASK 0x80000000UL /* most significant w-r bits */
-#define LMASK 0x7fffffffUL /* least significant r bits */
-#define MIXBITS(u,v) ( ((u) & UMASK) | ((v) & LMASK) )
-#define TWIST(u,v) ((MIXBITS(u,v) >> 1) ^ ((v)&1UL ? MATRIX_A : 0UL))
+#define N             624
+#define M             397
+#define MATRIX_A      0x9908b0dfUL /* constant vector a */
+#define UMASK         0x80000000UL /* most significant w-r bits */
+#define LMASK         0x7fffffffUL /* least significant r bits */
+#define MIXBITS(u, v) (((u)&UMASK) | ((v)&LMASK))
+#define TWIST(u, v)   ((MIXBITS(u, v) >> 1) ^ ((v)&1UL ? MATRIX_A : 0UL))
 
 static unsigned long state[N]; /* the array for the state vector  */
 static int left = 1;
 static int initf = 0;
-static unsigned long *next;
+static unsigned long* next;
 
 /* initializes state[N] with a seed */
-static void init_genrand(unsigned long s)
-{
+static void
+init_genrand(unsigned long s) {
     int j;
-    state[0]= s & 0xffffffffUL;
-    for (j=1; j<N; j++) {
-        state[j] = (1812433253UL * (state[j-1] ^ (state[j-1] >> 30)) + j);
+    state[0] = s & 0xffffffffUL;
+    for (j = 1; j < N; j++) {
+        state[j] = (1812433253UL * (state[j - 1] ^ (state[j - 1] >> 30)) + j);
         /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
         /* In the previous versions, MSBs of the seed affect   */
         /* only MSBs of the array state[].                        */
         /* 2002/01/09 modified by Makoto Matsumoto             */
-        state[j] &= 0xffffffffUL;  /* for >32 bit machines */
+        state[j] &= 0xffffffffUL; /* for >32 bit machines */
     }
-    left = 1; initf = 1;
+    left = 1;
+    initf = 1;
 }
 
-#if 0	/* does not compile in MAME and is not necessary either */
+#if 0 /* does not compile in MAME and is not necessary either */
 /* initialize by an array with array-length */
 /* init_key is the array for initializing keys */
 /* key_length is its length */
@@ -107,33 +108,35 @@ static unsigned long init_key[], key_length;
 }
 #endif
 
-static void next_state(void)
-{
-    unsigned long *p=state;
+static void
+next_state(void) {
+    unsigned long* p = state;
     int j;
 
     /* if init_genrand() has not been called, */
     /* a default initial seed is used         */
-    if (initf==0) init_genrand(5489UL);
+    if (initf == 0)
+        init_genrand(5489UL);
 
     left = N;
     next = state;
 
-    for (j=N-M+1; --j; p++)
+    for (j = N - M + 1; --j; p++)
         *p = p[M] ^ TWIST(p[0], p[1]);
 
-    for (j=M; --j; p++)
-        *p = p[M-N] ^ TWIST(p[0], p[1]);
+    for (j = M; --j; p++)
+        *p = p[M - N] ^ TWIST(p[0], p[1]);
 
-    *p = p[M-N] ^ TWIST(p[0], state[0]);
+    *p = p[M - N] ^ TWIST(p[0], state[0]);
 }
 
 /* generates a random number on [0,0xffffffff]-interval */
-static unsigned long genrand_int32(void)
-{
+static unsigned long
+genrand_int32(void) {
     unsigned long y;
 
-    if (--left == 0) next_state();
+    if (--left == 0)
+        next_state();
     y = *next++;
 
     /* Tempering */
@@ -145,7 +148,7 @@ static unsigned long genrand_int32(void)
     return y;
 }
 
-#if 0  /* not needed for MAME, left for reference */
+#if 0 /* not needed for MAME, left for reference */
 
 /* generates a random number on [0,0x7fffffff]-interval */
 static long genrand_int31(void)
@@ -255,14 +258,12 @@ int main(void)
  * The extra function call should get optimized by the compiler.
  */
 
-void mame_srand(unsigned long s)
-{
-	init_genrand(s);
+void
+mame_srand(unsigned long s) {
+    init_genrand(s);
 }
 
-unsigned long mame_rand(void)
-{
-	return genrand_int32();
+unsigned long
+mame_rand(void) {
+    return genrand_int32();
 }
-
-

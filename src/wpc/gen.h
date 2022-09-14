@@ -1,6 +1,7 @@
 #ifndef INC_GEN
 #define INC_GEN
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
@@ -40,7 +41,7 @@
 #define GEN_STMPU100    U64(0x0000000800000) /* Stern MPU - 100*/
 #define GEN_STMPU200    U64(0x0000001000000) /* Stern MPU - 200*/
 #define GEN_ASTRO       U64(0x0000002000000) /* Unknown Astro game, Stern hardware */
-#define GEN_HNK	        U64(0x0000004000000) /* Hankin */
+#define GEN_HNK         U64(0x0000004000000) /* Hankin */
 #define GEN_BYPROTO     U64(0x0000008000000) /* Bally Bow & Arrow prototype */
 #define GEN_BY6803      U64(0x0000010000000)
 #define GEN_BY6803A     U64(0x0000020000000)

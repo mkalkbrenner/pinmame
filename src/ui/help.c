@@ -19,10 +19,10 @@
 ***************************************************************************/
 
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 #include "help.h"
+#include <windows.h>
 
-typedef HWND (WINAPI *HtmlHelpProc)(HWND hwndCaller, LPCSTR pszFile, UINT uCommand, DWORD_PTR dwData);
+typedef HWND(WINAPI* HtmlHelpProc)(HWND hwndCaller, LPCSTR pszFile, UINT uCommand, DWORD_PTR dwData);
 
 /***************************************************************************
  Internal structures
@@ -47,72 +47,67 @@ static void Help_Load(void);
 ***************************************************************************/
 
 static HtmlHelpProc g_pHtmlHelp;
-static HMODULE      g_hHelpLib;
-static DWORD_PTR    g_dwCookie;
+static HMODULE g_hHelpLib;
+static DWORD_PTR g_dwCookie;
 
 /**************************************************************************
  External functions
 ***************************************************************************/
 
-int HelpInit(void)
-{
-	g_pHtmlHelp = NULL;
-	g_hHelpLib  = NULL;
+int
+HelpInit(void) {
+    g_pHtmlHelp = NULL;
+    g_hHelpLib = NULL;
 
-	g_dwCookie = 0;
-	HelpFunction(NULL, NULL, HH_INITIALIZE, (DWORD_PTR)&g_dwCookie);
-	return 0;
+    g_dwCookie = 0;
+    HelpFunction(NULL, NULL, HH_INITIALIZE, (DWORD_PTR)&g_dwCookie);
+    return 0;
 }
 
-void HelpExit(void)
-{
-	HelpFunction(NULL, NULL, HH_CLOSE_ALL, 0);
-	HelpFunction(NULL, NULL, HH_UNINITIALIZE, (DWORD_PTR)g_dwCookie);
+void
+HelpExit(void) {
+    HelpFunction(NULL, NULL, HH_CLOSE_ALL, 0);
+    HelpFunction(NULL, NULL, HH_UNINITIALIZE, (DWORD_PTR)g_dwCookie);
 
-	g_dwCookie  = 0;
-	g_pHtmlHelp = NULL;
+    g_dwCookie = 0;
+    g_pHtmlHelp = NULL;
 
-	if (g_hHelpLib)
-	{
-		FreeLibrary(g_hHelpLib);
-		g_hHelpLib = NULL;
-	}
+    if (g_hHelpLib) {
+        FreeLibrary(g_hHelpLib);
+        g_hHelpLib = NULL;
+    }
 }
 
-HWND HelpFunction(HWND hwndCaller, LPCSTR pszFile, UINT uCommand, DWORD_PTR dwData)
-{
-	if (g_pHtmlHelp == NULL)
-		Help_Load();
+HWND
+HelpFunction(HWND hwndCaller, LPCSTR pszFile, UINT uCommand, DWORD_PTR dwData) {
+    if (g_pHtmlHelp == NULL)
+        Help_Load();
 
-	if (g_pHtmlHelp)
-		return g_pHtmlHelp(hwndCaller, pszFile, uCommand, dwData);
-	else
-		return NULL;
+    if (g_pHtmlHelp)
+        return g_pHtmlHelp(hwndCaller, pszFile, uCommand, dwData);
+    else
+        return NULL;
 }
 
 /***************************************************************************
  Internal functions  
 ***************************************************************************/
 
-static void Help_Load(void)
-{
+static void
+Help_Load(void) {
 #if defined(__GNUC__)
-	g_hHelpLib = LoadLibrary("hhctrl.ocx");
-	if (g_hHelpLib)
-	{
-		FARPROC pProc = NULL;
-		pProc = GetProcAddress(g_hHelpLib, "HtmlHelpA");
-		if (pProc)
-		{
-			g_pHtmlHelp = (HtmlHelpProc)pProc;
-		}
-		else
-		{
-			FreeLibrary(g_hHelpLib);
-			g_hHelpLib = NULL;
-		}
-	}
+    g_hHelpLib = LoadLibrary("hhctrl.ocx");
+    if (g_hHelpLib) {
+        FARPROC pProc = NULL;
+        pProc = GetProcAddress(g_hHelpLib, "HtmlHelpA");
+        if (pProc) {
+            g_pHtmlHelp = (HtmlHelpProc)pProc;
+        } else {
+            FreeLibrary(g_hHelpLib);
+            g_hHelpLib = NULL;
+        }
+    }
 #else
-	g_pHtmlHelp = HtmlHelp;
+    g_pHtmlHelp = HtmlHelp;
 #endif
 }

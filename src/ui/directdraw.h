@@ -12,37 +12,36 @@
 
 #ifndef DIRECTDRAW_H
 #define DIRECTDRAW_H
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
 #include <ddraw.h>
 
-#define MAXMODES    256 /* Maximum number of DirectDraw Display modes. */
+#define MAXMODES 256 /* Maximum number of DirectDraw Display modes. */
 
 /* Display mode node */
-struct tDisplayMode
-{
-	DWORD m_dwWidth;
-	DWORD m_dwHeight;
-	DWORD m_dwBPP;
-	DWORD m_dwRefresh;
+struct tDisplayMode {
+    DWORD m_dwWidth;
+    DWORD m_dwHeight;
+    DWORD m_dwBPP;
+    DWORD m_dwRefresh;
 };
 
 /* EnumDisplayMode Context */
-struct tDisplayModes
-{
-	struct tDisplayMode m_Modes[MAXMODES];
-	int                 m_nNumModes;
+struct tDisplayModes {
+    struct tDisplayMode m_Modes[MAXMODES];
+    int m_nNumModes;
 };
 
 extern BOOL DirectDraw_Initialize(void);
 extern void DirectDraw_Close(void);
 
 extern struct tDisplayModes* DirectDraw_GetDisplayModes(void);
-extern int            DirectDraw_GetNumDisplays(void);
-extern BOOL           DirectDraw_HasHWStretch(void);
-extern BOOL           DirectDraw_HasRefresh(void);
-extern const char*    DirectDraw_GetDisplayName(int num_display);
+extern int DirectDraw_GetNumDisplays(void);
+extern BOOL DirectDraw_HasHWStretch(void);
+extern BOOL DirectDraw_HasRefresh(void);
+extern const char* DirectDraw_GetDisplayName(int num_display);
 
 #endif

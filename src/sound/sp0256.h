@@ -1,6 +1,7 @@
 #ifndef __SP0256_H__
 #define __SP0256_H__
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
@@ -25,22 +26,22 @@
 */
 
 struct sp0256_interface {
-	int volume;
-	int clock;
-	void (*lrq_callback)(int state);
-	void (*sby_callback)(int state);
-	int	memory_region;
+    int volume;
+    int clock;
+    void (*lrq_callback)(int state);
+    void (*sby_callback)(int state);
+    int memory_region;
 };
 
-int  sp0256_sh_start( const struct MachineSound *msound );
-void sp0256_sh_stop( void );
-void sp0256_reset( void );
+int sp0256_sh_start(const struct MachineSound* msound);
+void sp0256_sh_stop(void);
+void sp0256_reset(void);
 
-void sp0256_bitrevbuff(UINT8 *buffer, unsigned int start, unsigned int length);
+void sp0256_bitrevbuff(UINT8* buffer, unsigned int start, unsigned int length);
 
-WRITE_HANDLER( sp0256_ALD_w );
+WRITE_HANDLER(sp0256_ALD_w);
 
-READ16_HANDLER( spb640_r );
-WRITE16_HANDLER( spb640_w );
+READ16_HANDLER(spb640_r);
+WRITE16_HANDLER(spb640_w);
 
 #endif

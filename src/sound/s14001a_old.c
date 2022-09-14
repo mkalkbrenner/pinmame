@@ -126,417 +126,458 @@
  *
  */
 
+#include "driver.h"
+#include "s14001a.h"
+#include "sndintrf.h"
+#include "streams.h"
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include "driver.h"
-#include "sndintrf.h"
-#include "s14001a.h"
-#include "streams.h"
 
 int stream;
 
-UINT8 WordInput; // value on word input bus
-UINT8 LatchedWord; // value latched from input bus
-UINT16 SyllableAddress; // address read from word table
-UINT16 PhoneAddress; // starting/current phone address from syllable table
-UINT8 PlayParams; // playback parameters from syllable table
-UINT8 PhoneOffset; // offset within phone
-UINT8 LengthCounter; // 4-bit counter which holds the inverted length of the word in phones, leftshifted by 1
-UINT8 RepeatCounter; // 3-bit counter which holds the inverted number of repeats per phone, leftshifted by 1
-UINT8 OutputCounter; // 2-bit counter to determine forward/backward and output/silence state.
-UINT8 machineState; // chip state machine state
-UINT8 nextstate; // chip state machine's new state
-UINT8 laststate; // chip state machine's previous state, needed for mirror increment masking
-UINT8 resetState; // reset line state
-UINT8 oddeven; // odd versus even cycle toggle
+UINT8 WordInput;          // value on word input bus
+UINT8 LatchedWord;        // value latched from input bus
+UINT16 SyllableAddress;   // address read from word table
+UINT16 PhoneAddress;      // starting/current phone address from syllable table
+UINT8 PlayParams;         // playback parameters from syllable table
+UINT8 PhoneOffset;        // offset within phone
+UINT8 LengthCounter;      // 4-bit counter which holds the inverted length of the word in phones, leftshifted by 1
+UINT8 RepeatCounter;      // 3-bit counter which holds the inverted number of repeats per phone, leftshifted by 1
+UINT8 OutputCounter;      // 2-bit counter to determine forward/backward and output/silence state.
+UINT8 machineState;       // chip state machine state
+UINT8 nextstate;          // chip state machine's new state
+UINT8 laststate;          // chip state machine's previous state, needed for mirror increment masking
+UINT8 resetState;         // reset line state
+UINT8 oddeven;            // odd versus even cycle toggle
 UINT8 GlobalSilenceState; // same as above but for silent syllables instead of silent portions of mirrored syllables
-UINT8 OldDelta; // 2-bit old delta value
-UINT8 DACOutput; // 4-bit DAC Accumulator/output
-UINT8 audioout; // filtered audio output
-UINT8 *SpeechRom; // array to hold rom contents, mame will not need this, will use a pointer
+UINT8 OldDelta;           // 2-bit old delta value
+UINT8 DACOutput;          // 4-bit DAC Accumulator/output
+UINT8 audioout;           // filtered audio output
+UINT8* SpeechRom;         // array to hold rom contents, mame will not need this, will use a pointer
 UINT8 filtervals[8];
-UINT8 VSU1000_amp; // amplitude setting on VSU-1000 board
-UINT16 VSU1000_freq; // frequency setting on VSU-1000 board
+UINT8 VSU1000_amp;      // amplitude setting on VSU-1000 board
+UINT16 VSU1000_freq;    // frequency setting on VSU-1000 board
 UINT16 VSU1000_counter; // counter for freq divider
 
 //#define DEBUGSTATE
 
-#define SILENCE 0x77 // value output when silent
+#define SILENCE           0x77 // value output when silent
 
-#define LASTSYLLABLE ((PlayParams & 0x80)>>7)
-#define MIRRORMODE ((PlayParams & 0x40)>>6)
-#define SILENCEFLAG ((PlayParams & 0x20)>>5)
-#define LENGTHCOUNT ((PlayParams & 0x1C)>>1) // remember: its 4 bits and the bottom bit is always zero!
-#define REPEATCOUNT ((PlayParams<<1)&0x6) // remember: its 3 bits and the bottom bit is always zero!
+#define LASTSYLLABLE      ((PlayParams & 0x80) >> 7)
+#define MIRRORMODE        ((PlayParams & 0x40) >> 6)
+#define SILENCEFLAG       ((PlayParams & 0x20) >> 5)
+#define LENGTHCOUNT       ((PlayParams & 0x1C) >> 1) // remember: its 4 bits and the bottom bit is always zero!
+#define REPEATCOUNT       ((PlayParams << 1) & 0x6)  // remember: its 3 bits and the bottom bit is always zero!
 #define LOCALSILENCESTATE ((OutputCounter & 0x2) && (MIRRORMODE)) // 1 when silent output, 0 when DAC output.
 
-static INT8 DeltaTable[4][4] =
-{
-	{ (INT8)0xCD, (INT8)0xCD, (INT8)0xEF, (INT8)0xEF, },
-	{ (INT8)0xEF, (INT8)0xEF, 0x00, 0x00, },
-	{ 0x00, 0x00, 0x11, 0x11, },
-	{ 0x11, 0x11, 0x33, 0x33  },
+static INT8 DeltaTable[4][4] = {
+    {
+        (INT8)0xCD,
+        (INT8)0xCD,
+        (INT8)0xEF,
+        (INT8)0xEF,
+    },
+    {
+        (INT8)0xEF,
+        (INT8)0xEF,
+        0x00,
+        0x00,
+    },
+    {
+        0x00,
+        0x00,
+        0x11,
+        0x11,
+    },
+    {0x11, 0x11, 0x33, 0x33},
 };
 
-static UINT8 audiofilter(void) /* rewrite me to better match the real filter! */
+static UINT8
+audiofilter(void) /* rewrite me to better match the real filter! */
 {
-	UINT16 temp1, temp2 = 0;
-	/* crappy averaging filter! */
-	for (temp1 = 0; temp1 < 8; temp1++) { temp2 += filtervals[temp1]; }
-	temp2 >>= 3;
-	return temp2;
+    UINT16 temp1, temp2 = 0;
+    /* crappy averaging filter! */
+    for (temp1 = 0; temp1 < 8; temp1++) {
+        temp2 += filtervals[temp1];
+    }
+    temp2 >>= 3;
+    return temp2;
 }
 
-static void shiftIntoFilter(UINT8 inputvalue)
-{
-	UINT8 temp1;
-	for (temp1 = 7; temp1 > 0; temp1--)
-	{
-		filtervals[temp1] = filtervals[(temp1 - 1)];
-	}
-	filtervals[0] = inputvalue;
-
+static void
+shiftIntoFilter(UINT8 inputvalue) {
+    UINT8 temp1;
+    for (temp1 = 7; temp1 > 0; temp1--) {
+        filtervals[temp1] = filtervals[(temp1 - 1)];
+    }
+    filtervals[0] = inputvalue;
 }
 
-static void PostPhoneme(void) /* figure out what the heck to do after playing a phoneme */
+static void
+PostPhoneme(void) /* figure out what the heck to do after playing a phoneme */
 {
 #ifdef DEBUGSTATE
-	fprintf(stderr,"0: entered PostPhoneme\n");
+    fprintf(stderr, "0: entered PostPhoneme\n");
 #endif
-	RepeatCounter++; // increment the repeat counter
-	OutputCounter++; // increment the output counter
-	if (MIRRORMODE) // if mirroring is enabled
-	{
+    RepeatCounter++; // increment the repeat counter
+    OutputCounter++; // increment the output counter
+    if (MIRRORMODE)  // if mirroring is enabled
+    {
 #ifdef DEBUGSTATE
-		fprintf(stderr,"1: MIRRORMODE was on\n");
+        fprintf(stderr, "1: MIRRORMODE was on\n");
 #endif
-		if (RepeatCounter == 0x8) // exceeded 3 bits?
-		{
-#ifdef DEBUGSTATE
-			fprintf(stderr,"2: RepeatCounter was == 8\n");
-#endif
-			// reset repeat counter, increment length counter
-			// but first check if lowest bit is set
-			RepeatCounter = REPEATCOUNT; // reload repeat counter with reload value
-			if (LengthCounter & 0x1) // if low bit is 1 (will carry after increment)
-			{
-#ifdef DEBUGSTATE
-				fprintf(stderr,"3: LengthCounter's low bit was 1\n");
-#endif
-				PhoneAddress+=8; // go to next phone in this syllable
-			}
-			LengthCounter++;
-			if (LengthCounter == 0x10) // if Length counter carried out of 4 bits
-			{
-#ifdef DEBUGSTATE
-				fprintf(stderr,"3: LengthCounter overflowed\n");
-#endif
-				SyllableAddress += 2; // go to next syllable
-				nextstate = LASTSYLLABLE ? 13 : 3; // if we're on the last syllable, go to end state, otherwise go and load the next syllable.
-			}
-			else
-			{
-#ifdef DEBUGSTATE
-				fprintf(stderr,"3: LengthCounter's low bit wasn't 1 and it didn't overflow\n");
-#endif
-				PhoneOffset = (OutputCounter&1) ? 7 : 0;
-				nextstate = (OutputCounter&1) ? 9 : 5;
-			}
-		}
-		else // repeatcounter did NOT carry out of 3 bits so leave length counter alone
-		{
-#ifdef DEBUGSTATE
-			fprintf(stderr,"2: RepeatCounter is less than 8 (its actually %d)\n", RepeatCounter);
-#endif
-			PhoneOffset = (OutputCounter&1) ? 7 : 0;
-			nextstate = (OutputCounter&1) ? 9 : 5;
-		}
-	}
-	else // if mirroring is NOT enabled
-	{
-#ifdef DEBUGSTATE
-		fprintf(stderr,"1: MIRRORMODE was off\n");
-#endif
-		if (RepeatCounter == 0x8) // exceeded 3 bits?
-		{
-#ifdef DEBUGSTATE
-			fprintf(stderr,"2: RepeatCounter was == 8\n");
-#endif
-			// reset repeat counter, increment length counter
-			RepeatCounter = REPEATCOUNT; // reload repeat counter with reload value
-			LengthCounter++;
-			if (LengthCounter == 0x10) // if Length counter carried out of 4 bits
-			{
-#ifdef DEBUGSTATE
-				fprintf(stderr,"3: LengthCounter overflowed\n");
-#endif
-				SyllableAddress += 2; // go to next syllable
-				nextstate = LASTSYLLABLE ? 13 : 3; // if we're on the last syllable, go to end state, otherwise go and load the next syllable.
-#ifdef DEBUGSTATE
-				fprintf(stderr,"nextstate is now %d\n", nextstate); // see line below, same reason.
-#endif
-				return; // need a return here so we don't hit the 'nextstate = 5' line below
-			}
-		}
-		PhoneAddress += 8; // regardless of counters, the phone address always increments in non-mirrored mode
-		PhoneOffset = 0;
-		nextstate = 5;
-	}
-#ifdef DEBUGSTATE
-	fprintf(stderr,"nextstate is now %d\n", nextstate);
-#endif
-}
-
-UINT8 s14001a_readmem(UINT16 offset)
-{
-	offset &= 0xfff; // 11-bit internal
-	return /*((m_ext_read_handler.isnull()) ?*/ SpeechRom[offset /*& (SpeechRom.bytes() - 1)*/];// : m_ext_read_handler(offset));
-}
-
-void s14001a_clock(void) /* called once per clock */
-{
-	UINT8 CurDelta; // Current delta
-
-	/* on even clocks, audio output is floating, /romen is low so rom data bus is driven, input is latched?
-	 * on odd clocks, audio output is driven, /romen is high, state machine 2 is clocked */
-	oddeven = !(oddeven); // invert the clock
-	if (oddeven == 0) // even clock
+        if (RepeatCounter == 0x8) // exceeded 3 bits?
         {
-		audioout = audiofilter(); // function to handle output filtering by internal capacitance based on clock speed and such
-#ifdef PINMAME
-		if (!machineState) audioout = SILENCE;
-#endif
-		shiftIntoFilter(audioout); // shift over all the filter outputs and stick in audioout
-	}
-	else // odd clock
-	{
-		// fix dac output between samples. theoretically this might be unnecessary but it would require some messy logic in state 5 on the first sample load.
-		if (GlobalSilenceState || LOCALSILENCESTATE)
-		{
-			DACOutput = SILENCE;
-			OldDelta = 2;
-		}
-		audioout = (GlobalSilenceState || LOCALSILENCESTATE) ? SILENCE : DACOutput; // when either silence state is 1, output silence.
-#ifdef PINMAME
-		if (!machineState) audioout = SILENCE;
-#endif
-		shiftIntoFilter(audioout); // shift over all the filter outputs and stick in audioout
-		switch(machineState)
-		{
-		case 0: // idle state
-			nextstate = 0;
-			break;
-		case 1: // read starting syllable high byte from word table
-			SyllableAddress = 0; // clear syllable address
-			SyllableAddress |= s14001a_readmem(LatchedWord<<1)<<4;
-			nextstate = resetState ? 1 : 2;
-			break;
-		case 2: // read starting syllable low byte from word table
-			SyllableAddress |= s14001a_readmem((LatchedWord<<1)+1)>>4;
-			nextstate = 3;
-			break;
-		case 3: // read starting phone address
-			PhoneAddress = s14001a_readmem(SyllableAddress)<<4;
-			nextstate = 4;
-			break;
-		case 4: // read playback parameters and prepare for play
-			PlayParams = s14001a_readmem(SyllableAddress+1);
-			GlobalSilenceState = SILENCEFLAG; // load phone silence flag
-			LengthCounter = LENGTHCOUNT; // load length counter
-			RepeatCounter = REPEATCOUNT; // load repeat counter
-			OutputCounter = 0; // clear output counter and disable mirrored phoneme silence indirectly via LOCALSILENCESTATE
-			PhoneOffset = 0; // set offset within phone to zero
-			OldDelta = 0x2; // set old delta to 2 <- is this right?
-			DACOutput = 0x88; // set DAC output to center/silence position (0x88)
-			nextstate = 5;
-			break;
-		case 5: // Play phone forward, shift = 0 (also load)
-			CurDelta = (s14001a_readmem((PhoneAddress)+PhoneOffset)&0xc0)>>6; // grab current delta from high 2 bits of high nybble
-			DACOutput += DeltaTable[CurDelta][OldDelta]; // send data to forward delta table and add result to accumulator
-			OldDelta = CurDelta; // Move current delta to old
-			nextstate = 6;
-			break;
-		case 6: // Play phone forward, shift = 2
-	   		CurDelta = (s14001a_readmem((PhoneAddress)+PhoneOffset)&0x30)>>4; // grab current delta from low 2 bits of high nybble
-			DACOutput += DeltaTable[CurDelta][OldDelta]; // send data to forward delta table and add result to accumulator
-			OldDelta = CurDelta; // Move current delta to old
-			nextstate = 7;
-			break;
-		case 7: // Play phone forward, shift = 4
-			CurDelta = (s14001a_readmem((PhoneAddress)+PhoneOffset)&0xc)>>2; // grab current delta from high 2 bits of low nybble
-			DACOutput += DeltaTable[CurDelta][OldDelta]; // send data to forward delta table and add result to accumulator
-			OldDelta = CurDelta; // Move current delta to old
-			nextstate = 8;
-			break;
-		case 8: // Play phone forward, shift = 6 (increment address if needed)
-			CurDelta = s14001a_readmem((PhoneAddress)+PhoneOffset)&0x3; // grab current delta from low 2 bits of low nybble
-			DACOutput += DeltaTable[CurDelta][OldDelta]; // send data to forward delta table and add result to accumulator
-			OldDelta = CurDelta; // Move current delta to old
-			PhoneOffset++; // increment phone offset
-			if (PhoneOffset == 0x8) // if we're now done this phone
-			{
-				/* call the PostPhoneme Function */
-				PostPhoneme();
-			}
-			else
-			{
-				nextstate = 5;
-			}
-			break;
-		case 9: // Play phone backward, shift = 6 (also load)
-			CurDelta = (s14001a_readmem((PhoneAddress)+PhoneOffset)&0x3); // grab current delta from low 2 bits of low nybble
-			if (laststate != 8) // ignore first (bogus) dac change in mirrored backwards mode. observations and the patent show this.
-			{
-				DACOutput -= DeltaTable[OldDelta][CurDelta]; // send data to forward delta table and subtract result from accumulator
-			}
-			OldDelta = CurDelta; // Move current delta to old
-			nextstate = 10;
-			break;
-		case 10: // Play phone backward, shift = 4
-			CurDelta = (s14001a_readmem((PhoneAddress)+PhoneOffset)&0xc)>>2; // grab current delta from high 2 bits of low nybble
-			DACOutput -= DeltaTable[OldDelta][CurDelta]; // send data to forward delta table and subtract result from accumulator
-			OldDelta = CurDelta; // Move current delta to old
-			nextstate = 11;
-			break;
-		case 11: // Play phone backward, shift = 2
-			CurDelta = (s14001a_readmem((PhoneAddress)+PhoneOffset)&0x30)>>4; // grab current delta from low 2 bits of high nybble
-			DACOutput -= DeltaTable[OldDelta][CurDelta]; // send data to forward delta table and subtract result from accumulator
-			OldDelta = CurDelta; // Move current delta to old
-			nextstate = 12;
-			break;
-		case 12: // Play phone backward, shift = 0 (increment address if needed)
-			CurDelta = (s14001a_readmem((PhoneAddress)+PhoneOffset)&0xc0)>>6; // grab current delta from high 2 bits of high nybble
-			DACOutput -= DeltaTable[OldDelta][CurDelta]; // send data to forward delta table and subtract result from accumulator
-			OldDelta = CurDelta; // Move current delta to old
-			PhoneOffset--; // decrement phone offset
-			if (PhoneOffset == 0xFF) // if we're now done this phone
-			{
-				/* call the PostPhoneme() function */
-				PostPhoneme();
-			}
-			else
-			{
-				nextstate = 9;
-			}
-			break;
-		case 13: // For those pedantic among us, consume an extra two clocks like the real chip does.
-			nextstate = 0;
-			break;
-		}
 #ifdef DEBUGSTATE
-		fprintf(stderr, "Machine state is now %d, was %d, PhoneOffset is %d\n", nextstate, machineState, PhoneOffset);
+            fprintf(stderr, "2: RepeatCounter was == 8\n");
 #endif
-		laststate = machineState;
-		machineState = nextstate;
-	}
+            // reset repeat counter, increment length counter
+            // but first check if lowest bit is set
+            RepeatCounter = REPEATCOUNT; // reload repeat counter with reload value
+            if (LengthCounter & 0x1)     // if low bit is 1 (will carry after increment)
+            {
+#ifdef DEBUGSTATE
+                fprintf(stderr, "3: LengthCounter's low bit was 1\n");
+#endif
+                PhoneAddress += 8; // go to next phone in this syllable
+            }
+            LengthCounter++;
+            if (LengthCounter == 0x10) // if Length counter carried out of 4 bits
+            {
+#ifdef DEBUGSTATE
+                fprintf(stderr, "3: LengthCounter overflowed\n");
+#endif
+                SyllableAddress += 2; // go to next syllable
+                nextstate =
+                    LASTSYLLABLE
+                        ? 13
+                        : 3; // if we're on the last syllable, go to end state, otherwise go and load the next syllable.
+            } else {
+#ifdef DEBUGSTATE
+                fprintf(stderr, "3: LengthCounter's low bit wasn't 1 and it didn't overflow\n");
+#endif
+                PhoneOffset = (OutputCounter & 1) ? 7 : 0;
+                nextstate = (OutputCounter & 1) ? 9 : 5;
+            }
+        } else // repeatcounter did NOT carry out of 3 bits so leave length counter alone
+        {
+#ifdef DEBUGSTATE
+            fprintf(stderr, "2: RepeatCounter is less than 8 (its actually %d)\n", RepeatCounter);
+#endif
+            PhoneOffset = (OutputCounter & 1) ? 7 : 0;
+            nextstate = (OutputCounter & 1) ? 9 : 5;
+        }
+    } else // if mirroring is NOT enabled
+    {
+#ifdef DEBUGSTATE
+        fprintf(stderr, "1: MIRRORMODE was off\n");
+#endif
+        if (RepeatCounter == 0x8) // exceeded 3 bits?
+        {
+#ifdef DEBUGSTATE
+            fprintf(stderr, "2: RepeatCounter was == 8\n");
+#endif
+            // reset repeat counter, increment length counter
+            RepeatCounter = REPEATCOUNT; // reload repeat counter with reload value
+            LengthCounter++;
+            if (LengthCounter == 0x10) // if Length counter carried out of 4 bits
+            {
+#ifdef DEBUGSTATE
+                fprintf(stderr, "3: LengthCounter overflowed\n");
+#endif
+                SyllableAddress += 2; // go to next syllable
+                nextstate =
+                    LASTSYLLABLE
+                        ? 13
+                        : 3; // if we're on the last syllable, go to end state, otherwise go and load the next syllable.
+#ifdef DEBUGSTATE
+                fprintf(stderr, "nextstate is now %d\n", nextstate); // see line below, same reason.
+#endif
+                return; // need a return here so we don't hit the 'nextstate = 5' line below
+            }
+        }
+        PhoneAddress += 8; // regardless of counters, the phone address always increments in non-mirrored mode
+        PhoneOffset = 0;
+        nextstate = 5;
+    }
+#ifdef DEBUGSTATE
+    fprintf(stderr, "nextstate is now %d\n", nextstate);
+#endif
+}
+
+UINT8
+s14001a_readmem(UINT16 offset) {
+    offset &= 0xfff; // 11-bit internal
+    return /*((m_ext_read_handler.isnull()) ?*/ SpeechRom
+        [offset /*& (SpeechRom.bytes() - 1)*/]; // : m_ext_read_handler(offset));
+}
+
+void
+s14001a_clock(void) /* called once per clock */
+{
+    UINT8 CurDelta; // Current delta
+
+    /* on even clocks, audio output is floating, /romen is low so rom data bus is driven, input is latched?
+	 * on odd clocks, audio output is driven, /romen is high, state machine 2 is clocked */
+    oddeven = !(oddeven); // invert the clock
+    if (oddeven == 0)     // even clock
+    {
+        audioout =
+            audiofilter(); // function to handle output filtering by internal capacitance based on clock speed and such
+#ifdef PINMAME
+        if (!machineState)
+            audioout = SILENCE;
+#endif
+        shiftIntoFilter(audioout); // shift over all the filter outputs and stick in audioout
+    } else                         // odd clock
+    {
+        // fix dac output between samples. theoretically this might be unnecessary but it would require some messy logic in state 5 on the first sample load.
+        if (GlobalSilenceState || LOCALSILENCESTATE) {
+            DACOutput = SILENCE;
+            OldDelta = 2;
+        }
+        audioout = (GlobalSilenceState || LOCALSILENCESTATE)
+                       ? SILENCE
+                       : DACOutput; // when either silence state is 1, output silence.
+#ifdef PINMAME
+        if (!machineState)
+            audioout = SILENCE;
+#endif
+        shiftIntoFilter(audioout); // shift over all the filter outputs and stick in audioout
+        switch (machineState) {
+            case 0: // idle state
+                nextstate = 0;
+                break;
+            case 1:                  // read starting syllable high byte from word table
+                SyllableAddress = 0; // clear syllable address
+                SyllableAddress |= s14001a_readmem(LatchedWord << 1) << 4;
+                nextstate = resetState ? 1 : 2;
+                break;
+            case 2: // read starting syllable low byte from word table
+                SyllableAddress |= s14001a_readmem((LatchedWord << 1) + 1) >> 4;
+                nextstate = 3;
+                break;
+            case 3: // read starting phone address
+                PhoneAddress = s14001a_readmem(SyllableAddress) << 4;
+                nextstate = 4;
+                break;
+            case 4: // read playback parameters and prepare for play
+                PlayParams = s14001a_readmem(SyllableAddress + 1);
+                GlobalSilenceState = SILENCEFLAG; // load phone silence flag
+                LengthCounter = LENGTHCOUNT;      // load length counter
+                RepeatCounter = REPEATCOUNT;      // load repeat counter
+                OutputCounter =
+                    0; // clear output counter and disable mirrored phoneme silence indirectly via LOCALSILENCESTATE
+                PhoneOffset = 0;  // set offset within phone to zero
+                OldDelta = 0x2;   // set old delta to 2 <- is this right?
+                DACOutput = 0x88; // set DAC output to center/silence position (0x88)
+                nextstate = 5;
+                break;
+            case 5: // Play phone forward, shift = 0 (also load)
+                CurDelta = (s14001a_readmem((PhoneAddress) + PhoneOffset) & 0xc0)
+                           >> 6; // grab current delta from high 2 bits of high nybble
+                DACOutput +=
+                    DeltaTable[CurDelta][OldDelta]; // send data to forward delta table and add result to accumulator
+                OldDelta = CurDelta;                // Move current delta to old
+                nextstate = 6;
+                break;
+            case 6: // Play phone forward, shift = 2
+                CurDelta = (s14001a_readmem((PhoneAddress) + PhoneOffset) & 0x30)
+                           >> 4; // grab current delta from low 2 bits of high nybble
+                DACOutput +=
+                    DeltaTable[CurDelta][OldDelta]; // send data to forward delta table and add result to accumulator
+                OldDelta = CurDelta;                // Move current delta to old
+                nextstate = 7;
+                break;
+            case 7: // Play phone forward, shift = 4
+                CurDelta = (s14001a_readmem((PhoneAddress) + PhoneOffset) & 0xc)
+                           >> 2; // grab current delta from high 2 bits of low nybble
+                DACOutput +=
+                    DeltaTable[CurDelta][OldDelta]; // send data to forward delta table and add result to accumulator
+                OldDelta = CurDelta;                // Move current delta to old
+                nextstate = 8;
+                break;
+            case 8: // Play phone forward, shift = 6 (increment address if needed)
+                CurDelta = s14001a_readmem((PhoneAddress) + PhoneOffset)
+                           & 0x3; // grab current delta from low 2 bits of low nybble
+                DACOutput +=
+                    DeltaTable[CurDelta][OldDelta]; // send data to forward delta table and add result to accumulator
+                OldDelta = CurDelta;                // Move current delta to old
+                PhoneOffset++;                      // increment phone offset
+                if (PhoneOffset == 0x8)             // if we're now done this phone
+                {
+                    /* call the PostPhoneme Function */
+                    PostPhoneme();
+                } else {
+                    nextstate = 5;
+                }
+                break;
+            case 9: // Play phone backward, shift = 6 (also load)
+                CurDelta = (s14001a_readmem((PhoneAddress) + PhoneOffset)
+                            & 0x3); // grab current delta from low 2 bits of low nybble
+                if (laststate
+                    != 8) // ignore first (bogus) dac change in mirrored backwards mode. observations and the patent show this.
+                {
+                    DACOutput -=
+                        DeltaTable[OldDelta]
+                                  [CurDelta]; // send data to forward delta table and subtract result from accumulator
+                }
+                OldDelta = CurDelta; // Move current delta to old
+                nextstate = 10;
+                break;
+            case 10: // Play phone backward, shift = 4
+                CurDelta = (s14001a_readmem((PhoneAddress) + PhoneOffset) & 0xc)
+                           >> 2; // grab current delta from high 2 bits of low nybble
+                DACOutput -=
+                    DeltaTable[OldDelta]
+                              [CurDelta]; // send data to forward delta table and subtract result from accumulator
+                OldDelta = CurDelta;      // Move current delta to old
+                nextstate = 11;
+                break;
+            case 11: // Play phone backward, shift = 2
+                CurDelta = (s14001a_readmem((PhoneAddress) + PhoneOffset) & 0x30)
+                           >> 4; // grab current delta from low 2 bits of high nybble
+                DACOutput -=
+                    DeltaTable[OldDelta]
+                              [CurDelta]; // send data to forward delta table and subtract result from accumulator
+                OldDelta = CurDelta;      // Move current delta to old
+                nextstate = 12;
+                break;
+            case 12: // Play phone backward, shift = 0 (increment address if needed)
+                CurDelta = (s14001a_readmem((PhoneAddress) + PhoneOffset) & 0xc0)
+                           >> 6; // grab current delta from high 2 bits of high nybble
+                DACOutput -=
+                    DeltaTable[OldDelta]
+                              [CurDelta]; // send data to forward delta table and subtract result from accumulator
+                OldDelta = CurDelta;      // Move current delta to old
+                PhoneOffset--;            // decrement phone offset
+                if (PhoneOffset == 0xFF)  // if we're now done this phone
+                {
+                    /* call the PostPhoneme() function */
+                    PostPhoneme();
+                } else {
+                    nextstate = 9;
+                }
+                break;
+            case 13: // For those pedantic among us, consume an extra two clocks like the real chip does.
+                nextstate = 0;
+                break;
+        }
+#ifdef DEBUGSTATE
+        fprintf(stderr, "Machine state is now %d, was %d, PhoneOffset is %d\n", nextstate, machineState, PhoneOffset);
+#endif
+        laststate = machineState;
+        machineState = nextstate;
+    }
 }
 
 /**************************************************************************
    MAME glue code
  **************************************************************************/
 
-static void s14001a_update(int ch, INT16 *buffer, int length)
-{
-	int i;
+static void
+s14001a_update(int ch, INT16* buffer, int length) {
+    int i;
 
-	for (i = 0; i < length; i++)
-	{
-		if (--VSU1000_counter <= 0) {
-		  s14001a_clock();
-		  VSU1000_counter = VSU1000_freq;
-		}
+    for (i = 0; i < length; i++) {
+        if (--VSU1000_counter <= 0) {
+            s14001a_clock();
+            VSU1000_counter = VSU1000_freq;
+        }
 #ifdef PINMAME
-		buffer[i] = ((((INT16)audioout)-128)*36)*((21 + 2 * VSU1000_amp) / 5);
+        buffer[i] = ((((INT16)audioout) - 128) * 36) * ((21 + 2 * VSU1000_amp) / 5);
 #else
-		buffer[i] = ((((INT16)audioout)-128)*36)*VSU1000_amp;
+        buffer[i] = ((((INT16)audioout) - 128) * 36) * VSU1000_amp;
 #endif
-	}
+    }
 }
 
-int s14001a_sh_start(const struct MachineSound *msound)
-{
-	const struct S14001A_interface *intf = msound->sound_interface;
-	int i;
+int
+s14001a_sh_start(const struct MachineSound* msound) {
+    const struct S14001A_interface* intf = msound->sound_interface;
+    int i;
 
-	GlobalSilenceState = 1;
-	OldDelta = 0x02;
-	DACOutput = SILENCE;
-	VSU1000_amp = 7; /* reset by /reset line */
-	VSU1000_freq = 1; /* base-1; reset by /reset line */
-	VSU1000_counter = 1; /* base-1; not reset by /reset line but this is the best place to reset it */
+    GlobalSilenceState = 1;
+    OldDelta = 0x02;
+    DACOutput = SILENCE;
+    VSU1000_amp = 7;     /* reset by /reset line */
+    VSU1000_freq = 1;    /* base-1; reset by /reset line */
+    VSU1000_counter = 1; /* base-1; not reset by /reset line but this is the best place to reset it */
 
-	for (i = 0; i < 8; i++)
-	{
-		filtervals[i] = SILENCE;
-	}
+    for (i = 0; i < 8; i++) {
+        filtervals[i] = SILENCE;
+    }
 
-	SpeechRom = memory_region(intf->region);
+    SpeechRom = memory_region(intf->region);
 
 #ifdef PINMAME
-	stream = stream_init("S14001A", 100, 19000, 0, s14001a_update);
+    stream = stream_init("S14001A", 100, 19000, 0, s14001a_update);
 #else
-	stream = stream_init("S14001A", 100, 44100, 0, s14001a_update);
+    stream = stream_init("S14001A", 100, 44100, 0, s14001a_update);
 #endif
-	if (stream == -1)
-		return 1;
+    if (stream == -1)
+        return 1;
 
-	return 0;
+    return 0;
 }
 
-void s14001a_sh_stop(void)
-{
-}
+void
+s14001a_sh_stop(void) {}
 
-int S14001A_bsy_0_r(void)
-{
-	if (stream != -1)
-		stream_update(stream, 0);
+int
+S14001A_bsy_0_r(void) {
+    if (stream != -1)
+        stream_update(stream, 0);
 #ifdef DEBUGSTATE
-	fprintf(stderr,"busy state checked: %d\n",(machineState != 0) );
+    fprintf(stderr, "busy state checked: %d\n", (machineState != 0));
 #endif
-	return machineState;
+    return machineState;
 }
 
-void S14001A_reg_0_w(int data)
-{
-	if (stream != -1)
-		stream_update(stream, 0);
-	WordInput = data;
+void
+S14001A_reg_0_w(int data) {
+    if (stream != -1)
+        stream_update(stream, 0);
+    WordInput = data;
 }
 
-void S14001A_rst_0_w(int data)
-{
-	if (stream != -1)
-		stream_update(stream, 0);
+void
+S14001A_rst_0_w(int data) {
+    if (stream != -1)
+        stream_update(stream, 0);
     LatchedWord = WordInput;
-	resetState = (data==1);
-	machineState = resetState ? 1 : machineState;
+    resetState = (data == 1);
+    machineState = resetState ? 1 : machineState;
 }
 
-void S14001A_set_rate(int newrate)
-{
+void
+S14001A_set_rate(int newrate) {
 #ifdef PINMAME
-	static int rates[8] = { 19000, 20500, 22000, 24500, 27000, 29500, 31000, 33500 };
+    static int rates[8] = {19000, 20500, 22000, 24500, 27000, 29500, 31000, 33500};
 #endif
-	if (stream != -1)
-		stream_update(stream, 0);
+    if (stream != -1)
+        stream_update(stream, 0);
 #ifdef PINMAME
-	if (newrate < 0) newrate = 0;
-	else if (newrate > 7) newrate = 7;
-	stream_set_sample_rate(stream, rates[newrate]);
+    if (newrate < 0)
+        newrate = 0;
+    else if (newrate > 7)
+        newrate = 7;
+    stream_set_sample_rate(stream, rates[newrate]);
 #else
-	VSU1000_freq = newrate;
+    VSU1000_freq = newrate;
 #endif
 }
 
-void S14001A_set_volume(int volume)
-{
-	if (stream != -1)
-		stream_update(stream, 0);
+void
+S14001A_set_volume(int volume) {
+    if (stream != -1)
+        stream_update(stream, 0);
 #ifdef PINMAME
-	if (volume < 0) volume = 0;
-	else if (volume > 7) volume = 7;
+    if (volume < 0)
+        volume = 0;
+    else if (volume > 7)
+        volume = 7;
 #endif
     VSU1000_amp = volume;
 }

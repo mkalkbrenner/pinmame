@@ -18,25 +18,24 @@ Phil
 
 */
 
-#include <string.h>
-#include <assert.h>
 #include "memdbg.h"
+#include <assert.h>
+#include <string.h>
 
 /* MEM_UNINITIALIZED_VALUE gets copied to memory regions when they are alloc'd or free'd */
-#define MEM_UNINITIALIZED_VALUE	0x0A
+#define MEM_UNINITIALIZED_VALUE 0x0A
 
 /* mGuardData is a signature that is written at the end of every allocated block, to help
  * detect corruption due to overwriting an allocated memory pointer.
  */
-static const char mGuardData[] = {'d','o','n','o','t','o','v','e','r','w','r','i','t','e'};
+static const char mGuardData[] = {'d', 'o', 'n', 'o', 't', 'o', 'v', 'e', 'r', 'w', 'r', 'i', 't', 'e'};
 
-struct MemPtr
-{
-	const char *pModule;
-	int line;
-	size_t numBytes;
-	struct MemPtr *pNextAllocation;
-	/* This header is exactly 16 bytes; it should not interfere with any alignment
+struct MemPtr {
+    const char* pModule;
+    int line;
+    size_t numBytes;
+    struct MemPtr* pNextAllocation;
+    /* This header is exactly 16 bytes; it should not interfere with any alignment
 	 * requirements for the data chunk itself, which immediately follows this header.
 	 *
 	 * uint8_t data[numBytes];
@@ -45,139 +44,114 @@ struct MemPtr
 };
 typedef struct MemPtr MemPtr;
 
-void *MEMPTR_TO_PDATA( MemPtr * );
+void* MEMPTR_TO_PDATA(MemPtr*);
 /* The following macro provides syntactic sugar to get from a raw MemPtr to the payload. */
-#define MEMPTR_TO_PDATA( MEMPTR ) ((void *)((MEMPTR)+1))
+#define MEMPTR_TO_PDATA(MEMPTR) ((void*)((MEMPTR) + 1))
 
-
-void *PDATA_TO_MEMPTR( void * );
-#define PDATA_TO_MEMPTR( MEMPTR ) (((MemPtr *)(MEMPTR))-1)
+void* PDATA_TO_MEMPTR(void*);
+#define PDATA_TO_MEMPTR(MEMPTR) (((MemPtr*)(MEMPTR)) - 1)
 
 /* head of linked list containing all currently allocated chunks of memory */
-static MemPtr *mpFirstAllocation;
+static MemPtr* mpFirstAllocation;
 
 /* BeginCriticalSection and EndCriticalSection must be implemented if this code is used
  * from multiple threads.
  */
-static void BeginCriticalSection( void ){ /* STUB */ }
-static void EndCriticalSection( void ){ /* STUB */ }
+static void
+BeginCriticalSection(void) { /* STUB */
+}
+
+static void
+EndCriticalSection(void) { /* STUB */
+}
 
 void
-memdbg_Debug( void )
-{
+memdbg_Debug(void) {
 #if defined(USE_MEMDBG)
-	MemPtr *pMemPtr;
+    MemPtr* pMemPtr;
 
-	BeginCriticalSection();
+    BeginCriticalSection();
 
-	pMemPtr = mpFirstAllocation;
-	printf( "\nmemdbg allocations:\n" );
-	while( pMemPtr )
-	{
-		printf( "%p\tsize: %d\t file %s line %d\n",
-			MEMPTR_TO_PDATA(pMemPtr),
-			pMemPtr->numBytes,
-			pMemPtr->pModule,
-			pMemPtr->line );
+    pMemPtr = mpFirstAllocation;
+    printf("\nmemdbg allocations:\n");
+    while (pMemPtr) {
+        printf("%p\tsize: %d\t file %s line %d\n", MEMPTR_TO_PDATA(pMemPtr), pMemPtr->numBytes, pMemPtr->pModule,
+               pMemPtr->line);
 
-		pMemPtr = pMemPtr->pNextAllocation;
-	}
+        pMemPtr = pMemPtr->pNextAllocation;
+    }
 
-	EndCriticalSection();
+    EndCriticalSection();
 #endif
 } /* memdbg_Debug */
 
-void *
-memdbg_Alloc( size_t numBytes, const char *pModule, int line )
-{
-	void *pData;
+void*
+memdbg_Alloc(size_t numBytes, const char* pModule, int line) {
+    void* pData;
 
-	BeginCriticalSection();
+    BeginCriticalSection();
 
-	pData = NULL; /* default */
-	if( !numBytes )
-	{
-		printf( "WARNING: attempt to memdbg_Alloc zero bytes!\n" );
-	}
-	else
-	{
-		MemPtr *pMemPtr = malloc(sizeof(MemPtr)+numBytes+sizeof(mGuardData));
-		if( !pMemPtr )
-		{
-			printf( "memdbg_Alloc failure: insufficient memory!\n" );
-		}
-		else
-		{
-			pMemPtr->pNextAllocation = mpFirstAllocation;
-			mpFirstAllocation = pMemPtr;
-			pMemPtr->numBytes = numBytes;
-			pMemPtr->pModule = pModule;
-			pMemPtr->line = line;
-			pData = MEMPTR_TO_PDATA(pMemPtr);
-			memset( pData, MEM_UNINITIALIZED_VALUE, numBytes );
-			memcpy( numBytes+(char *)pData,mGuardData,sizeof(mGuardData) );
-		}
-	}
+    pData = NULL; /* default */
+    if (!numBytes) {
+        printf("WARNING: attempt to memdbg_Alloc zero bytes!\n");
+    } else {
+        MemPtr* pMemPtr = malloc(sizeof(MemPtr) + numBytes + sizeof(mGuardData));
+        if (!pMemPtr) {
+            printf("memdbg_Alloc failure: insufficient memory!\n");
+        } else {
+            pMemPtr->pNextAllocation = mpFirstAllocation;
+            mpFirstAllocation = pMemPtr;
+            pMemPtr->numBytes = numBytes;
+            pMemPtr->pModule = pModule;
+            pMemPtr->line = line;
+            pData = MEMPTR_TO_PDATA(pMemPtr);
+            memset(pData, MEM_UNINITIALIZED_VALUE, numBytes);
+            memcpy(numBytes + (char*)pData, mGuardData, sizeof(mGuardData));
+        }
+    }
 
-	EndCriticalSection();
+    EndCriticalSection();
 
-	return pData;
+    return pData;
 } /* memdbg_Alloc */
 
 void
-memdbg_Free( void *pData )
-{
-	BeginCriticalSection();
+memdbg_Free(void* pData) {
+    BeginCriticalSection();
 
-	if( !pData )
-	{
-		printf( "WARNING: attempt to memdbg_Free a NULL pointer!\n" );
-	}
-	else
-	{
-		const char *pErrorString = "attempt to memdbg_Free a bogus pointer";
+    if (!pData) {
+        printf("WARNING: attempt to memdbg_Free a NULL pointer!\n");
+    } else {
+        const char* pErrorString = "attempt to memdbg_Free a bogus pointer";
 
-		MemPtr *pMemPtr = PDATA_TO_MEMPTR(pData);
-		if( memcmp(pMemPtr->numBytes+(char *)pData, mGuardData, sizeof(mGuardData) )!=0 )
-		{
-			pErrorString = "corruption detected";
-		}
-		else
-		{
-			MemPtr *pPrevAlloc = NULL;
-			MemPtr *pCurAlloc = mpFirstAllocation;
-			while( pCurAlloc )
-			{
-				if( pCurAlloc == pMemPtr )
-				{
-					if( pPrevAlloc )
-					{
-						pPrevAlloc->pNextAllocation = pMemPtr->pNextAllocation;
-					}
-					else
-					{
-						mpFirstAllocation = pMemPtr->pNextAllocation;
-					}
-					memset( pData, MEM_UNINITIALIZED_VALUE, pMemPtr->numBytes );
-					free( pMemPtr );
-					pErrorString = NULL;
-					break;
-				}
-				pPrevAlloc = pCurAlloc;
-				pCurAlloc = pCurAlloc->pNextAllocation;
-			}
-		}
-		if( pErrorString )
-		{
-			printf( "ERROR!!! %s!: %p %s.%d\n",
-				pErrorString,
-				pData,
-				pMemPtr->pModule,
-				pMemPtr->line );
+        MemPtr* pMemPtr = PDATA_TO_MEMPTR(pData);
+        if (memcmp(pMemPtr->numBytes + (char*)pData, mGuardData, sizeof(mGuardData)) != 0) {
+            pErrorString = "corruption detected";
+        } else {
+            MemPtr* pPrevAlloc = NULL;
+            MemPtr* pCurAlloc = mpFirstAllocation;
+            while (pCurAlloc) {
+                if (pCurAlloc == pMemPtr) {
+                    if (pPrevAlloc) {
+                        pPrevAlloc->pNextAllocation = pMemPtr->pNextAllocation;
+                    } else {
+                        mpFirstAllocation = pMemPtr->pNextAllocation;
+                    }
+                    memset(pData, MEM_UNINITIALIZED_VALUE, pMemPtr->numBytes);
+                    free(pMemPtr);
+                    pErrorString = NULL;
+                    break;
+                }
+                pPrevAlloc = pCurAlloc;
+                pCurAlloc = pCurAlloc->pNextAllocation;
+            }
+        }
+        if (pErrorString) {
+            printf("ERROR!!! %s!: %p %s.%d\n", pErrorString, pData, pMemPtr->pModule, pMemPtr->line);
 
-			assert(0);
-		}
-	}
+            assert(0);
+        }
+    }
 
-	EndCriticalSection();
+    EndCriticalSection();
 } /* memdbg_Free */

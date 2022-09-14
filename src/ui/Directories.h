@@ -12,32 +12,31 @@
 
 #ifndef DIRECTORIES_H
 #define DIRECTORIES_H
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
 /* Dialog return codes */
-#define DIRDLG_ROMS         0x0010
-#define DIRDLG_SAMPLES      0x0020
-#define DIRDLG_INI		    0x0040
-#define DIRDLG_CFG          0x0100
-#define DIRDLG_HI           0x0200
-#define DIRDLG_IMG          0x0400
-#define DIRDLG_INP          0x0800
-#define DIRDLG_CTRLR        0x1000
-#define DIRDLG_SOFTWARE		0x2000
+#define DIRDLG_ROMS          0x0010
+#define DIRDLG_SAMPLES       0x0020
+#define DIRDLG_INI           0x0040
+#define DIRDLG_CFG           0x0100
+#define DIRDLG_HI            0x0200
+#define DIRDLG_IMG           0x0400
+#define DIRDLG_INP           0x0800
+#define DIRDLG_CTRLR         0x1000
+#define DIRDLG_SOFTWARE      0x2000
 
 #define DIRLIST_NEWENTRYTEXT "<               >"
 
-typedef struct
-{
-	LPCSTR   lpName;
-	LPCSTR   (*pfnGetTheseDirs)(void);
-	void     (*pfnSetTheseDirs)(LPCSTR lpDirs);
-	BOOL     bMulti;
-	int      nDirDlgFlags;
-}
-DIRECTORYINFO;
+typedef struct {
+    LPCSTR lpName;
+    LPCSTR (*pfnGetTheseDirs)(void);
+    void (*pfnSetTheseDirs)(LPCSTR lpDirs);
+    BOOL bMulti;
+    int nDirDlgFlags;
+} DIRECTORYINFO;
 
 /* in layout[ms].c */
 extern DIRECTORYINFO g_directoryInfo[];
@@ -45,5 +44,3 @@ extern DIRECTORYINFO g_directoryInfo[];
 INT_PTR CALLBACK DirectoriesDialogProc(HWND hDlg, UINT Msg, WPARAM wParam, LPARAM lParam);
 
 #endif /* DIRECTORIES_H */
-
-

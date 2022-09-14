@@ -40,21 +40,21 @@ Version 0.2, May 2000
 
 #include "misc.h"
 
-
 #ifdef HAVE_GETTIMEOFDAY
 /* Standard UNIX clock() is based on CPU time, not real time.
    Here is a real-time drop in replacement for UNIX systems that have the
    gettimeofday() routine.  This results in much more accurate timing.
 */
-uclock_t uclock(void)
-{
-  static uclock_t init_sec = 0;
-  struct timeval tv;
+uclock_t
+uclock(void) {
+    static uclock_t init_sec = 0;
+    struct timeval tv;
 
-  gettimeofday(&tv, 0);
-  if (init_sec == 0) init_sec = tv.tv_sec;
+    gettimeofday(&tv, 0);
+    if (init_sec == 0)
+        init_sec = tv.tv_sec;
 
-  return (tv.tv_sec - init_sec) * 1000000 + tv.tv_usec;
+    return (tv.tv_sec - init_sec) * 1000000 + tv.tv_usec;
 }
 #else
 
@@ -63,85 +63,81 @@ uclock_t uclock(void)
    except for openstep which doesn't define it and has it at 64 */
 #ifndef CLOCKS_PER_SEC
 #ifdef openstep
-#define CLOCKS_PER_SEC 64     /* this is correct for OS4.2 intel */
+#define CLOCKS_PER_SEC 64 /* this is correct for OS4.2 intel */
 #else
 #define CLOCKS_PER_SEC 1000000
 #endif
 #endif
 
-uclock_t uclock(void)
-{
-   return (clock() * (1000000 / CLOCKS_PER_SEC));
+uclock_t
+uclock(void) {
+    return (clock() * (1000000 / CLOCKS_PER_SEC));
 }
 
 #endif
 
-void print_columns(const char *text1, const char *text2)
-{
-   fprint_columns(stdout, text1, text2);
+void
+print_columns(const char* text1, const char* text2) {
+    fprint_columns(stdout, text1, text2);
 }
 
-void fprint_columns(FILE *f, const char *text1, const char *text2)
-{
-   const char *text[2];
-   int i, cols, width[2], done = 0;
-   size_t j;
-   char *e_cols = getenv("COLUMNS");
+void
+fprint_columns(FILE* f, const char* text1, const char* text2) {
+    const char* text[2];
+    int i, cols, width[2], done = 0;
+    size_t j;
+    char* e_cols = getenv("COLUMNS");
 
-   cols = e_cols? atoi(e_cols):80;
-   if ( cols < 6 ) cols = 6;  /* minimum must be 6 */
-   cols--;
+    cols = e_cols ? atoi(e_cols) : 80;
+    if (cols < 6)
+        cols = 6; /* minimum must be 6 */
+    cols--;
 
-   /* initialize our arrays */
-   text[0] = text1;
-   text[1] = text2;
-   width[0] = (int)((double)cols * 0.4);
-   width[1] = cols - width[0];
+    /* initialize our arrays */
+    text[0] = text1;
+    text[1] = text2;
+    width[0] = (int)((double)cols * 0.4);
+    width[1] = cols - width[0];
 
-   while(!done)
-   {
-      done = 1;
-      for(i = 0; i < 2; i++)
-      {
-         size_t to_print = width[i]-1; /* always leave one space open */
+    while (!done) {
+        done = 1;
+        for (i = 0; i < 2; i++) {
+            size_t to_print = width[i] - 1; /* always leave one space open */
 
-         /* we don't want to print more then we have */
-         j = strlen(text[i]);
-         if (to_print > j)
-           to_print = j;
+            /* we don't want to print more then we have */
+            j = strlen(text[i]);
+            if (to_print > j)
+                to_print = j;
 
-         /* if they have preffered breaks, try to give them to them */
-         for(j=0; j<to_print; j++)
-            if(text[i][j] == '\n')
-            {
-               to_print = j;
-               break;
+            /* if they have preffered breaks, try to give them to them */
+            for (j = 0; j < to_print; j++)
+                if (text[i][j] == '\n') {
+                    to_print = j;
+                    break;
+                }
+
+            /* if we don't have enough space, break at the first ' ' or '\n' */
+            if (to_print < strlen(text[i])) {
+                while (to_print && (text[i][to_print] != ' ') && (text[i][to_print] != '\n'))
+                    to_print--;
+
+                /* if it didn't work, just print the columnwidth */
+                if (!to_print)
+                    to_print = width[i] - 1;
             }
+            fprintf(f, "%-*.*s", width[i], (int)to_print, text[i]);
 
-         /* if we don't have enough space, break at the first ' ' or '\n' */
-         if(to_print < strlen(text[i]))
-         {
-           while(to_print && (text[i][to_print] != ' ') &&
-              (text[i][to_print] != '\n'))
-              to_print--;
+            /* adjust ptr */
+            text[i] += to_print;
 
-           /* if it didn't work, just print the columnwidth */
-           if(!to_print)
-              to_print = width[i]-1;
-         }
-         fprintf(f, "%-*.*s", width[i], (int)to_print, text[i]);
+            /* skip ' ' and '\n' */
+            while ((text[i][0] == ' ') || (text[i][0] == '\n'))
+                text[i]++;
 
-         /* adjust ptr */
-         text[i] += to_print;
-
-         /* skip ' ' and '\n' */
-         while((text[i][0] == ' ') || (text[i][0] == '\n'))
-            text[i]++;
-
-         /* do we still have text to print */
-         if(text[i][0])
-            done = 0;
-      }
-      fprintf(f, "\n");
-   }
+            /* do we still have text to print */
+            if (text[i][0])
+                done = 0;
+        }
+        fprintf(f, "\n");
+    }
 }

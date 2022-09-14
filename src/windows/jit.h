@@ -254,166 +254,164 @@
 typedef unsigned char byte;
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1400) && !defined(__LP64__) // visual studio & > 6 & 32bit compile
-#define JIT_ENABLED  1   // enable the JIT (false -> use only the standard emulator code)
+#define JIT_ENABLED 1 // enable the JIT (false -> use only the standard emulator code)
 #else
-#define JIT_ENABLED  0
+#define JIT_ENABLED 0
 #endif
 
-#define JIT_DEBUG    0   // enable additional debugging code in the JIT
+#define JIT_DEBUG 0 // enable additional debugging code in the JIT
 
 #if JIT_ENABLED
 
 // figure the address-to-index right shift based on the opcode alignment
 #if JIT_OPALIGN == 8
-# define JIT_RSHIFT  0
+#define JIT_RSHIFT 0
 #elif JIT_OPALIGN == 16
-# define JIT_RSHIFT 1
+#define JIT_RSHIFT 1
 #elif JIT_OPALIGN == 32
-# define JIT_RSHIFT 2
+#define JIT_RSHIFT 2
 #elif JIT_OPALIGN == 64
-# define JIT_RSHIFT 3
+#define JIT_RSHIFT 3
 #elif JIT_OPALIGN == 0
 // special case for generic jit.c - use dynamic rshift from the structure
-# define JIT_RSHIFT (jit->rshift)
+#define JIT_RSHIFT (jit->rshift)
 #else
-# error Invalid JIT_OPALIGN value - must be 8, 16, 32, or 64
+#error Invalid JIT_OPALIGN value - must be 8, 16, 32, or 64
 #endif
 
 /*
  *   JIT control structure.  This contains internal information that the JIT
  *   uses for translating and executing code.
  */
-struct jit_ctl
-{
-	// Array of pointers to native code jump locations, indexed by
-	// emulated opcode address scaled by 'rshift'.
-	byte **native;
+struct jit_ctl {
+    // Array of pointers to native code jump locations, indexed by
+    // emulated opcode address scaled by 'rshift'.
+    byte** native;
 
-	// Address range for the map (inclusive of minAddr, exclusive
-	// of maxAddr)
-	data32_t minAddr, maxAddr;
+    // Address range for the map (inclusive of minAddr, exclusive
+    // of maxAddr)
+    data32_t minAddr, maxAddr;
 
-	// The right-shift to go from an emulated address offset to an
-	// array index.  For machines where an opcode can start at any
-	// byte address, the index is the same as the offset, so the
-	// shift is 0.  For 16-bit alignment, we only store every other
-	// address, so we divide the offset by 2 to get the index, hence
-	// the shift is 1.  For 32-bit alignment, we only store every 4th
-	// address, so the shift is 2.
-	int rshift;
+    // The right-shift to go from an emulated address offset to an
+    // array index.  For machines where an opcode can start at any
+    // byte address, the index is the same as the offset, so the
+    // shift is 0.  For 16-bit alignment, we only store every other
+    // address, so we divide the offset by 2 to get the index, hence
+    // the shift is 1.  For 32-bit alignment, we only store every 4th
+    // address, so the shift is 2.
+    int rshift;
 
-	// Cycle count pointer.  MAME requires each CPU emulator
-	// instruction execution loop to yield (by returning to MAME)
-	// after its time slice expires.  Time slices are allocated by
-	// cycle count, based on the nominal clock speed of the emulated
-	// machine.  The translated JIT code needs to track the number
-	// of emulated instructions it carries out in order to determine
-	// when the time slice has expired.  To do this, the emulator
-	// has to give us the address of an int32 with the remaining
-	// cycle counter.  The generated code has to decrement this
-	// for each emulated instruction, and must also test from time
-	// to time to see if this reaches zero.
-	//
-	// The cycle counter MUST be a static variable that persists
-	// for the lifetime of the JIT structure, since we hang onto
-	// a pointer to it and generate code that refers directly to
-	// the given address.  The existing emulators all use statics
-	// for this, so those should be directly usable.
-	//
-	// The emulator loops generally check for expiration on every
-	// instruction, but this doesn't seem strictly necessary, as
-	// the main MAME loop can tolerate a bit of overshoot or
-	// undershoot.  The original physical CPUs generally ran much
-	// slower than we can emulate them, so the main MAME loop ends
-	// up running the emulators in little bursts, then stalling
-	// to keep execution in sync with real time.  (The real time
-	// sync is important because the original programs perform
-	// audio, video, and other tasks that must be carried out in
-	// real time.)
-	//
-	// Because MAME can tolerate overshoot and undershoot in the
-	// time slice consumption, and because translated native code
-	// tends to run much faster than emulated code (that's the
-	// whole point!), it seems acceptable for translated code to
-	// check the cycle counter only occasionally.  A reasonable
-	// strategy might be to check it whenever making a subroutine
-	// call or an unconditional branch.
-	int *cycle_counter_ptr;
+    // Cycle count pointer.  MAME requires each CPU emulator
+    // instruction execution loop to yield (by returning to MAME)
+    // after its time slice expires.  Time slices are allocated by
+    // cycle count, based on the nominal clock speed of the emulated
+    // machine.  The translated JIT code needs to track the number
+    // of emulated instructions it carries out in order to determine
+    // when the time slice has expired.  To do this, the emulator
+    // has to give us the address of an int32 with the remaining
+    // cycle counter.  The generated code has to decrement this
+    // for each emulated instruction, and must also test from time
+    // to time to see if this reaches zero.
+    //
+    // The cycle counter MUST be a static variable that persists
+    // for the lifetime of the JIT structure, since we hang onto
+    // a pointer to it and generate code that refers directly to
+    // the given address.  The existing emulators all use statics
+    // for this, so those should be directly usable.
+    //
+    // The emulator loops generally check for expiration on every
+    // instruction, but this doesn't seem strictly necessary, as
+    // the main MAME loop can tolerate a bit of overshoot or
+    // undershoot.  The original physical CPUs generally ran much
+    // slower than we can emulate them, so the main MAME loop ends
+    // up running the emulators in little bursts, then stalling
+    // to keep execution in sync with real time.  (The real time
+    // sync is important because the original programs perform
+    // audio, video, and other tasks that must be carried out in
+    // real time.)
+    //
+    // Because MAME can tolerate overshoot and undershoot in the
+    // time slice consumption, and because translated native code
+    // tends to run much faster than emulated code (that's the
+    // whole point!), it seems acceptable for translated code to
+    // check the cycle counter only occasionally.  A reasonable
+    // strategy might be to check it whenever making a subroutine
+    // call or an unconditional branch.
+    int* cycle_counter_ptr;
 
-	// Special native addresses for opcodes in the "pending" and
-	// "emulate" states.  If an address mapping contains the
-	// "pending" pointer value, it means that the opcode is
-	// eligible for translation but hasn't been translated yet.
-	// If it contains the "emulate" pointer value, it means that
-	// the opcode is ineligible for translation and should always
-	// be emulated.
-	//
-	// These two pointers must have distinct values, because the
-	// emulator uses the pointer value to determine which treatment
-	// (pending or emulate).  Both of them point to native code
-	// consisting simply of a RETN instruction.  If translated native
-	// code jumps to an opcode in either state, the RETN will cause
-	// the native code to return to the emulator, so that the
-	// emulator can emulate or translate the original opcode.
-	//
-	// Note that the mapping pointer for a translated instruction
-	// has neither of these values - it will instead point directly
-	// to the translated native code.  So any opcode whose address
-	// mapping is any other pointer value is in the "translated"
-	// state.  In this case, the emulator will jump to the native
-	// translation to execute the opcode.
-	byte *pPending;
-	byte *pEmulate;
+    // Special native addresses for opcodes in the "pending" and
+    // "emulate" states.  If an address mapping contains the
+    // "pending" pointer value, it means that the opcode is
+    // eligible for translation but hasn't been translated yet.
+    // If it contains the "emulate" pointer value, it means that
+    // the opcode is ineligible for translation and should always
+    // be emulated.
+    //
+    // These two pointers must have distinct values, because the
+    // emulator uses the pointer value to determine which treatment
+    // (pending or emulate).  Both of them point to native code
+    // consisting simply of a RETN instruction.  If translated native
+    // code jumps to an opcode in either state, the RETN will cause
+    // the native code to return to the emulator, so that the
+    // emulator can emulate or translate the original opcode.
+    //
+    // Note that the mapping pointer for a translated instruction
+    // has neither of these values - it will instead point directly
+    // to the translated native code.  So any opcode whose address
+    // mapping is any other pointer value is in the "translated"
+    // state.  In this case, the emulator will jump to the native
+    // translation to execute the opcode.
+    byte* pPending;
+    byte* pEmulate;
 
-	// Special native opcode address for the "working" state.  This
-	// is only used during translation, to mark an opcode as currently
-	// being translated.
-	byte *pWorking;
+    // Special native opcode address for the "working" state.  This
+    // is only used during translation, to mark an opcode as currently
+    // being translated.
+    byte* pWorking;
 
-	// Address of the emulated address lookup routine for generated
-	// code.  When we initialize the JIT, we generate code that takes
-	// an emulator address in EAX, looks it up in our address map,
-	// and jumps directly to the native code if the address is valid.
-	// If the address doesn't contain native code, we simply return
-	// to the emulator.  To invoke this, load EAX with the native
-	// address and perform a JMP here.
-	byte *pLookup;
+    // Address of the emulated address lookup routine for generated
+    // code.  When we initialize the JIT, we generate code that takes
+    // an emulator address in EAX, looks it up in our address map,
+    // and jumps directly to the native code if the address is valid.
+    // If the address doesn't contain native code, we simply return
+    // to the emulator.  To invoke this, load EAX with the native
+    // address and perform a JMP here.
+    byte* pLookup;
 
-	// Lookup-and-patch.  This must be reached by a CALL rather than
-	// a JMP.  We look up the current native address for the emulated
-	// instruction as in pLookup, but if the address now has native
-	// translated code, we'll patch the caller (thus the need for a
-	// CALL - we need to know where the invocation came from) with
-	// a direct JMP to the new native code.  This lets the caller
-	// bypass the lookup step on future invocations, which speeds
-	// things up a bit.  This is only suitable for static jumps -
-	// dynamic jumps (e.g., subroutine returns or indirect jumps)
-	// must always do a run-time lookup.
-	byte *pLookupPatch;
+    // Lookup-and-patch.  This must be reached by a CALL rather than
+    // a JMP.  We look up the current native address for the emulated
+    // instruction as in pLookup, but if the address now has native
+    // translated code, we'll patch the caller (thus the need for a
+    // CALL - we need to know where the invocation came from) with
+    // a direct JMP to the new native code.  This lets the caller
+    // bypass the lookup step on future invocations, which speeds
+    // things up a bit.  This is only suitable for static jumps -
+    // dynamic jumps (e.g., subroutine returns or indirect jumps)
+    // must always do a run-time lookup.
+    byte* pLookupPatch;
 
-	// Head of native code program memory list allocated by the JIT
-	// for this CPU.  The JIT uses this internally to manage the memory
-	// containing the translated code.
-	struct jit_page *pages;
-	data32_t mem_count;
+    // Head of native code program memory list allocated by the JIT
+    // for this CPU.  The JIT uses this internally to manage the memory
+    // containing the translated code.
+    struct jit_page* pages;
+    data32_t mem_count;
 
-	// Read and write callbacks.  The generated code calls these
-	// functions to access memory.
-	byte *read8;     // data8_t  (*read8)(int addr);
-	byte *read16;    // data16_t (*read16)(int addr);
-	byte *read32;    // data32_t (*read32)(int addr);
-	byte *write8;    // void (*write8)(int addr, data8_t data);
-	byte *write16;   // void (*write16)(int addr, data16_t data);
-	byte *write32;   // void (*write32)(int addr, data32_t data);
+    // Read and write callbacks.  The generated code calls these
+    // functions to access memory.
+    byte* read8;   // data8_t  (*read8)(int addr);
+    byte* read16;  // data16_t (*read16)(int addr);
+    byte* read32;  // data32_t (*read32)(int addr);
+    byte* write8;  // void (*write8)(int addr, data8_t data);
+    byte* write16; // void (*write16)(int addr, data16_t data);
+    byte* write32; // void (*write32)(int addr, data32_t data);
 };
-
 
 /*
  *   Allocate the JIT control structure.  This must be called in the emulated
  *   CPU's xxx_init() machine init routine.
  */
 #define jit_create(cycle_counter) _jit_create(cycle_counter, JIT_RSHIFT)
-struct jit_ctl *_jit_create(int *cycle_counter, int rshift);
+struct jit_ctl* _jit_create(int* cycle_counter, int rshift);
 
 /*
  *   Reset the JIT.  This should be called if the CPU is reset in such a way
@@ -426,14 +424,14 @@ struct jit_ctl *_jit_create(int *cycle_counter, int rshift);
  *   calling this, you must call jit_enable() to re-enable translation at the
  *   appropriate point after the bootstrap loading process has completed.
  */
-void jit_reset(struct jit_ctl *jit);
+void jit_reset(struct jit_ctl* jit);
 
 /* 
  *   Free the JIT control structure and all of its components (including any
  *   translated code).  Call this from the CPU's xxx_exit() routine, to
  *   release all JIT-related memory on shutdown.
  */
-void jit_delete(struct jit_ctl **jit);
+void jit_delete(struct jit_ctl** jit);
 
 /*
  *   Create the JIT address map, covering the given range within the emulated
@@ -445,21 +443,15 @@ void jit_delete(struct jit_ctl **jit);
  *   effectively disables JIT translation initially.  Call jit_enable() to
  *   enable translation.
  */
-void jit_create_map(struct jit_ctl *jit, data32_t minAddr, data32_t maxAddr);
+void jit_create_map(struct jit_ctl* jit, data32_t minAddr, data32_t maxAddr);
 
 /*
  *   Set the memory access callbacks.  The caller must invoke this during
  *   initialization to tell us how to access memory from generated code.
  */
-void jit_set_mem_callbacks(
-	struct jit_ctl *jit,
-	data8_t (*read8)(int addr),
-	data16_t (*read16)(int addr),
-	data32_t (*read32)(int addr),
-	void (*write8)(int addr, data8_t data),
-	void (*write16)(int addr, data16_t data),
-	void (*write32)(int addr, data32_t data));
-
+void jit_set_mem_callbacks(struct jit_ctl* jit, data8_t (*read8)(int addr), data16_t (*read16)(int addr),
+                           data32_t (*read32)(int addr), void (*write8)(int addr, data8_t data),
+                           void (*write16)(int addr, data16_t data), void (*write32)(int addr, data32_t data));
 
 /*
  *   Enable translation.  This changes the state of every instruction in the
@@ -467,7 +459,7 @@ void jit_set_mem_callbacks(
  *   call this when the bootstrap procedure is finished and the final program
  *   is loaded into the machine's program address space.
  */
-void jit_enable(struct jit_ctl *jit);
+void jit_enable(struct jit_ctl* jit);
 
 /*
  *   Un-translate an instruction at the given byte address.  This should be
@@ -482,7 +474,7 @@ void jit_enable(struct jit_ctl *jit);
  *   (It's not necessary to call this during bootstrapping, since translation
  *   is initially disabled for the whole address space.)
  */
-void jit_untranslate(struct jit_ctl *jit, data32_t addr);
+void jit_untranslate(struct jit_ctl* jit, data32_t addr);
 
 /* 
  *   get the native code pointer for a given machine code address (this isn't
@@ -503,13 +495,15 @@ void jit_untranslate(struct jit_ctl *jit, data32_t addr);
  *   current instruction pointer (an address in the emulated CPU address
  *   space).
  */
-#define JIT_FETCH(jit, pc) \
-	if ((pc) >= (jit)->minAddr && (pc) < (jit)->maxAddr) \
-    { \
-		byte *tmp = JIT_NATIVE(jit, pc); \
-		if (tmp == (jit)->pPending) { if (JIT_XLAT_FUNC(JIT_NAME)(jit, pc)) goto jit_go_native; } \
-		else if (tmp != (jit)->pEmulate) goto jit_go_native; \
-	}
+#define JIT_FETCH(jit, pc)                                                                                             \
+    if ((pc) >= (jit)->minAddr && (pc) < (jit)->maxAddr) {                                                             \
+        byte* tmp = JIT_NATIVE(jit, pc);                                                                               \
+        if (tmp == (jit)->pPending) {                                                                                  \
+            if (JIT_XLAT_FUNC(JIT_NAME)(jit, pc))                                                                      \
+                goto jit_go_native;                                                                                    \
+        } else if (tmp != (jit)->pEmulate)                                                                             \
+            goto jit_go_native;                                                                                        \
+    }
 
 /*
  *   JIT_CALL_NATIVE - comments on how to invoke the native code.
@@ -626,13 +620,13 @@ void jit_untranslate(struct jit_ctl *jit, data32_t addr);
 //  // establish.
 // 	data32_t tmp1 = (data32_t)JIT_NATIVE(ARM7.jit, pc);
 // 	data32_t tmp2 = ARM7_ICOUNT;
-// 
+//
 // 	__asm {
 // 		// Allocate space for temporary variables we'll need while transitioning
 //      // between C and assembler (and back).  See the 'IMPORTANT' note below.
 // 		// 1 stack DWORD == 4 bytes.
 // 		SUB ESP, 4;
-// 
+//
 // 		// Save registers that the generated code uses and that the C caller
 // 		// might expect to be preserved across function calls.  To be robust
 //      // across different optimization modes and compiler versions, we will
@@ -644,7 +638,7 @@ void jit_untranslate(struct jit_ctl *jit, data32_t addr);
 // 		PUSH EDX;
 // 		PUSH ESI;
 // 		PUSH EDI;
-// 		
+//
 // 		// Get the native code address, and move the cycle counter into EDI for
 // 		// use in the translated code.  Note that any register update here could
 //      // cause us to lose the C frame pointer and thus lose access to our C
@@ -657,7 +651,7 @@ void jit_untranslate(struct jit_ctl *jit, data32_t addr);
 //      // we can get to after losing the C frame pointer.
 // 		MOV  EAX, tmp1;
 // 		MOV  EDI, tmp2;
-// 		
+//
 // 		// IMPORTANT: don't access any C local variables (tmp1, tmp2, etc) from
 // 		// here until after the POPs below.  At least one VC optimization mode uses
 // 		// EBX as the frame pointer, and it's possible that other modes or other
@@ -667,14 +661,14 @@ void jit_untranslate(struct jit_ctl *jit, data32_t addr);
 // 		// explicitly in stack slots allocated with the 'SUB ESP, n' above, and
 // 		// addressed explicitly in terms of [ESP+n] addresses.  These are safe
 // 		// because we control the stack layout in this section of code.
-// 		
+//
 // 		// call the native code
 // 		CALL EAX;
-// 		
+//
 // 		// save the new cycle counter from EDI into a stack temp (before we restore
 // 		// the pre-call EDI)
 // 		MOV  [ESP+20], EDI;
-// 		
+//
 // 		// restore saved registers - C locals are safe to access again after these
 //      // POPs, because the frame pointer will be restored if it was one of these
 //      // (and will never have been lost if it wasn't)
@@ -683,7 +677,7 @@ void jit_untranslate(struct jit_ctl *jit, data32_t addr);
 // 		POP  EDX;
 // 		POP  ECX;
 // 		POP  EBX;
-// 		
+//
 // 		// move the new PC and cycle count into C locals, so that we can move them
 //      // into their real locations below (those might involve C expressions that
 //      // could modify registers, so we want them in simple C locals first so
@@ -711,9 +705,9 @@ void jit_untranslate(struct jit_ctl *jit, data32_t addr);
  *   If the instruction at 'pc' can't be translated, return false.
  */
 #ifdef JIT_NAME
-# define JIT_XLAT_FUNC_(x) x ## _jit_xlat
-# define JIT_XLAT_FUNC(x) JIT_XLAT_FUNC_(x)
-int JIT_XLAT_FUNC(JIT_NAME)(struct jit_ctl *jit, data32_t pc);
+#define JIT_XLAT_FUNC_(x) x##_jit_xlat
+#define JIT_XLAT_FUNC(x)  JIT_XLAT_FUNC_(x)
+int JIT_XLAT_FUNC(JIT_NAME)(struct jit_ctl* jit, data32_t pc);
 #endif
 
 /*
@@ -723,18 +717,17 @@ int JIT_XLAT_FUNC(JIT_NAME)(struct jit_ctl *jit, data32_t pc);
  *   stored with jit_store_native() will be in contiguous memory.  Returns a
  *   pointer to the reserved memory.
  */
-byte *jit_reserve_native(struct jit_ctl *jit, int len, /*OUT*/ struct jit_page **pgp);
+byte* jit_reserve_native(struct jit_ctl* jit, int len, /*OUT*/ struct jit_page** pgp);
 
 /*
  *   Store a translated block of native code in the JIT executable memory
  *   page.  Returns the address of the stored code.
  */
-byte *jit_store_native(struct jit_ctl *jit, const byte *code, int len);
+byte* jit_store_native(struct jit_ctl* jit, const byte* code, int len);
 
 /* Same as jit_store_native but does not try to find a new location for code. Needed for blocks of code with relative jumps */
 
-void jit_store_native_from_reserved(struct jit_ctl *jit, const byte *code, int len, struct jit_page *pg, byte *dst);
-
+void jit_store_native_from_reserved(struct jit_ctl* jit, const byte* code, int len, struct jit_page* pg, byte* dst);
 
 /*
  *   End a store-native operation.  Each call to jit_reserve_native() should
@@ -743,8 +736,7 @@ void jit_store_native_from_reserved(struct jit_ctl *jit, const byte *code, int l
  *   returned from jit_reserve_native(), and 'len' is the length originally
  *   reserved.
  */
-void jit_close_native(struct jit_ctl *jit, byte *addr, int len);
-
+void jit_close_native(struct jit_ctl* jit, byte* addr, int len);
 
 /*
  *   Native code memory page structure.  This is an internal allocation block
@@ -752,29 +744,32 @@ void jit_close_native(struct jit_ctl *jit, byte *addr, int len);
  *   emulated CPU.
  */
 struct jit_page {
-	// next page in the list for this CPU
-	struct jit_page *nxt;
+    // next page in the list for this CPU
+    struct jit_page* nxt;
 
-	// total amount of space on this page
-	int siz;
+    // total amount of space on this page
+    int siz;
 
-	// offset of next free byte
-	int ofsFree;
+    // offset of next free byte
+    int ofsFree;
 
-	// native code (allocated as a separate block via VirtualAlloc())
-	byte *b;
+    // native code (allocated as a separate block via VirtualAlloc())
+    byte* b;
 };
 
 #else /* JIT_ENABLED */
 
-struct jit_ctl { int foo; };
+struct jit_ctl {
+    int foo;
+};
+
 #define jit_create(icnt) 0
 #define jit_create_map(jit, minAddr, maxAddr)
 #define jit_set_mem_callbacks(jit, r8, r16, r32, w8, w16, w32)
 #define jit_enable(jit)
 #define jit_reset(jit)
 #define jit_delete(jitp)
-#define JIT_FETCH(jit,pc)
+#define JIT_FETCH(jit, pc)
 
 #endif /* JIT_ENABLED */
 

@@ -15,15 +15,12 @@
 #include "driver.h"
 #include "tms5220.h"
 
-
 /* the state of the streamed output */
 static int stream;
 static double baseclock;
 
 /* static function prototypes */
-static void tms5220_update(int ch, INT16 *buffer, int samples);
-
-
+static void tms5220_update(int ch, INT16* buffer, int samples);
 
 /**********************************************************************************************
 
@@ -31,9 +28,9 @@ static void tms5220_update(int ch, INT16 *buffer, int samples);
 
 ***********************************************************************************************/
 
-int tms5220_sh_start(const struct MachineSound *msound)
-{
-    const struct TMS5220interface *intf = msound->sound_interface;
+int
+tms5220_sh_start(const struct MachineSound* msound) {
+    const struct TMS5220interface* intf = msound->sound_interface;
 
     /* reset the 5220 */
     tms5220_reset();
@@ -46,16 +43,14 @@ int tms5220_sh_start(const struct MachineSound *msound)
 
     baseclock = intf->baseclock;
 
-	/* initialize a stream */
-	stream = stream_init("TMS5220", intf->mixing_level, intf->baseclock/80., 0, tms5220_update);
-	if (stream == -1)
-		return 1;
+    /* initialize a stream */
+    stream = stream_init("TMS5220", intf->mixing_level, intf->baseclock / 80., 0, tms5220_update);
+    if (stream == -1)
+        return 1;
 
     /* request a sound channel */
     return 0;
 }
-
-
 
 /**********************************************************************************************
 
@@ -63,11 +58,8 @@ int tms5220_sh_start(const struct MachineSound *msound)
 
 ***********************************************************************************************/
 
-void tms5220_sh_stop(void)
-{
-}
-
-
+void
+tms5220_sh_stop(void) {}
 
 /**********************************************************************************************
 
@@ -75,11 +67,8 @@ void tms5220_sh_stop(void)
 
 ***********************************************************************************************/
 
-void tms5220_sh_update(void)
-{
-}
-
-
+void
+tms5220_sh_update(void) {}
 
 /**********************************************************************************************
 
@@ -87,14 +76,11 @@ void tms5220_sh_update(void)
 
 ***********************************************************************************************/
 
-WRITE_HANDLER( tms5220_data_w )
-{
+WRITE_HANDLER(tms5220_data_w) {
     /* bring up to date first */
     stream_update(stream, 0);
     tms5220_data_write(data);
 }
-
-
 
 /**********************************************************************************************
 
@@ -102,14 +88,11 @@ WRITE_HANDLER( tms5220_data_w )
 
 ***********************************************************************************************/
 
-READ_HANDLER( tms5220_status_r )
-{
+READ_HANDLER(tms5220_status_r) {
     /* bring up to date first */
     stream_update(stream, 0);
     return tms5220_status_read();
 }
-
-
 
 /**********************************************************************************************
 
@@ -117,14 +100,12 @@ READ_HANDLER( tms5220_status_r )
 
 ***********************************************************************************************/
 
-int tms5220_ready_r(void)
-{
+int
+tms5220_ready_r(void) {
     /* bring up to date first */
     stream_update(stream, 0);
     return tms5220_ready_read();
 }
-
-
 
 /**********************************************************************************************
 
@@ -132,17 +113,15 @@ int tms5220_ready_r(void)
 
 ***********************************************************************************************/
 
-double tms5220_time_to_ready(void)
-{
-	double cycles;
+double
+tms5220_time_to_ready(void) {
+    double cycles;
 
-	/* bring up to date first */
-	stream_update(stream, 0);
-	cycles = tms5220_cycles_to_ready();
-	return cycles * 80.0 / baseclock;
+    /* bring up to date first */
+    stream_update(stream, 0);
+    cycles = tms5220_cycles_to_ready();
+    return cycles * 80.0 / baseclock;
 }
-
-
 
 /**********************************************************************************************
 
@@ -150,14 +129,12 @@ double tms5220_time_to_ready(void)
 
 ***********************************************************************************************/
 
-int tms5220_int_r(void)
-{
+int
+tms5220_int_r(void) {
     /* bring up to date first */
     stream_update(stream, 0);
     return tms5220_int_read();
 }
-
-
 
 /**********************************************************************************************
 
@@ -165,9 +142,9 @@ int tms5220_int_r(void)
 
 ***********************************************************************************************/
 
-static void tms5220_update(int ch, INT16 *buffer, int samples)
-{
-	tms5220_process(buffer, samples);
+static void
+tms5220_update(int ch, INT16* buffer, int samples) {
+    tms5220_process(buffer, samples);
 }
 
 /**********************************************************************************************
@@ -176,21 +153,20 @@ static void tms5220_update(int ch, INT16 *buffer, int samples)
 
 ***********************************************************************************************/
 
-void tms5220_set_frequency(double frequency)
-{
-	baseclock = frequency;
+void
+tms5220_set_frequency(double frequency) {
+    baseclock = frequency;
 
-	if (stream != -1)
-	{
-		//stream_update(stream, 0); //!! not necessary as clock change only done once on startup, also leads to garbled sound for whatever reason
-		stream_set_sample_rate(stream, frequency/80.);
-	}
+    if (stream != -1) {
+        //stream_update(stream, 0); //!! not necessary as clock change only done once on startup, also leads to garbled sound for whatever reason
+        stream_set_sample_rate(stream, frequency / 80.);
+    }
 }
 
 #ifdef PINMAME
-void tms5220_set_reverb_filter(float delay, float force)
-{
-	//stream_update(stream, 0); //!!?
-	mixer_set_reverb_filter(stream, delay, force);
+void
+tms5220_set_reverb_filter(float delay, float force) {
+    //stream_update(stream, 0); //!!?
+    mixer_set_reverb_filter(stream, delay, force);
 }
 #endif

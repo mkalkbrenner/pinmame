@@ -1,5 +1,5 @@
 #ifndef _GLCAPS_H
-	/**
+/**
 	 * glcaps.h
 	 *
 	 * Copyright (C) 2001  Sven Goethel
@@ -11,47 +11,47 @@
 	 * General dynamical loading OpenGL (GL/GLU) support for:
 	 */
 
-	#define _GLCAPS_H
+#define _GLCAPS_H
 
-	#ifndef LIBAPIENTRY
-                #define LIBAPIENTRY
-        #endif
-        #ifndef LIBAPI
-                #define LIBAPI
-        #endif
+#ifndef LIBAPIENTRY
+#define LIBAPIENTRY
+#endif
+#ifndef LIBAPI
+#define LIBAPI
+#endif
 
-	#define BUFFER_SINGLE 0
-	#define BUFFER_DOUBLE 1
-	 
-	#define COLOR_INDEX 0
-	#define COLOR_RGBA  1
-	 
-	#define STEREO_OFF 0
-	#define STEREO_ON  1
+#define BUFFER_SINGLE 0
+#define BUFFER_DOUBLE 1
 
-	typedef struct {
-	  int buffer;
-	  int color;
-	  int stereo;
-	  int depthBits;
-	  int stencilBits;
+#define COLOR_INDEX   0
+#define COLOR_RGBA    1
 
-	  int redBits;
-	  int greenBits;
-	  int blueBits;
-	  int alphaBits;
-	  int accumRedBits;
-	  int accumGreenBits;
-	  int accumBlueBits;
-	  int accumAlphaBits;
+#define STEREO_OFF    0
+#define STEREO_ON     1
 
-	  /* internal use only */
-	  int  gl_supported;
-	  long nativeVisualID;
-	} GLCapabilities;
+typedef struct {
+    int buffer;
+    int color;
+    int stereo;
+    int depthBits;
+    int stencilBits;
 
-	/**
+    int redBits;
+    int greenBits;
+    int blueBits;
+    int alphaBits;
+    int accumRedBits;
+    int accumGreenBits;
+    int accumBlueBits;
+    int accumAlphaBits;
+
+    /* internal use only */
+    int gl_supported;
+    long nativeVisualID;
+} GLCapabilities;
+
+/**
 	 * prints the contents of the GLCapabilities to stdout !
 	 */
-	LIBAPI void LIBAPIENTRY printGLCapabilities ( GLCapabilities *glCaps );
+LIBAPI void LIBAPIENTRY printGLCapabilities(GLCapabilities* glCaps);
 #endif

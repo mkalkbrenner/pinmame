@@ -77,7 +77,6 @@
  trouble!
 *********************************************************************************************************/
 
-
 /*-------------------------------------------------------------------------------------------------
   Keys for Funhouse Simulator:
   ----------------------------
@@ -101,21 +100,21 @@
      Y  Jet Bumper Lane
 -------------------------------------------------------------------------------------------------*/
 
-#include "driver.h"
 #include "core.h"
-#include "wpc.h"
+#include "driver.h"
 #include "sim.h"
 #include "wmssnd.h"
+#include "wpc.h"
 #include "wpcsam.h"
 
 /*------------------
 /  Local functions
 /-------------------*/
 /*-- local state/ball handling functions --*/
-static int  fh_handleBallState(sim_tBallStatus *ball, int *inports);
+static int fh_handleBallState(sim_tBallStatus* ball, int* inports);
 static void fh_handleMech(int mech);
-static void fh_drawMech(BMTYPE **line);
-static void fh_drawStatic(BMTYPE **line);
+static void fh_drawMech(BMTYPE** line);
+static void fh_drawStatic(BMTYPE** line);
 static void init_fh(void);
 static const char* showeyepos(void);
 
@@ -126,13 +125,13 @@ static const char* showeyepos(void);
    which needed to be displayed on screen
 --------------------------------------------------------------------------------------------------*/
 static struct {
-  int stepgatePos;    /* Steps Gate Position */
-  int trapdoorPos;    /* Trap Door Position  */
-  int rudymouthPos;   /* Rudy's Mouth Position */
-  int rudyeyesOC;     /* Rudy's Eyes Open or Closed? */
-  int rudyeyesLR;     /* Rudy's Eyes Left or Right?  */
-  int diverterPos;    /* Position of Diverter Open or Closed? */
-  int divertercount;  /* Count # of times diverter solenoid is inactive*/
+    int stepgatePos;   /* Steps Gate Position */
+    int trapdoorPos;   /* Trap Door Position  */
+    int rudymouthPos;  /* Rudy's Mouth Position */
+    int rudyeyesOC;    /* Rudy's Eyes Open or Closed? */
+    int rudyeyesLR;    /* Rudy's Eyes Left or Right?  */
+    int diverterPos;   /* Position of Diverter Open or Closed? */
+    int divertercount; /* Count # of times diverter solenoid is inactive*/
 } locals;
 
 /*--------------------------
@@ -140,135 +139,127 @@ static struct {
 /---------------------------
    Here we define for PINMAME which Keyboard Presses it should look for, and process!
 --------------------------------------------------------------------------------------------------*/
-WPC_INPUT_PORTS_START(fh,3)
-  PORT_START /* 0 */
-    COREPORT_BIT(   0x0001,"Left Qualifier",  KEYCODE_LCONTROL)
-    COREPORT_BIT(   0x0002,"Right Qualifier", KEYCODE_RCONTROL)
-    COREPORT_BITIMP(0x0004,"L/R Ramp",        KEYCODE_R)
-    COREPORT_BITIMP(0x0008,"L/R Outlane",     KEYCODE_O)
-    COREPORT_BITIMP(0x0010,"L/R Loop",        KEYCODE_L)
-    COREPORT_BIT(   0x0040,"L/R Slingshot",   KEYCODE_MINUS)
-    COREPORT_BIT(   0x0080,"L/R Inlane",      KEYCODE_I)
-    COREPORT_BITIMP(0x0100,"Wind Tunnel",     KEYCODE_W)
-    COREPORT_BITIMP(0x0200,"Rudy Hit",        KEYCODE_F)
-    COREPORT_BITIMP(0x0400,"Trap Door Loop",  KEYCODE_T)
-    COREPORT_BITIMP(0x0800,"Steps Drop Hole", KEYCODE_E)
-    COREPORT_BIT(   0x1000,"Hidden Hall Way", KEYCODE_U)
-    COREPORT_BIT(   0x2000,"Jet 1",      KEYCODE_H)
-    COREPORT_BITIMP(0x4000,"Jet 2",           KEYCODE_J)
-    COREPORT_BIT(   0x8000,"Jet 3",           KEYCODE_K)
-  PORT_START /* 1 */
-    COREPORT_BIT(   0x0001,"'S'TEP",          KEYCODE_X)
-    COREPORT_BIT(   0x0002,"S'T'EP",          KEYCODE_C)
-    COREPORT_BIT(   0x0004,"ST'E'P",          KEYCODE_V)
-    COREPORT_BIT(   0x0008,"STE'P'",          KEYCODE_B)
-    COREPORT_BIT(   0x0010,"Hot Dog Upper",   KEYCODE_A)
-    COREPORT_BIT(   0x0020,"Hot Dog Middle",  KEYCODE_S)
-    COREPORT_BIT(   0x0040,"Hot Dog Lower",   KEYCODE_D)
-    COREPORT_BIT(   0x0100,"Award Frenzy",    KEYCODE_N)
-    COREPORT_BIT(   0x0200,"Award EB",        KEYCODE_M)
-    COREPORT_BIT(   0x0400,"Award 500,000",   KEYCODE_COMMA)
-    COREPORT_BIT(   0x0800,"Award Super Dog", KEYCODE_STOP)
-    COREPORT_BIT(   0x1000,"Rudy's Hideout",  KEYCODE_Z)
-    COREPORT_BITIMP(0x2000,"Drain",           KEYCODE_Q)
-    COREPORT_BIT(   0x4000,"Right Inlane Outer", KEYCODE_G)
-    COREPORT_BIT(   0x8000,"Jet Bumper Lane", KEYCODE_Y)
-WPC_INPUT_PORTS_END
+WPC_INPUT_PORTS_START(fh, 3)
+
+PORT_START /* 0 */
+    COREPORT_BIT(0x0001, "Left Qualifier", KEYCODE_LCONTROL) COREPORT_BIT(0x0002, "Right Qualifier", KEYCODE_RCONTROL)
+        COREPORT_BITIMP(0x0004, "L/R Ramp", KEYCODE_R) COREPORT_BITIMP(0x0008, "L/R Outlane", KEYCODE_O)
+            COREPORT_BITIMP(0x0010, "L/R Loop", KEYCODE_L) COREPORT_BIT(0x0040, "L/R Slingshot", KEYCODE_MINUS)
+                COREPORT_BIT(0x0080, "L/R Inlane", KEYCODE_I) COREPORT_BITIMP(0x0100, "Wind Tunnel", KEYCODE_W)
+                    COREPORT_BITIMP(0x0200, "Rudy Hit", KEYCODE_F) COREPORT_BITIMP(0x0400, "Trap Door Loop", KEYCODE_T)
+                        COREPORT_BITIMP(0x0800, "Steps Drop Hole", KEYCODE_E)
+                            COREPORT_BIT(0x1000, "Hidden Hall Way", KEYCODE_U) COREPORT_BIT(0x2000, "Jet 1", KEYCODE_H)
+                                COREPORT_BITIMP(0x4000, "Jet 2", KEYCODE_J)
+                                    COREPORT_BIT(0x8000, "Jet 3", KEYCODE_K) PORT_START /* 1 */
+    COREPORT_BIT(0x0001, "'S'TEP", KEYCODE_X) COREPORT_BIT(0x0002, "S'T'EP", KEYCODE_C)
+        COREPORT_BIT(0x0004, "ST'E'P", KEYCODE_V) COREPORT_BIT(0x0008, "STE'P'", KEYCODE_B)
+            COREPORT_BIT(0x0010, "Hot Dog Upper", KEYCODE_A) COREPORT_BIT(0x0020, "Hot Dog Middle", KEYCODE_S)
+                COREPORT_BIT(0x0040, "Hot Dog Lower", KEYCODE_D) COREPORT_BIT(0x0100, "Award Frenzy", KEYCODE_N)
+                    COREPORT_BIT(0x0200, "Award EB", KEYCODE_M) COREPORT_BIT(0x0400, "Award 500,000", KEYCODE_COMMA)
+                        COREPORT_BIT(0x0800, "Award Super Dog", KEYCODE_STOP)
+                            COREPORT_BIT(0x1000, "Rudy's Hideout", KEYCODE_Z)
+                                COREPORT_BITIMP(0x2000, "Drain", KEYCODE_Q)
+                                    COREPORT_BIT(0x4000, "Right Inlane Outer", KEYCODE_G)
+                                        COREPORT_BIT(0x8000, "Jet Bumper Lane", KEYCODE_Y) WPC_INPUT_PORTS_END
 
 /*-------------------
 / Switch definitions
 /--------------------*/
 #define swStart       13
 #define swTilt        14
-#define swAwardFrenzy   15
-#define swMRamp   16
-#define swStepS   17
-#define swJet1    18
+#define swAwardFrenzy 15
+#define swMRamp       16
+#define swStepS       17
+#define swJet1        18
 
 #define swSlamTilt    21
 #define swCoinDoor    22
 #define swTicket      23
-#define swNotUsed 24
-#define swLockR   25
-#define swAwardEB 26
-#define swLockC   27
-#define swLockL   28
+#define swNotUsed     24
+#define swLockR       25
+#define swAwardEB     26
+#define swLockC       27
+#define swLockL       28
 
-#define swStepP   31
-#define swHotDogU 32
-#define swGangWayL  33
-#define swHotDogL 34
-#define swURampExit 35
-#define swAwardPTS  36
-#define swHotDogM 37
-#define swURampEnt  38
+#define swStepP       31
+#define swHotDogU     32
+#define swGangWayL    33
+#define swHotDogL     34
+#define swURampExit   35
+#define swAwardPTS    36
+#define swHotDogM     37
+#define swURampEnt    38
 
 #define swLSling      41
-#define swLIn   42
-#define swLOut    43
+#define swLIn         42
+#define swLOut        43
 #define swWindTunnel  44
 #define swTrapOpen    45
 #define swRudyHideout 46
 #define swLShooter    47
-#define swMRampExit 48
+#define swMRampExit   48
 
-#define swRudyJaw 51  /*Opto*/
-#define swROut    52
+#define swRudyJaw     51 /*Opto*/
+#define swROut        52
 #define swRSling      53
-#define swStepT   54
-#define swAwardDog  55  /*Opto*/
-#define swMRampEnt  56
-#define swJetLane 57
+#define swStepT       54
+#define swAwardDog    55 /*Opto*/
+#define swMRampEnt    56
+#define swJetLane     57
 #define swDropKickout 58
 
-#define swRIn   61
-#define swRShooter      62
+#define swRIn         61
+#define swRShooter    62
 #define swRTrough     63
-#define swStepE   64
+#define swStepE       64
 #define swDummyEject  65
-#define swGangWayR  66
-#define swDropHole  67
+#define swGangWayR    66
+#define swDropHole    67
 #define swJet3        68
 
-#define swRIn2    71
+#define swRIn2        71
 #define swLTrough     72
 #define swOuthole     73
 #define swCTrough     74
-#define swTrapLoop  75
+#define swTrapLoop    75
 #define swTrapClosed  76
 #define swJet2        77
-
 
 /*---------------------
 / Solenoid definitions
 /----------------------*/
-#define sOuthole        1
-#define sRampDiv        2
-#define sRudyHideout    3
+#define sOuthole      1
+#define sRampDiv      2
+#define sRudyHideout  3
 #define sDropKickout  4
-#define sTrapOpen 5
-#define sTrapClosed 6
-#define sKnocker        7
-#define sLockRelease    8
-#define sJet1           9
+#define sTrapOpen     5
+#define sTrapClosed   6
+#define sKnocker      7
+#define sLockRelease  8
+#define sJet1         9
 #define sJet2         10
 #define sJet3         11
 #define sLSling       12
 #define sRSling       13
-#define sStepGate 14
-#define sBallRel  15
-#define sDummyEject     16
+#define sStepGate     14
+#define sBallRel      15
+#define sDummyEject   16
 
-#define sMouthMotor     21
-#define sUpDownDriver   22
+#define sMouthMotor   21
+#define sUpDownDriver 22
 
-#define sEyesRight      25
-#define sEyesOpen       26
-#define sEyesClosed     27
+#define sEyesRight    25
+#define sEyesOpen     26
+#define sEyesClosed   27
 #define sEyesLeft     28
 
-/*Status of Eyes*/
-enum {EYES_ST=0,EYES_LEFT,EYES_RIGHT,EYES_CLOSED};
+    /*Status of Eyes*/
+    enum {
+        EYES_ST = 0,
+        EYES_LEFT,
+        EYES_RIGHT,
+        EYES_CLOSED
+    };
 #define OPEN   0
 #define CLOSED 1
 
@@ -280,16 +271,59 @@ enum {EYES_ST=0,EYES_LEFT,EYES_RIGHT,EYES_CLOSED};
    The following variables are used to refer to the state array!
    These vars *must* be in the *exact* *same* *order* as each stateDef array entry!
    -----------------------------------------------------------------------------------------*/
-enum {stRTrough=SIM_FIRSTSTATE, stCTrough, stLTrough, stOuthole, stDrain,
-      stRShooter, stRBallLane, stRNotEnough, stROut, stLOut, stRIn, stRIn2, stLIn,
-      stLLoopUp, stLLoopDn, stRLoopUp, stRLoopDn,
-      stMRampEnt, stMRamp, stMRampExit, stRampDiv, stURampEnt, stURampExit,
-      stLShooter, stLBallLane, stLNotEnough, stAwardFrenzy, stAwardEB, stAwardPTS, stAwardDog,
-      stRudyHideout, stRudyHideout2, stWindTunnel,
-      stDropHole, stDropKickout, stHiddenHallway, stLockL, stLockC, stLockR,
-      stRudyHit, stTrapDoorLoop, stUpperLoop, stBallInTrap, stRudyGulp, stLOut2, stRudyJaw,
-      stRudyJaw1, stJetLane, stJet1, stJet2, stJet3
-      };
+enum {
+    stRTrough = SIM_FIRSTSTATE,
+    stCTrough,
+    stLTrough,
+    stOuthole,
+    stDrain,
+    stRShooter,
+    stRBallLane,
+    stRNotEnough,
+    stROut,
+    stLOut,
+    stRIn,
+    stRIn2,
+    stLIn,
+    stLLoopUp,
+    stLLoopDn,
+    stRLoopUp,
+    stRLoopDn,
+    stMRampEnt,
+    stMRamp,
+    stMRampExit,
+    stRampDiv,
+    stURampEnt,
+    stURampExit,
+    stLShooter,
+    stLBallLane,
+    stLNotEnough,
+    stAwardFrenzy,
+    stAwardEB,
+    stAwardPTS,
+    stAwardDog,
+    stRudyHideout,
+    stRudyHideout2,
+    stWindTunnel,
+    stDropHole,
+    stDropKickout,
+    stHiddenHallway,
+    stLockL,
+    stLockC,
+    stLockR,
+    stRudyHit,
+    stTrapDoorLoop,
+    stUpperLoop,
+    stBallInTrap,
+    stRudyGulp,
+    stLOut2,
+    stRudyJaw,
+    stRudyJaw1,
+    stJetLane,
+    stJet1,
+    stJet2,
+    stJet3
+};
 
 /********************************************************************************************************
    The following is a list of all possible game states.....
@@ -318,142 +352,139 @@ enum {stRTrough=SIM_FIRSTSTATE, stCTrough, stLTrough, stOuthole, stDrain,
   STSPINNER        Switch is a spinner
 *******************************************************************************************************/
 static sim_tState fh_stateDef[] = {
-  {"Not Installed",    0,0,           0,        stDrain,     0,0,0,SIM_STNOTEXCL},
-  {"Moving"},
-  {"Playfield",               0,0,           0,        0,           0,0,0,SIM_STNOTEXCL},
+    {"Not Installed", 0, 0, 0, stDrain, 0, 0, 0, SIM_STNOTEXCL},
+    {"Moving"},
+    {"Playfield", 0, 0, 0, 0, 0, 0, 0, SIM_STNOTEXCL},
 
-  {"Right Trough",     1,swRTrough,   sBallRel, stRShooter,  5},
-  {"Center Trough",    1,swCTrough,   0,        stRTrough,   1},
-  {"Left Trough",      1,swLTrough,   0,        stCTrough,   1},
-  {"Outhole",          1,swOuthole,   sOuthole, stLTrough,   5},
-  {"Drain",            1,0,           0,        stOuthole,   0,0,0,SIM_STNOTEXCL},
+    {"Right Trough", 1, swRTrough, sBallRel, stRShooter, 5},
+    {"Center Trough", 1, swCTrough, 0, stRTrough, 1},
+    {"Left Trough", 1, swLTrough, 0, stCTrough, 1},
+    {"Outhole", 1, swOuthole, sOuthole, stLTrough, 5},
+    {"Drain", 1, 0, 0, stOuthole, 0, 0, 0, SIM_STNOTEXCL},
 
-  {"R. Shooter",       1,swRShooter,   sShooterRel, stRBallLane, 10,0,0,SIM_STNOTEXCL|SIM_STSHOOT},
-  {"R. Ball Lane",     1, 0,           0,       0,             0,0,0,SIM_STNOTEXCL},
-  {"Not Enough",       1,swRShooter,   0,        stRShooter, 3},
+    {"R. Shooter", 1, swRShooter, sShooterRel, stRBallLane, 10, 0, 0, SIM_STNOTEXCL | SIM_STSHOOT},
+    {"R. Ball Lane", 1, 0, 0, 0, 0, 0, 0, SIM_STNOTEXCL},
+    {"Not Enough", 1, swRShooter, 0, stRShooter, 3},
 
-  {"Right Outlane",    1,swROut,       0,        stDrain,   20},
-  {"Left Outlane",     1,swLOut,       0,        stLOut2,   20},
+    {"Right Outlane", 1, swROut, 0, stDrain, 20},
+    {"Left Outlane", 1, swLOut, 0, stLOut2, 20},
 
-  {"Right Inlane",     1,swRIn,       0,        stFree,      5},
-  {"Right Inlane (Outer)",     1,swRIn2,       0,        stFree,      5},
-  {"Left  Inlane",     1,swLIn,       0,       stFree,      5},
+    {"Right Inlane", 1, swRIn, 0, stFree, 5},
+    {"Right Inlane (Outer)", 1, swRIn2, 0, stFree, 5},
+    {"Left  Inlane", 1, swLIn, 0, stFree, 5},
 
-  {"Left Loop",        1,swGangWayL,    0,        stRLoopDn,  10},
-  {"Left Loop",        1,swGangWayL,    0,        stFree,      1},
+    {"Left Loop", 1, swGangWayL, 0, stRLoopDn, 10},
+    {"Left Loop", 1, swGangWayL, 0, stFree, 1},
 
-  {"Right Loop",       1,swGangWayR,     0,       stLLoopDn,  10},
-  {"Right Loop",       1,swGangWayR,     0,       stFree,      1},
+    {"Right Loop", 1, swGangWayR, 0, stLLoopDn, 10},
+    {"Right Loop", 1, swGangWayR, 0, stFree, 1},
 
-  {"Main Ramp Enter",  1,swMRampEnt,   0,       stMRamp,     2},
-  {"Main Ramp"      ,  1,swMRamp,      0,       stRampDiv,   5},
-  {"Main Ramp Exit",   1,swMRampExit,  0,       stLIn,       3},
-  {"Ramp Diverter",    1,0,            0,       stMRampExit, 2, sRampDiv, stURampEnt},
+    {"Main Ramp Enter", 1, swMRampEnt, 0, stMRamp, 2},
+    {"Main Ramp", 1, swMRamp, 0, stRampDiv, 5},
+    {"Main Ramp Exit", 1, swMRampExit, 0, stLIn, 3},
+    {"Ramp Diverter", 1, 0, 0, stMRampExit, 2, sRampDiv, stURampEnt},
 
-  {"Steps Track Enter",  1,swURampEnt,   0,     stURampExit, 5},
-  {"Steps Track Exit" ,  1,swURampExit,  0,     stLOut,      2},
+    {"Steps Track Enter", 1, swURampEnt, 0, stURampExit, 5},
+    {"Steps Track Exit", 1, swURampExit, 0, stLOut, 2},
 
-  {"L. Shooter",       1,swLShooter,   sShooterRel, stLBallLane, 5,0,0,SIM_STNOTEXCL|SIM_STSHOOT},
-  {"L. Ball Lane"  ,   1, 0,           0,       0,             0,0,0,SIM_STNOTEXCL},
-  {"Not Enough",       1,swLShooter,   0,        stLShooter, 2},
-  {"Award Frenzy",     1,swAwardFrenzy, 0,       stFree, 1},
-  {"Award Ex.Ball",    1,swAwardEB,     0,       stFree, 3},
-  {"Award 500,000",    1,swAwardPTS,    0,       stFree, 6},
-  {"Award SuperDog",   1,swAwardDog,    0,       stFree, 8},
+    {"L. Shooter", 1, swLShooter, sShooterRel, stLBallLane, 5, 0, 0, SIM_STNOTEXCL | SIM_STSHOOT},
+    {"L. Ball Lane", 1, 0, 0, 0, 0, 0, 0, SIM_STNOTEXCL},
+    {"Not Enough", 1, swLShooter, 0, stLShooter, 2},
+    {"Award Frenzy", 1, swAwardFrenzy, 0, stFree, 1},
+    {"Award Ex.Ball", 1, swAwardEB, 0, stFree, 3},
+    {"Award 500,000", 1, swAwardPTS, 0, stFree, 6},
+    {"Award SuperDog", 1, swAwardDog, 0, stFree, 8},
 
-  {"Rudy's Hideout",   1,swGangWayR, 0, stRudyHideout2, 5},
-  {"Rudy's Hideout",   1,swRudyHideout, sRudyHideout, stLLoopDn, 1},
+    {"Rudy's Hideout", 1, swGangWayR, 0, stRudyHideout2, 5},
+    {"Rudy's Hideout", 1, swRudyHideout, sRudyHideout, stLLoopDn, 1},
 
-  {"Wind Tunnel",      1,swWindTunnel,  0,       stDropKickout, 25},
-  {"Drop Hole",        1,swDropHole,    0,       stDropKickout, 5},
-  {"Drop Kickout",     1,swDropKickout, sDropKickout,   stFree, 5},
+    {"Wind Tunnel", 1, swWindTunnel, 0, stDropKickout, 25},
+    {"Drop Hole", 1, swDropHole, 0, stDropKickout, 5},
+    {"Drop Kickout", 1, swDropKickout, sDropKickout, stFree, 5},
 
-  {"Hidden HallWay",   1,0,    0,       stLockR, 10},
-  {"Left Lock",        1,swLockL,    sLockRelease,       stFree, 5},
-  {"Center Lock",      1,swLockC,    0,            stLockL, 1},
-  {"Right Lock",       1,swLockR,    0,            stLockC, 1},
+    {"Hidden HallWay", 1, 0, 0, stLockR, 10},
+    {"Left Lock", 1, swLockL, sLockRelease, stFree, 5},
+    {"Center Lock", 1, swLockC, 0, stLockL, 1},
+    {"Right Lock", 1, swLockR, 0, stLockC, 1},
 
-  {"Rudy Hit",         1,0, 0,  0, 1},
-  {"Upper Loop",       1,0,    0,       0, 0},
-  {"Upper Loop Made", 1,swTrapLoop, 0, stFree, 5},
-  {"Ball in Trap Door", 1,swTrapOpen, 0, stDropKickout, 25},
-  {"Rudy's Mouth",      1,swDummyEject, sDummyEject, stFree, 5},
-  {"Left Outlane",  1,0,0,0,0},
-  {"Rudy Jaw",    1,swRudyJaw,0,stFree,5},
-  {"Rudy Jaw",    1,swRudyJaw,0,stRudyGulp,5},
-  {"Jet Bumper Lane",   1,swJetLane,0,stRIn2,5},
-  {"Jet Bumper 1",        1,swJet1, 0, stJet2, 5},
-  {"Jet Bumper 2",        1,swJet2, 0, stJet3, 5},
-  {"Jet Bumper 3",        1,swJet3, 0, stFree, 5},
-  {0}
-};
+    {"Rudy Hit", 1, 0, 0, 0, 1},
+    {"Upper Loop", 1, 0, 0, 0, 0},
+    {"Upper Loop Made", 1, swTrapLoop, 0, stFree, 5},
+    {"Ball in Trap Door", 1, swTrapOpen, 0, stDropKickout, 25},
+    {"Rudy's Mouth", 1, swDummyEject, sDummyEject, stFree, 5},
+    {"Left Outlane", 1, 0, 0, 0, 0},
+    {"Rudy Jaw", 1, swRudyJaw, 0, stFree, 5},
+    {"Rudy Jaw", 1, swRudyJaw, 0, stRudyGulp, 5},
+    {"Jet Bumper Lane", 1, swJetLane, 0, stRIn2, 5},
+    {"Jet Bumper 1", 1, swJet1, 0, stJet2, 5},
+    {"Jet Bumper 2", 1, swJet2, 0, stJet3, 5},
+    {"Jet Bumper 3", 1, swJet3, 0, stFree, 5},
+    {0}};
 
-static int fh_handleBallState(sim_tBallStatus *ball, int *inports) {
-  switch (ball->state)
-  {
+static int
+fh_handleBallState(sim_tBallStatus* ball, int* inports) {
+    switch (ball->state) {
 
-  /* Ball in RIGHT Shooter Lane */
-  /* Note: Sim supports max of 50 speed for manual plunger */
-  case stRBallLane:
-    if (ball->speed < 20)
-      return setState(stRNotEnough,3);  /*Ball not plunged hard enough*/
-    if (ball->speed < 25)
-      return setState(stJetLane,10);    /*Ball rolled down Jet Lane*/
-    if (ball->speed < 30)
-      return setState(stDropHole,20);   /*Ball landed in Drop Hole*/
-    if (ball->speed < 35)
-      return setState(stJet1,20);       /*Ball Hit Bumper!*/
-    if (ball->speed < 40)
-      return setState(stRudyHideout,35);  /*Skill Shot - Landed in Rudy Hideout*/
-    else
-      return setState(stRLoopUp,30);    /*Shot missed hideout, but triggered Right Loop!*/
-  break;
+        /* Ball in RIGHT Shooter Lane */
+        /* Note: Sim supports max of 50 speed for manual plunger */
+        case stRBallLane:
+            if (ball->speed < 20)
+                return setState(stRNotEnough, 3); /*Ball not plunged hard enough*/
+            if (ball->speed < 25)
+                return setState(stJetLane, 10); /*Ball rolled down Jet Lane*/
+            if (ball->speed < 30)
+                return setState(stDropHole, 20); /*Ball landed in Drop Hole*/
+            if (ball->speed < 35)
+                return setState(stJet1, 20); /*Ball Hit Bumper!*/
+            if (ball->speed < 40)
+                return setState(stRudyHideout, 35); /*Skill Shot - Landed in Rudy Hideout*/
+            else
+                return setState(stRLoopUp, 30); /*Shot missed hideout, but triggered Right Loop!*/
+            break;
 
-  /* Ball in LEFT Shooter Lane */
-  /* Note: Sim supports max of 50 speed for manual plunger */
-  case stLBallLane:
-    if (ball->speed < 25)
-      return setState(stLNotEnough,3);  /*Ball not plunged hard enough*/
-    if (ball->speed < 30)
-      return setState(stAwardFrenzy,15);  /*Ball landed in Steps Award Frenzy*/
-    if (ball->speed < 35)
-      return setState(stAwardEB,20);    /*Ball landed in Steps Award Extra Ball*/
-    if (ball->speed < 40)
-      return setState(stAwardPTS,25);   /*Ball landed in Steps Award Points*/
-    else
-      return setState(stAwardDog,30);   /*Shot Awards Super Dog*/
-  break;
+        /* Ball in LEFT Shooter Lane */
+        /* Note: Sim supports max of 50 speed for manual plunger */
+        case stLBallLane:
+            if (ball->speed < 25)
+                return setState(stLNotEnough, 3); /*Ball not plunged hard enough*/
+            if (ball->speed < 30)
+                return setState(stAwardFrenzy, 15); /*Ball landed in Steps Award Frenzy*/
+            if (ball->speed < 35)
+                return setState(stAwardEB, 20); /*Ball landed in Steps Award Extra Ball*/
+            if (ball->speed < 40)
+                return setState(stAwardPTS, 25); /*Ball landed in Steps Award Points*/
+            else
+                return setState(stAwardDog, 30); /*Shot Awards Super Dog*/
+            break;
 
-  /* Rudy Hit */
-  case stRudyHit:
-    /*Is Rudy's Mouth Open?*/
-    if (locals.rudymouthPos)
-      return setState(stRudyJaw1,10);   /*Yes, ball goes into rudy's mouth*/
-    else
-      return setState(stRudyJaw,10);    /*Ball hits Rudy's Jaw!!*/
-  break;
+        /* Rudy Hit */
+        case stRudyHit:
+            /*Is Rudy's Mouth Open?*/
+            if (locals.rudymouthPos)
+                return setState(stRudyJaw1, 10); /*Yes, ball goes into rudy's mouth*/
+            else
+                return setState(stRudyJaw, 10); /*Ball hits Rudy's Jaw!!*/
+            break;
 
-  /* Trap Door */
-  case stTrapDoorLoop:
-    /*Is the Trap Door Open?*/
-    if (locals.trapdoorPos)
-      return setState(stBallInTrap,10); /*Trap Door is Open, Ball Lands in Trap Door!*/
-    else
-      return setState(stUpperLoop,10);  /*Trap Door is Closed, Make Upper Loop Shot!*/
-  break;
+        /* Trap Door */
+        case stTrapDoorLoop:
+            /*Is the Trap Door Open?*/
+            if (locals.trapdoorPos)
+                return setState(stBallInTrap, 10); /*Trap Door is Open, Ball Lands in Trap Door!*/
+            else
+                return setState(stUpperLoop, 10); /*Trap Door is Closed, Make Upper Loop Shot!*/
+            break;
 
-  /* Left Outlane - Drain or Go to Left Shooter? */
-  case stLOut2:
-    if (locals.stepgatePos)
-      {
-      ball->speed = -1;
-      return setState(stLShooter,5);
-      }
-    else
-      return setState(stDrain,15);
-  break;
-  }
-  return 0;
+        /* Left Outlane - Drain or Go to Left Shooter? */
+        case stLOut2:
+            if (locals.stepgatePos) {
+                ball->speed = -1;
+                return setState(stLShooter, 5);
+            } else
+                return setState(stDrain, 15);
+            break;
+    }
+    return 0;
 }
 
 /*---------------------------
@@ -476,85 +507,104 @@ static int fh_handleBallState(sim_tBallStatus *ball, int *inports) {
                  SIM_CUSTCOND(n) : call custom condition handler (keyCond)
 --------------------------------------------------------------------------------------------------*/
 
-static sim_tInportData fh_inportData[] = {
-  {0, 0x0005, stMRampEnt},
-  {0, 0x0006, stMRampEnt},
-  {0, 0x0009, stLOut},
-  {0, 0x000a, stROut},
-  {0, 0x0011, stLLoopUp},
-  {0, 0x0012, stRLoopUp},
-  {0, 0x0041, swLSling},
-  {0, 0x0042, swRSling},
-  {0, 0x0081, stLIn},
-  {0, 0x0082, stRIn},
-  {0, 0x0100, stWindTunnel},
-  {0, 0x0200, stRudyHit},
-  {0, 0x0400, stTrapDoorLoop},
-  {0, 0x0800, stDropHole},
-  {0, 0x1000, stHiddenHallway},
-  {0, 0x2000, swJet1},
-  {0, 0x4000, swJet2},
-  {0, 0x8000, swJet3},
-  {1, 0x0001, swStepS},
-  {1, 0x0002, swStepT},
-  {1, 0x0004, swStepE},
-  {1, 0x0008, swStepP},
-  {1, 0x0010, swHotDogU},
-  {1, 0x0020, swHotDogM},
-  {1, 0x0040, swHotDogL},
-  {1, 0x0100, stAwardFrenzy},
-  {1, 0x0200, stAwardEB},
-  {1, 0x0400, stAwardPTS},
-  {1, 0x0800, stAwardDog},
-  {1, 0x1000, stRudyHideout},
-  {1, 0x2000, stDrain},
-  {1, 0x4000, swRIn2},
-  {1, 0x8000, stJetLane},
-  {0}
-};
+static sim_tInportData fh_inportData[] = {{0, 0x0005, stMRampEnt},      {0, 0x0006, stMRampEnt},
+                                          {0, 0x0009, stLOut},          {0, 0x000a, stROut},
+                                          {0, 0x0011, stLLoopUp},       {0, 0x0012, stRLoopUp},
+                                          {0, 0x0041, swLSling},        {0, 0x0042, swRSling},
+                                          {0, 0x0081, stLIn},           {0, 0x0082, stRIn},
+                                          {0, 0x0100, stWindTunnel},    {0, 0x0200, stRudyHit},
+                                          {0, 0x0400, stTrapDoorLoop},  {0, 0x0800, stDropHole},
+                                          {0, 0x1000, stHiddenHallway}, {0, 0x2000, swJet1},
+                                          {0, 0x4000, swJet2},          {0, 0x8000, swJet3},
+                                          {1, 0x0001, swStepS},         {1, 0x0002, swStepT},
+                                          {1, 0x0004, swStepE},         {1, 0x0008, swStepP},
+                                          {1, 0x0010, swHotDogU},       {1, 0x0020, swHotDogM},
+                                          {1, 0x0040, swHotDogL},       {1, 0x0100, stAwardFrenzy},
+                                          {1, 0x0200, stAwardEB},       {1, 0x0400, stAwardPTS},
+                                          {1, 0x0800, stAwardDog},      {1, 0x1000, stRudyHideout},
+                                          {1, 0x2000, stDrain},         {1, 0x4000, swRIn2},
+                                          {1, 0x8000, stJetLane},       {0}};
 
 /*--------------------
   Drawing information
   --------------------------------------------------------
   Code to draw the mechanical objects, and their states!
 ---------------------------------------------------------*/
-static core_tLampDisplay fh_lampPos = {
-{ 0, 0 }, /* top left */
-{39, 29}, /* size */
-{
- {1,{{32, 9,ORANGE}}},{1,{{33,11,ORANGE}}},{1,{{33,13,ORANGE}}},{1,{{33,15,ORANGE}}},
- {1,{{33,17,ORANGE}}},{1,{{32,19,RED}}},{1,{{36,14,RED}}},{1,{{33, 3,LBLUE}}},
- {1,{{25, 9,ORANGE}}},{1,{{27,10,YELLOW}}},{1,{{29,14,YELLOW}}},{1,{{30,17,ORANGE}}},
- {1,{{25,19,ORANGE}}},{1,{{22,19,ORANGE}}},{1,{{20,14,RED}}},{1,{{18,14,RED}}},
- {1,{{28, 9,ORANGE}}},{1,{{30,11,ORANGE}}},{1,{{30,14,ORANGE}}},{1,{{28,19,ORANGE}}},
- {1,{{25,18,YELLOW}}},{1,{{21,16,YELLOW}}},{1,{{21,12,YELLOW}}},{1,{{22, 9,ORANGE}}},
- {1,{{25,10,YELLOW}}},{1,{{29,12,YELLOW}}},{1,{{29,16,YELLOW}}},{1,{{27,18,YELLOW}}},
- {1,{{23,18,YELLOW}}},{1,{{20,17,ORANGE}}},{1,{{20,11,ORANGE}}},{1,{{23,10,YELLOW}}},
- {1,{{16,24,LBLUE}}},{1,{{15,21,RED}}},
+static core_tLampDisplay fh_lampPos = {{0, 0},   /* top left */
+                                       {39, 29}, /* size */
+                                       {{1, {{32, 9, ORANGE}}},
+                                        {1, {{33, 11, ORANGE}}},
+                                        {1, {{33, 13, ORANGE}}},
+                                        {1, {{33, 15, ORANGE}}},
+                                        {1, {{33, 17, ORANGE}}},
+                                        {1, {{32, 19, RED}}},
+                                        {1, {{36, 14, RED}}},
+                                        {1, {{33, 3, LBLUE}}},
+                                        {1, {{25, 9, ORANGE}}},
+                                        {1, {{27, 10, YELLOW}}},
+                                        {1, {{29, 14, YELLOW}}},
+                                        {1, {{30, 17, ORANGE}}},
+                                        {1, {{25, 19, ORANGE}}},
+                                        {1, {{22, 19, ORANGE}}},
+                                        {1, {{20, 14, RED}}},
+                                        {1, {{18, 14, RED}}},
+                                        {1, {{28, 9, ORANGE}}},
+                                        {1, {{30, 11, ORANGE}}},
+                                        {1, {{30, 14, ORANGE}}},
+                                        {1, {{28, 19, ORANGE}}},
+                                        {1, {{25, 18, YELLOW}}},
+                                        {1, {{21, 16, YELLOW}}},
+                                        {1, {{21, 12, YELLOW}}},
+                                        {1, {{22, 9, ORANGE}}},
+                                        {1, {{25, 10, YELLOW}}},
+                                        {1, {{29, 12, YELLOW}}},
+                                        {1, {{29, 16, YELLOW}}},
+                                        {1, {{27, 18, YELLOW}}},
+                                        {1, {{23, 18, YELLOW}}},
+                                        {1, {{20, 17, ORANGE}}},
+                                        {1, {{20, 11, ORANGE}}},
+                                        {1, {{23, 10, YELLOW}}},
+                                        {1, {{16, 24, LBLUE}}},
+                                        {1, {{15, 21, RED}}},
 
- /*Lamp 35 - Matrix # 53 - Splits into 3 bulbs*/
- {3,{{16,17,RED},{15,17,RED},{14,17,RED}}},
+                                        /*Lamp 35 - Matrix # 53 - Splits into 3 bulbs*/
+                                        {3, {{16, 17, RED}, {15, 17, RED}, {14, 17, RED}}},
 
- {1,{{10, 3,ORANGE}}},{1,{{ 8, 3,ORANGE}}},{1,{{ 6, 3,ORANGE}}},
- {1,{{10, 6,RED}}},{1,{{17,22,YELLOW}}},
+                                        {1, {{10, 3, ORANGE}}},
+                                        {1, {{8, 3, ORANGE}}},
+                                        {1, {{6, 3, ORANGE}}},
+                                        {1, {{10, 6, RED}}},
+                                        {1, {{17, 22, YELLOW}}},
 
- /*Lamp 41 - Matrix # 61 - Splits into 2 bulbs*/
- {2,{{27,25,YELLOW},{27, 4,YELLOW}}},
+                                        /*Lamp 41 - Matrix # 61 - Splits into 2 bulbs*/
+                                        {2, {{27, 25, YELLOW}, {27, 4, YELLOW}}},
 
- {1,{{22, 5,LBLUE}}},{1,{{13,14,RED}}},{1,{{12, 9,ORANGE}}},
- {1,{{12, 7,LBLUE}}},{1,{{14, 3,YELLOW}}},{1,{{ 8,16,ORANGE}}},{1,{{ 6,17,YELLOW}}},
- {1,{{ 1,13,RED}}},{1,{{13,24,WHITE}}},{1,{{18,19,LBLUE}}},{1,{{ 2,13,YELLOW}}},
- {1,{{ 3,13,YELLOW}}},{1,{{ 4,13,YELLOW}}},{1,{{ 5,13,YELLOW}}},{1,{{ 6,13,GREEN}}},
- {1,{{15, 8,RED}}},
+                                        {1, {{22, 5, LBLUE}}},
+                                        {1, {{13, 14, RED}}},
+                                        {1, {{12, 9, ORANGE}}},
+                                        {1, {{12, 7, LBLUE}}},
+                                        {1, {{14, 3, YELLOW}}},
+                                        {1, {{8, 16, ORANGE}}},
+                                        {1, {{6, 17, YELLOW}}},
+                                        {1, {{1, 13, RED}}},
+                                        {1, {{13, 24, WHITE}}},
+                                        {1, {{18, 19, LBLUE}}},
+                                        {1, {{2, 13, YELLOW}}},
+                                        {1, {{3, 13, YELLOW}}},
+                                        {1, {{4, 13, YELLOW}}},
+                                        {1, {{5, 13, YELLOW}}},
+                                        {1, {{6, 13, GREEN}}},
+                                        {1, {{15, 8, RED}}},
 
- /*Lamp 58 - Matrix # 82 - Splits into 2 bulbs*/
- {2,{{27, 3,RED},{29,26,RED}}},
+                                        /*Lamp 58 - Matrix # 82 - Splits into 2 bulbs*/
+                                        {2, {{27, 3, RED}, {29, 26, RED}}},
 
- {1,{{14,11,YELLOW}}},{1,{{13,10,LBLUE}}},
- {1,{{11,13,WHITE}}},{1,{{11,10,LBLUE}}},{1,{{11,16,YELLOW}}},{1,{{39, 1,YELLOW}}}
-}
-};
-
+                                        {1, {{14, 11, YELLOW}}},
+                                        {1, {{13, 10, LBLUE}}},
+                                        {1, {{11, 13, WHITE}}},
+                                        {1, {{11, 10, LBLUE}}},
+                                        {1, {{11, 16, YELLOW}}},
+                                        {1, {{39, 1, YELLOW}}}}};
 
 /***************************************************************
   Solenoid to Sample Mapping -
@@ -568,182 +618,202 @@ static core_tLampDisplay fh_lampPos = {
   The code specifies: SOLENOID, CHANNEL #, and SAMPLE NAME
   *************************************************************/
 static wpc_tSamSolMap fh_samsolmap[] = {
- /*Channel #0*/
- {sKnocker,0,SAM_KNOCKER}, {sBallRel,0,SAM_BALLREL},
- {sOuthole,0,SAM_OUTHOLE},
- {sLockRelease,0,SAM_SOLENOID}, {sDummyEject,0,SAM_POPPER},
+    /*Channel #0*/
+    {sKnocker, 0, SAM_KNOCKER},
+    {sBallRel, 0, SAM_BALLREL},
+    {sOuthole, 0, SAM_OUTHOLE},
+    {sLockRelease, 0, SAM_SOLENOID},
+    {sDummyEject, 0, SAM_POPPER},
 
-//Ramp Diverter needs special checking due to solenoid smoothing!
-// {sRampDiv,0,SAM_DIVERTER},
+    //Ramp Diverter needs special checking due to solenoid smoothing!
+    // {sRampDiv,0,SAM_DIVERTER},
 
- /*Channel #1*/
- {sLSling,1,SAM_LSLING}, {sRSling,1,SAM_RSLING},
- {sJet1,1,SAM_JET1}, {sJet2,1,SAM_JET2},
- {sJet3,1,SAM_JET3}, {sDropKickout,1,SAM_POPPER},
- {sRudyHideout,1,SAM_SOLENOID},
+    /*Channel #1*/
+    {sLSling, 1, SAM_LSLING},
+    {sRSling, 1, SAM_RSLING},
+    {sJet1, 1, SAM_JET1},
+    {sJet2, 1, SAM_JET2},
+    {sJet3, 1, SAM_JET3},
+    {sDropKickout, 1, SAM_POPPER},
+    {sRudyHideout, 1, SAM_SOLENOID},
 
- /*Channel #2*/
- {sTrapOpen,2,SAM_FLAPOPEN}, {sTrapClosed,2,SAM_FLAPCLOSE},
+    /*Channel #2*/
+    {sTrapOpen, 2, SAM_FLAPOPEN},
+    {sTrapClosed, 2, SAM_FLAPCLOSE},
 
- /*Channel #3*/
- {sEyesOpen,3,SAM_SOLENOID}, {sEyesClosed,3,SAM_SOLENOID},
+    /*Channel #3*/
+    {sEyesOpen, 3, SAM_SOLENOID},
+    {sEyesClosed, 3, SAM_SOLENOID},
 
- /*Channel #4*/
- {sMouthMotor,4,SAM_MOTOR_1, WPCSAM_F_CONT},{-1}
+    /*Channel #4*/
+    {sMouthMotor, 4, SAM_MOTOR_1, WPCSAM_F_CONT},
+    {-1}
 
-// Eyes need special checking due to solenoid smoothing!
-// {sEyesRight,3,SAM_DIVERTER},  {sEyesLeft,3,SAM_DIVERTER}
+    // Eyes need special checking due to solenoid smoothing!
+    // {sEyesRight,3,SAM_DIVERTER},  {sEyesLeft,3,SAM_DIVERTER}
 
 };
 
-static void fh_drawMech(BMTYPE **line) {
-  core_textOutf(30, 0,BLACK,"Trap Door: %-6s", locals.trapdoorPos?"Open":"Closed");
-  core_textOutf(30, 10,BLACK,"Step Gate: %-6s", locals.stepgatePos?"Open":"Closed");
-  core_textOutf(30, 20,BLACK,"Rudy Jaw : %-6s", locals.rudymouthPos?"Open":"Closed");
-  core_textOutf(30, 30,BLACK,"Rudy Eyes: %-10s", showeyepos());
+static void
+fh_drawMech(BMTYPE** line) {
+    core_textOutf(30, 0, BLACK, "Trap Door: %-6s", locals.trapdoorPos ? "Open" : "Closed");
+    core_textOutf(30, 10, BLACK, "Step Gate: %-6s", locals.stepgatePos ? "Open" : "Closed");
+    core_textOutf(30, 20, BLACK, "Rudy Jaw : %-6s", locals.rudymouthPos ? "Open" : "Closed");
+    core_textOutf(30, 30, BLACK, "Rudy Eyes: %-10s", showeyepos());
 }
-  /* Help */
 
-static void fh_drawStatic(BMTYPE **line) {
-  core_textOutf(30, 40,BLACK,"Help on this Simulator:");
-  core_textOutf(30, 50,BLACK,"L/R Ctrl+I/O = L/R Inlane/Outlane");
-  core_textOutf(30, 60,BLACK,"L/R Ctrl+- = L/R Slingshot");
-  core_textOutf(30, 70,BLACK,"L/R Ctrl+R = L/R Ramp Shot");
-  core_textOutf(30, 80,BLACK,"L/R Ctrl+L = L/R Loop");
-  core_textOutf(30, 90,BLACK,"Q = Drain Ball, W = Wind Tunnel");
-  core_textOutf(30,100,BLACK,"E = Steps Hole, T = Trap Door Loop");
-  core_textOutf(30,110,BLACK,"Y = Jet Bumper Lane, U = Hidden Hallw.");
-  core_textOutf(30,120,BLACK,"A/S/D = Hot Dog Targets, F = Rudy Hit");
-  core_textOutf(30,130,BLACK,"G = Rt Outer Inl., H/J/K = Jet Bumpers");
-  core_textOutf(30,140,BLACK,"X/C/V/B = S/T/E/P Drop Targets");
-  core_textOutf(30,150,BLACK,"N/M/,/. = Left Ramp Awd Frenzy/ExBall/");
-  core_textOutf(30,160,BLACK,"500,000 Pts./Start Super HotDog");
+/* Help */
+
+static void
+fh_drawStatic(BMTYPE** line) {
+    core_textOutf(30, 40, BLACK, "Help on this Simulator:");
+    core_textOutf(30, 50, BLACK, "L/R Ctrl+I/O = L/R Inlane/Outlane");
+    core_textOutf(30, 60, BLACK, "L/R Ctrl+- = L/R Slingshot");
+    core_textOutf(30, 70, BLACK, "L/R Ctrl+R = L/R Ramp Shot");
+    core_textOutf(30, 80, BLACK, "L/R Ctrl+L = L/R Loop");
+    core_textOutf(30, 90, BLACK, "Q = Drain Ball, W = Wind Tunnel");
+    core_textOutf(30, 100, BLACK, "E = Steps Hole, T = Trap Door Loop");
+    core_textOutf(30, 110, BLACK, "Y = Jet Bumper Lane, U = Hidden Hallw.");
+    core_textOutf(30, 120, BLACK, "A/S/D = Hot Dog Targets, F = Rudy Hit");
+    core_textOutf(30, 130, BLACK, "G = Rt Outer Inl., H/J/K = Jet Bumpers");
+    core_textOutf(30, 140, BLACK, "X/C/V/B = S/T/E/P Drop Targets");
+    core_textOutf(30, 150, BLACK, "N/M/,/. = Left Ramp Awd Frenzy/ExBall/");
+    core_textOutf(30, 160, BLACK, "500,000 Pts./Start Super HotDog");
 }
 
 /*-----------------
 /  ROM definitions
 /------------------*/
 // "special L-2 sound ROM" for L-9:
-#define FH_SOUND_L3 \
-WPCS_SOUNDROM222("fh_u18.sl3",CRC(7f6c7045) SHA1(8c8d601e8e6598507d75b4955ccc51623124e8ab), \
-                 "fh_u15.sl2",CRC(0744b9f5) SHA1(b626601d82e6b1cf25f7fdcca31e623fc14a3f92), \
-                 "fh_u14.sl2",CRC(3394b69b) SHA1(34690688f00106b725b27a6975cdbf1e077e3bb3)) \
+#define FH_SOUND_L3                                                                                                    \
+    WPCS_SOUNDROM222("fh_u18.sl3", CRC(7f6c7045) SHA1(8c8d601e8e6598507d75b4955ccc51623124e8ab), "fh_u15.sl2",         \
+                     CRC(0744b9f5) SHA1(b626601d82e6b1cf25f7fdcca31e623fc14a3f92), "fh_u14.sl2",                       \
+                     CRC(3394b69b) SHA1(34690688f00106b725b27a6975cdbf1e077e3bb3))
 
-#define FH_SOUND_L2 \
-WPCS_SOUNDROM222("fh_u18.sl2",CRC(11c8944a) SHA1(425d8da5a036c41e054d201b99856319fd5ef9e2), \
-                 "fh_u15.sl2",CRC(0744b9f5) SHA1(b626601d82e6b1cf25f7fdcca31e623fc14a3f92), \
-                 "fh_u14.sl2",CRC(3394b69b) SHA1(34690688f00106b725b27a6975cdbf1e077e3bb3)) \
+#define FH_SOUND_L2                                                                                                    \
+    WPCS_SOUNDROM222("fh_u18.sl2", CRC(11c8944a) SHA1(425d8da5a036c41e054d201b99856319fd5ef9e2), "fh_u15.sl2",         \
+                     CRC(0744b9f5) SHA1(b626601d82e6b1cf25f7fdcca31e623fc14a3f92), "fh_u14.sl2",                       \
+                     CRC(3394b69b) SHA1(34690688f00106b725b27a6975cdbf1e077e3bb3))
 
-WPC_ROMSTART(fh,l9,"funh_l9.rom",0x040000,CRC(c8f90ff8) SHA1(8d200ea30a68f5e3ba1ac9232a516c44b765eb45)) FH_SOUND_L3 WPC_ROMEND
-WPC_ROMSTART(fh,d9,"funh_d9.rom",0x040000,CRC(983fbaf7) SHA1(50c0c904af3dccf95e16c41e6c7a14510ece4614)) FH_SOUND_L3 WPC_ROMEND
-// Found this on the stormaster site
-// It is an updated L9 rom where the German text translation is corrected
-// Author is unknown but it is definetly not from WMS
-// (author didn't know how to calculate the checksum so he
-//  altered some blanks in the credits to match the original checksum)
-WPC_ROMSTART(fh,l9b,"fh_l9ger.rom",0x040000,CRC(e9b32a8f) SHA1(deb77f0d025001ddcc3045b4e49176c54896da3f)) FH_SOUND_L3 WPC_ROMEND
-WPC_ROMSTART(fh,d9b,"fh_d9ger.rom",0x040000,CRC(b9759f80) SHA1(979995fc65a616522443b80368f3d78ea3ea2f55)) FH_SOUND_L3 WPC_ROMEND
+WPC_ROMSTART(fh, l9, "funh_l9.rom", 0x040000, CRC(c8f90ff8) SHA1(8d200ea30a68f5e3ba1ac9232a516c44b765eb45))
+FH_SOUND_L3 WPC_ROMEND WPC_ROMSTART(fh, d9, "funh_d9.rom", 0x040000,
+                                    CRC(983fbaf7) SHA1(50c0c904af3dccf95e16c41e6c7a14510ece4614)) FH_SOUND_L3 WPC_ROMEND
+    // Found this on the stormaster site
+    // It is an updated L9 rom where the German text translation is corrected
+    // Author is unknown but it is definetly not from WMS
+    // (author didn't know how to calculate the checksum so he
+    //  altered some blanks in the credits to match the original checksum)
+    WPC_ROMSTART(fh, l9b, "fh_l9ger.rom", 0x040000,
+                 CRC(e9b32a8f) SHA1(deb77f0d025001ddcc3045b4e49176c54896da3f)) FH_SOUND_L3 WPC_ROMEND
+    WPC_ROMSTART(fh, d9b, "fh_d9ger.rom", 0x040000,
+                 CRC(b9759f80) SHA1(979995fc65a616522443b80368f3d78ea3ea2f55)) FH_SOUND_L3 WPC_ROMEND
 
-WPC_ROMSTART(fh,905h,"fh_905h.rom",0x080000,CRC(445b632a) SHA1(6e277027a1d025e2b93f0d7736b414ba3a68a4f8)) FH_SOUND_L3 WPC_ROMEND
-WPC_ROMSTART(fh,906h,"fh_906h.rom",0x080000,CRC(2fe830a1) SHA1(f52eeef26ce509a52d7b58783236605dafae47d8)) FH_SOUND_L3 WPC_ROMEND
+    WPC_ROMSTART(fh, 905h, "fh_905h.rom", 0x080000,
+                 CRC(445b632a) SHA1(6e277027a1d025e2b93f0d7736b414ba3a68a4f8)) FH_SOUND_L3 WPC_ROMEND
+    WPC_ROMSTART(fh, 906h, "fh_906h.rom", 0x080000,
+                 CRC(2fe830a1) SHA1(f52eeef26ce509a52d7b58783236605dafae47d8)) FH_SOUND_L3 WPC_ROMEND
 
-WPC_ROMSTART(fh,pa1, "u6-l2.rom",   0x20000, CRC(7a8a3278) SHA1(b35c1149862724ea70cc810f14141e51b365e950))
-  SOUNDREGION(0x10000, S11CS_CPUREGION)
-  SOUNDREGION(0x70000, S11CS_ROMREGION)
-    ROM_LOAD("fh_u4.pa1",  0x00000, 0x10000, CRC(9f0a716d) SHA1(3d3ec250b0b4344844ad8ce5bcbb326f934b22d3))
-      ROM_CONTINUE        (0x40000, 0x10000)
-    ROM_LOAD("fh_u19.pa1", 0x10000, 0x10000, CRC(b0fb5ddf) SHA1(138c2aa283f7ced90637e981063f520bf46c57df))
-      ROM_CONTINUE        (0x50000, 0x10000)
-    ROM_LOAD("fh_u20.pa1", 0x20000, 0x10000, CRC(bb864f78) SHA1(ed861bd5df382e7efac103a1acb3d810ee4b15dc))
-      ROM_CONTINUE        (0x60000, 0x10000)
-WPC_ROMEND
+    WPC_ROMSTART(fh, pa1, "u6-l2.rom", 0x20000, CRC(7a8a3278) SHA1(b35c1149862724ea70cc810f14141e51b365e950))
+        SOUNDREGION(0x10000, S11CS_CPUREGION) SOUNDREGION(0x70000, S11CS_ROMREGION)
+            ROM_LOAD("fh_u4.pa1", 0x00000, 0x10000, CRC(9f0a716d) SHA1(3d3ec250b0b4344844ad8ce5bcbb326f934b22d3))
+                ROM_CONTINUE(0x40000, 0x10000) ROM_LOAD("fh_u19.pa1", 0x10000, 0x10000,
+                                                        CRC(b0fb5ddf) SHA1(138c2aa283f7ced90637e981063f520bf46c57df))
+                    ROM_CONTINUE(0x50000, 0x10000)
+                        ROM_LOAD("fh_u20.pa1", 0x20000, 0x10000,
+                                 CRC(bb864f78) SHA1(ed861bd5df382e7efac103a1acb3d810ee4b15dc))
+                            ROM_CONTINUE(0x60000, 0x10000) WPC_ROMEND
 
-WPC_ROMSTART(fh,l2,"u6-l2.rom",0x020000,CRC(7a8a3278) SHA1(b35c1149862724ea70cc810f14141e51b365e950)) FH_SOUND_L2 WPC_ROMEND
+    WPC_ROMSTART(fh, l2, "u6-l2.rom", 0x020000,
+                 CRC(7a8a3278) SHA1(b35c1149862724ea70cc810f14141e51b365e950)) FH_SOUND_L2 WPC_ROMEND
 
-WPC_ROMSTART(fh,l3,"u6-l3.rom",0x020000,CRC(7a74d702) SHA1(91540cdc62c855b4139b202aa6ad5440b2dee141)) FH_SOUND_L2 WPC_ROMEND
-WPC_ROMSTART(fh,d3,"u6-d3.rom",0x020000,CRC(fa32b241) SHA1(330fd1403199fcfa7bc018b488ea5f1a51ee4820)) FH_SOUND_L2 WPC_ROMEND
+    WPC_ROMSTART(fh, l3, "u6-l3.rom", 0x020000,
+                 CRC(7a74d702) SHA1(91540cdc62c855b4139b202aa6ad5440b2dee141)) FH_SOUND_L2 WPC_ROMEND
+    WPC_ROMSTART(fh, d3, "u6-d3.rom", 0x020000,
+                 CRC(fa32b241) SHA1(330fd1403199fcfa7bc018b488ea5f1a51ee4820)) FH_SOUND_L2 WPC_ROMEND
 
-WPC_ROMSTART(fh,l4,"u6-l4.rom",0x020000,CRC(f438aaca) SHA1(42bf75325a0e85a4334a5a710c2eddf99160ffbf)) FH_SOUND_L2 WPC_ROMEND
-WPC_ROMSTART(fh,d4,"u6-d4.rom",0x020000,CRC(b7683195) SHA1(1022598113d32dbca057854907d3b3fb99abfefe)) FH_SOUND_L2 WPC_ROMEND
+    WPC_ROMSTART(fh, l4, "u6-l4.rom", 0x020000,
+                 CRC(f438aaca) SHA1(42bf75325a0e85a4334a5a710c2eddf99160ffbf)) FH_SOUND_L2 WPC_ROMEND
+    WPC_ROMSTART(fh, d4, "u6-d4.rom", 0x020000,
+                 CRC(b7683195) SHA1(1022598113d32dbca057854907d3b3fb99abfefe)) FH_SOUND_L2 WPC_ROMEND
 
-WPC_ROMSTART(fh,l5,"u6-l5.rom",0x020000,CRC(e2b25da4) SHA1(87129e18c60a65035ade2f4766c154d5d333696b)) FH_SOUND_L2 WPC_ROMEND
-WPC_ROMSTART(fh,d5,"u6-d5.rom",0x020000,CRC(11bc9542) SHA1(2728b55f07cc0dab0ce2048de7d537047ae20913)) FH_SOUND_L2 WPC_ROMEND
+    WPC_ROMSTART(fh, l5, "u6-l5.rom", 0x020000,
+                 CRC(e2b25da4) SHA1(87129e18c60a65035ade2f4766c154d5d333696b)) FH_SOUND_L2 WPC_ROMEND
+    WPC_ROMSTART(fh, d5, "u6-d5.rom", 0x020000,
+                 CRC(11bc9542) SHA1(2728b55f07cc0dab0ce2048de7d537047ae20913)) FH_SOUND_L2 WPC_ROMEND
 
-WPC_ROMSTART(fh,f91,"ffh0_91.rom",0x040000,CRC(b3224e53) SHA1(f0996209a4490af7ac636a359b52d83308328f57)) FH_SOUND_L3 WPC_ROMEND
+    WPC_ROMSTART(fh, f91, "ffh0_91.rom", 0x040000,
+                 CRC(b3224e53) SHA1(f0996209a4490af7ac636a359b52d83308328f57)) FH_SOUND_L3 WPC_ROMEND
 
-/*--------------
+    /*--------------
 /  Game drivers
 /---------------*/
 
-CORE_GAMEDEF(fh,l9,"Funhouse (L-9, SL-3)",1992,"Williams",wpc_mAlpha2S,0)
-CORE_CLONEDEF(fh,d9,l9,"Funhouse (D-9, SL-3 LED Ghost Fix)",1992,"Williams",wpc_mAlpha2S,0)
-CORE_CLONEDEF(fh,l9b,l9,"Funhouse (L-9, SL-3 Improved German translation patch)",1992,"Williams",wpc_mAlpha2S,0)
-CORE_CLONEDEF(fh,d9b,l9,"Funhouse (D-9, SL-3 German LED Ghost Fix)",1992,"Williams",wpc_mAlpha2S,0)
-CORE_CLONEDEF(fh,905h,l9,"Funhouse (9.05H)",1996,"Williams",wpc_mAlpha2S,0)
-CORE_CLONEDEF(fh,906h,l9,"Funhouse (9.06H Coin Play)",1996,"Williams",wpc_mAlpha2S,0)
-CORE_CLONEDEF(fh,pa1,l9,"Funhouse (L-2, Prototype PA-1 system 11 sound)",1990,"Williams",wpc_alpha1S,0) // L-2 is lowest we have, should use P-6 instead
-CORE_CLONEDEF(fh,l2,l9,"Funhouse (L-2)",1990,"Williams",wpc_mAlpha2S,0)
-CORE_CLONEDEF(fh,l3,l9,"Funhouse (L-3)",1990,"Williams",wpc_mAlpha2S,0)
-CORE_CLONEDEF(fh,d3,l9,"Funhouse (D-3 LED Ghost Fix)",1990,"Williams",wpc_mAlpha2S,0)
-CORE_CLONEDEF(fh,l4,l9,"Funhouse (L-4)",1991,"Williams",wpc_mAlpha2S,0)
-CORE_CLONEDEF(fh,d4,l9,"Funhouse (D-4 LED Ghost Fix)",1991,"Williams",wpc_mAlpha2S,0)
-CORE_CLONEDEF(fh,l5,l9,"Funhouse (L-5)",1991,"Williams",wpc_mAlpha2S,0)
-CORE_CLONEDEF(fh,d5,l9,"Funhouse (D-5 LED Ghost Fix)",1991,"Williams",wpc_mAlpha2S,0)
-CORE_CLONEDEF(fh,f91,l9,"Funhouse (FreeWPC 0.91)",1991,"FreeWPC",wpc_mAlpha2S,0)
+    CORE_GAMEDEF(fh, l9, "Funhouse (L-9, SL-3)", 1992, "Williams", wpc_mAlpha2S, 0)
+        CORE_CLONEDEF(fh, d9, l9, "Funhouse (D-9, SL-3 LED Ghost Fix)", 1992, "Williams", wpc_mAlpha2S, 0)
+            CORE_CLONEDEF(fh, l9b, l9, "Funhouse (L-9, SL-3 Improved German translation patch)", 1992, "Williams",
+                          wpc_mAlpha2S, 0) CORE_CLONEDEF(fh, d9b, l9, "Funhouse (D-9, SL-3 German LED Ghost Fix)", 1992,
+                                                         "Williams", wpc_mAlpha2S, 0)
+                CORE_CLONEDEF(fh, 905h, l9, "Funhouse (9.05H)", 1996, "Williams", wpc_mAlpha2S, 0)
+                    CORE_CLONEDEF(fh, 906h, l9, "Funhouse (9.06H Coin Play)", 1996, "Williams", wpc_mAlpha2S, 0)
+                        CORE_CLONEDEF(fh, pa1, l9, "Funhouse (L-2, Prototype PA-1 system 11 sound)", 1990, "Williams",
+                                      wpc_alpha1S, 0) // L-2 is lowest we have, should use P-6 instead
+    CORE_CLONEDEF(fh, l2, l9, "Funhouse (L-2)", 1990, "Williams", wpc_mAlpha2S, 0)
+        CORE_CLONEDEF(fh, l3, l9, "Funhouse (L-3)", 1990, "Williams", wpc_mAlpha2S, 0)
+            CORE_CLONEDEF(fh, d3, l9, "Funhouse (D-3 LED Ghost Fix)", 1990, "Williams", wpc_mAlpha2S, 0)
+                CORE_CLONEDEF(fh, l4, l9, "Funhouse (L-4)", 1991, "Williams", wpc_mAlpha2S, 0)
+                    CORE_CLONEDEF(fh, d4, l9, "Funhouse (D-4 LED Ghost Fix)", 1991, "Williams", wpc_mAlpha2S, 0)
+                        CORE_CLONEDEF(fh, l5, l9, "Funhouse (L-5)", 1991, "Williams", wpc_mAlpha2S, 0)
+                            CORE_CLONEDEF(fh, d5, l9, "Funhouse (D-5 LED Ghost Fix)", 1991, "Williams", wpc_mAlpha2S, 0)
+                                CORE_CLONEDEF(fh, f91, l9, "Funhouse (FreeWPC 0.91)", 1991, "FreeWPC", wpc_mAlpha2S, 0)
 
-/*-----------------------
+    /*-----------------------
 / Simulation Definitions
 /-----------------------*/
-static sim_tSimData fhSimData = {
-  2,        /* 2 game specific input ports */
-  fh_stateDef,    /* Definition of all states */
-  fh_inportData,  /* Keyboard Entries */
-  { stRTrough, stCTrough, stLTrough, stDrain, stDrain, stDrain, stDrain },  /*Position where balls start.. Max 7 Balls Allowed*/
-  NULL,     /* no init */
-  fh_handleBallState, /*Function to handle ball state changes*/
-  fh_drawStatic,  /*Function to handle mechanical state changes*/
-  TRUE,     /* simulate manual shooter */
-  NULL      /* no custom key conditions */
+    static sim_tSimData fhSimData = {
+        2,             /* 2 game specific input ports */
+        fh_stateDef,   /* Definition of all states */
+        fh_inportData, /* Keyboard Entries */
+        {stRTrough, stCTrough, stLTrough, stDrain, stDrain, stDrain,
+         stDrain},          /*Position where balls start.. Max 7 Balls Allowed*/
+        NULL,               /* no init */
+        fh_handleBallState, /*Function to handle ball state changes*/
+        fh_drawStatic,      /*Function to handle mechanical state changes*/
+        TRUE,               /* simulate manual shooter */
+        NULL                /* no custom key conditions */
 };
 
 /*----------------------
 / Game Data Information
 /----------------------*/
 static core_tGameData fhGameData = {
-  GEN_WPCALPHA_2, wpc_dispAlpha, /* generation */
-  {
-    FLIP_SWNO(12,11),   /* Which switches are the flippers */
-    0,0,0,0,0,1,0,
-    NULL, fh_handleMech, NULL, fh_drawMech,
-    &fh_lampPos, fh_samsolmap
-  },
-  &fhSimData,
-  {
-    "",
-    /*Coin    1     2     3     4     5     6     7     8     9    10   Cab.  Cust */
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, /* Dummy Jaw (Col 5, Row 1) & Superdog opto (Col 5, Row 5) = 0x11) */
-    /*Start    Tilt    SlamTilt    CoinDoor    Shooter */
-    { swStart, swTilt, swSlamTilt, swCoinDoor, 0},
-  }
-};
+    GEN_WPCALPHA_2,
+    wpc_dispAlpha,      /* generation */
+    {FLIP_SWNO(12, 11), /* Which switches are the flippers */
+     0, 0, 0, 0, 0, 1, 0, NULL, fh_handleMech, NULL, fh_drawMech, &fh_lampPos, fh_samsolmap},
+    &fhSimData,
+    {
+        "",
+        /*Coin    1     2     3     4     5     6     7     8     9    10   Cab.  Cust */
+        {0x00, 0x00, 0x00, 0x00, 0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00,
+         0x00}, /* Dummy Jaw (Col 5, Row 1) & Superdog opto (Col 5, Row 5) = 0x11) */
+        /*Start    Tilt    SlamTilt    CoinDoor    Shooter */
+        {swStart, swTilt, swSlamTilt, swCoinDoor, 0},
+    }};
 
 static core_tGameData fhpa1GameData = {
-  GEN_WPCALPHA_1, wpc_dispAlpha, /* generation */
-  {
-    FLIP_SWNO(12,11),   /* Which switches are the flippers */
-    0,0,0,0,0,1,0,
-    NULL, fh_handleMech, NULL, fh_drawMech,
-    &fh_lampPos, fh_samsolmap
-  },
-  &fhSimData,
-  {
-    "",
-    /*Coin    1     2     3     4     5     6     7     8     9    10   Cab.  Cust */
-    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, /* Dummy Jaw (Col 5, Row 1) & Superdog opto (Col 5, Row 5) = 0x11) */
-    /*Start    Tilt    SlamTilt    CoinDoor    Shooter */
-    { swStart, swTilt, swSlamTilt, swCoinDoor, 0},
-  }
-};
+    GEN_WPCALPHA_1,
+    wpc_dispAlpha,      /* generation */
+    {FLIP_SWNO(12, 11), /* Which switches are the flippers */
+     0, 0, 0, 0, 0, 1, 0, NULL, fh_handleMech, NULL, fh_drawMech, &fh_lampPos, fh_samsolmap},
+    &fhSimData,
+    {
+        "",
+        /*Coin    1     2     3     4     5     6     7     8     9    10   Cab.  Cust */
+        {0x00, 0x00, 0x00, 0x00, 0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00,
+         0x00}, /* Dummy Jaw (Col 5, Row 1) & Superdog opto (Col 5, Row 5) = 0x11) */
+        /*Start    Tilt    SlamTilt    CoinDoor    Shooter */
+        {swStart, swTilt, swSlamTilt, swCoinDoor, 0},
+    }};
 
 /* -----------------------------------------------------------------------------------------
    Inverted Switch Values -
@@ -770,134 +840,137 @@ static core_tGameData fhpa1GameData = {
 
 ---------------------------------------------------------------------------------------------*/
 
-
 #ifdef PROC_SUPPORT
-  #include "p-roc/p-roc.h"
-  /*
+#include "p-roc/p-roc.h"
+
+/*
     Solenoid smoothing messes up Rudy's mouth (C21 and C22)
   */
-  void fh_wpc_proc_solenoid_handler(int solNum, int enabled, int smoothed) {
+void
+fh_wpc_proc_solenoid_handler(int solNum, int enabled, int smoothed) {
     switch (solNum) {
-      case 20:  // C21, Mouth Motor
-      case 21:  // C22, Up/Down Driver
-        // Solenoids to handle in immediate mode, not smoothed.  Negate `smoothed`
-        // so default handler will process immediate solenoid changes and ignore
-        // smoothed changes.
-        smoothed = !smoothed;
+        case 20: // C21, Mouth Motor
+        case 21: // C22, Up/Down Driver
+            // Solenoids to handle in immediate mode, not smoothed.  Negate `smoothed`
+            // so default handler will process immediate solenoid changes and ignore
+            // smoothed changes.
+            smoothed = !smoothed;
     }
     default_wpc_proc_solenoid_handler(solNum, enabled, smoothed);
-  }
+}
 #endif
 
 /*---------------
 /  Game handling
 /----------------*/
-static void init_fh(void) {
-  core_gameData = strncasecmp(Machine->gamedrv->name, "fh_pa1", 6) ? &fhGameData : &fhpa1GameData;
-  locals.divertercount=0;
+static void
+init_fh(void) {
+    core_gameData = strncasecmp(Machine->gamedrv->name, "fh_pa1", 6) ? &fhGameData : &fhpa1GameData;
+    locals.divertercount = 0;
 #ifdef PROC_SUPPORT
-  wpc_proc_solenoid_handler = fh_wpc_proc_solenoid_handler;
+    wpc_proc_solenoid_handler = fh_wpc_proc_solenoid_handler;
 #endif
 }
-
 
 /***************************************************************************************************
  Functions here must manually adjust the state of mechanicla objects, usually checking for solenoids
  which control the state of those objects. Opening & Closing Doors, Diverter Switchs, etc..
 ****************************************************************************************************/
-static void fh_handleMech(int mech) {
-  int eyesleft, eyesright;
-  /* ----------------
+static void
+fh_handleMech(int mech) {
+    int eyesleft, eyesright;
+    /* ----------------
      Track Diverter
      ---------------*/
-  if (mech & 0x01) {
-    if (core_getSol(sRampDiv) && locals.diverterPos != OPEN) {
-      locals.diverterPos = OPEN;
-      wpc_play_sample(0,SAM_DIVERTER);
+    if (mech & 0x01) {
+        if (core_getSol(sRampDiv) && locals.diverterPos != OPEN) {
+            locals.diverterPos = OPEN;
+            wpc_play_sample(0, SAM_DIVERTER);
+        } else
+            locals.divertercount++;
+        if (locals.divertercount > 25) {
+            locals.divertercount = 0;
+            locals.diverterPos = CLOSED;
+        }
     }
-    else
-      locals.divertercount++;
-    if (locals.divertercount > 25) {
-      locals.divertercount = 0;
-      locals.diverterPos = CLOSED;
-    }
-  }
-
-  /* ----------------------------------
-     -- Open & Close Step Gate       --
-     ---------------------------------- */
-  if (mech & 0x02) {
-    /*-- if Step Gate Solenoid fires, keep it open for a timer of 50 seconds! --*/
-    if (core_getSol(sStepGate))
-      locals.stepgatePos = 50;
-    else
-      locals.stepgatePos-= (locals.stepgatePos>0)?1:0; /* -- Count down time till it closes --*/
-  }
-  /* ----------------------------------
-     -- Open & Close Trap Door       --
-     ---------------------------------- */
-  if (mech & 0x04) {
-    /*-- if Trap Door Open Solenoid firing, and TD is closed, open it! --*/
-    if (core_getSol(sTrapOpen) && !locals.trapdoorPos)
-      locals.trapdoorPos = 1 ;
-    /*-- if Trap Door Closed Solenoid firing, and TD is open, close it! --*/
-    if (core_getSol(sTrapClosed) && locals.trapdoorPos)
-      locals.trapdoorPos = 0 ;
-    /*-- Make sure Trap Door Closed Switch is on, when door is closed! --*/
-    core_setSw(swTrapClosed,!locals.trapdoorPos);
-  }
-
-  /* ----------------------------------
-     -- Open & Close Rudy's Mouth    --
-     ---------------------------------- */
-  /* -- If open, and Mouth Solenoid fired and !UpDown fired - Close it! -- */
-  if (mech & 0x08) {
-    if (locals.rudymouthPos && core_getSol(sMouthMotor) && !core_getSol(sUpDownDriver))
-      locals.rudymouthPos = 0;
-    /* -- If closed, and Mouth Solenoid fired and UpDown fired - Open it! -- */
-    if (!locals.rudymouthPos && core_getSol(sMouthMotor) && core_getSol(sUpDownDriver))
-      locals.rudymouthPos = 1;
 
     /* ----------------------------------
+     -- Open & Close Step Gate       --
+     ---------------------------------- */
+    if (mech & 0x02) {
+        /*-- if Step Gate Solenoid fires, keep it open for a timer of 50 seconds! --*/
+        if (core_getSol(sStepGate))
+            locals.stepgatePos = 50;
+        else
+            locals.stepgatePos -= (locals.stepgatePos > 0) ? 1 : 0; /* -- Count down time till it closes --*/
+    }
+    /* ----------------------------------
+     -- Open & Close Trap Door       --
+     ---------------------------------- */
+    if (mech & 0x04) {
+        /*-- if Trap Door Open Solenoid firing, and TD is closed, open it! --*/
+        if (core_getSol(sTrapOpen) && !locals.trapdoorPos)
+            locals.trapdoorPos = 1;
+        /*-- if Trap Door Closed Solenoid firing, and TD is open, close it! --*/
+        if (core_getSol(sTrapClosed) && locals.trapdoorPos)
+            locals.trapdoorPos = 0;
+        /*-- Make sure Trap Door Closed Switch is on, when door is closed! --*/
+        core_setSw(swTrapClosed, !locals.trapdoorPos);
+    }
+
+    /* ----------------------------------
+     -- Open & Close Rudy's Mouth    --
+     ---------------------------------- */
+    /* -- If open, and Mouth Solenoid fired and !UpDown fired - Close it! -- */
+    if (mech & 0x08) {
+        if (locals.rudymouthPos && core_getSol(sMouthMotor) && !core_getSol(sUpDownDriver))
+            locals.rudymouthPos = 0;
+        /* -- If closed, and Mouth Solenoid fired and UpDown fired - Open it! -- */
+        if (!locals.rudymouthPos && core_getSol(sMouthMotor) && core_getSol(sUpDownDriver))
+            locals.rudymouthPos = 1;
+
+        /* ----------------------------------
        -- Update status of Rudy's Eyes --
        ---------------------------------- */
-    /* -- If Eyes are Open, and Closed Solenoid Fired, close them! --*/
-    if (locals.rudyeyesOC == 0 && core_getSol(sEyesClosed))
-      locals.rudyeyesOC = 1;
-    /* -- If Eyes are Closed, and Open Solenoid Fired, open them! --*/
-    if (locals.rudyeyesOC == 1 && core_getSol(sEyesOpen))
-      locals.rudyeyesOC = 0;
-    /*-- Now check position of Eyes  -- */
-    eyesleft = core_getSol(sEyesLeft);
-    eyesright = core_getSol(sEyesRight);
-    if (eyesleft && !(locals.rudyeyesLR == EYES_LEFT)) {
-      locals.rudyeyesLR = EYES_LEFT;
-      wpc_play_sample(2,SAM_DIVERTER);
+        /* -- If Eyes are Open, and Closed Solenoid Fired, close them! --*/
+        if (locals.rudyeyesOC == 0 && core_getSol(sEyesClosed))
+            locals.rudyeyesOC = 1;
+        /* -- If Eyes are Closed, and Open Solenoid Fired, open them! --*/
+        if (locals.rudyeyesOC == 1 && core_getSol(sEyesOpen))
+            locals.rudyeyesOC = 0;
+        /*-- Now check position of Eyes  -- */
+        eyesleft = core_getSol(sEyesLeft);
+        eyesright = core_getSol(sEyesRight);
+        if (eyesleft && !(locals.rudyeyesLR == EYES_LEFT)) {
+            locals.rudyeyesLR = EYES_LEFT;
+            wpc_play_sample(2, SAM_DIVERTER);
+        }
+        if (eyesright && !(locals.rudyeyesLR == EYES_RIGHT)) {
+            locals.rudyeyesLR = EYES_RIGHT;
+            wpc_play_sample(2, SAM_DIVERTER);
+        }
+        if (!eyesleft && !eyesright)
+            locals.rudyeyesLR = EYES_ST;
     }
-    if (eyesright && !(locals.rudyeyesLR == EYES_RIGHT)) {
-      locals.rudyeyesLR = EYES_RIGHT;
-      wpc_play_sample(2,SAM_DIVERTER);
-    }
-    if (!eyesleft && !eyesright)
-      locals.rudyeyesLR = EYES_ST;
-  }
 }
 
 /**********************************
  Display Status of Rudy's Eyes
  *********************************/
-static const char* showeyepos(void)
-{
-if(locals.rudyeyesOC)
-  return "Closed";
-else
-  {
-  switch(locals.rudyeyesLR)
-    {
-    case EYES_ST: return "Straight";
-    case EYES_LEFT: return "Left";
-    case EYES_RIGHT: return "Right";
-    default: return "?";
+static const char*
+showeyepos(void) {
+    if (locals.rudyeyesOC)
+        return "Closed";
+    else {
+        switch (locals.rudyeyesLR) {
+            case EYES_ST:
+                return "Straight";
+            case EYES_LEFT:
+                return "Left";
+            case EYES_RIGHT:
+                return "Right";
+            default:
+                return "?";
+        }
     }
-  }
 }

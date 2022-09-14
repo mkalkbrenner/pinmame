@@ -67,7 +67,6 @@
  *   separately.
  */
 
-
 #ifndef INC_JITEMIT
 #define INC_JITEMIT
 
@@ -108,14 +107,14 @@ void jit_emit_queue_instr(data32_t addr);
 /*
  *   Process all queued instructions.
  */
-void jit_emit_process_queue(struct jit_ctl *jit, int (*func)(struct jit_ctl *jit, data32_t addr));
+void jit_emit_process_queue(struct jit_ctl* jit, int (*func)(struct jit_ctl* jit, data32_t addr));
 
 /*
  *   Begin a new emulator instruction.  This sets the emulated code address
  *   to 'addr', and sets a marker that can be used to roll back any code
  *   generated for the instruction via jit_emit_cancel_instr().
  */
-void jit_emit_begin_instr(struct jit_ctl *jit, data32_t addr);
+void jit_emit_begin_instr(struct jit_ctl* jit, data32_t addr);
 
 /*
  *   Cancel the current instruction.  This discards code back to the market
@@ -124,7 +123,7 @@ void jit_emit_begin_instr(struct jit_ctl *jit, data32_t addr);
  *   opcode after all.  This will discard any incomplete code generated along
  *   the way.
  */
-void jit_emit_cancel_instr(struct jit_ctl *jit);
+void jit_emit_cancel_instr(struct jit_ctl* jit);
 
 /*
  *   Generate a return to emulator at the given emulated code address.  This
@@ -143,8 +142,7 @@ void jit_emit_return_to_emu(data32_t addr);
  *   we'll resolve them to return to the emulator at the target emulated
  *   address.
  */
-void jit_emit_commit(struct jit_ctl *jit);
-
+void jit_emit_commit(struct jit_ctl* jit);
 
 /*
  *   Emit a native Intel machine code instruction.  This is a mini-assembler:
@@ -174,7 +172,7 @@ void jit_emit_commit(struct jit_ctl *jit);
  *   supplied in the varargs.
  */
 typedef enum intelMneId intelMneId;
-#define emit(mne, ...) jit_emit(im##mne, __VA_ARGS__, EndOfOps)
+#define emit(mne, ...)  jit_emit(im##mne, __VA_ARGS__, EndOfOps)
 #define emitv(mne, ...) jit_emit(mne, __VA_ARGS__, EndOfOps)
 void jit_emit(intelMneId mne, ...);
 
@@ -187,19 +185,19 @@ void jit_emit(intelMneId mne, ...);
  *   Labels are automatically deleted in jit_reset(), so there's no need to
  *   delete labels individually.
  */
-struct jit_label *jit_new_fwd_label();
+struct jit_label* jit_new_fwd_label();
 
 /*
  *   Create a new label and set its address to the current code address.
  */
-struct jit_label *jit_new_label_here();
+struct jit_label* jit_new_label_here();
 
 /*
  *   Create a label that points to an emulated code address.  'addr' is an
  *   opcode address in the emulated address space.  This is used to generate
  *   branches to emulator locations that might be in the same code block.
  */
-struct jit_label *jit_new_addr_label(data32_t addr);
+struct jit_label* jit_new_addr_label(data32_t addr);
 
 /*
  *   Create a label that points to a native code address.  This can be used
@@ -207,15 +205,14 @@ struct jit_label *jit_new_addr_label(data32_t addr);
  *   C code.  For example, this can be used for jumps to the jit->pLookup
  *   handler.
  */
-struct jit_label *jit_new_native_label(byte *addr);
+struct jit_label* jit_new_native_label(byte* addr);
 
 /*
  *   Resolve a forward label.  This sets the label's target address to the
  *   current code pointer, and fixes up any references that have been emitted
  *   to the label so far. 
  */
-void jit_resolve_label(struct jit_label *l);
-
+void jit_resolve_label(struct jit_label* l);
 
 /*
  *   Instruction mnemonic IDs for the Intel opcodes.  These are internal IDs
@@ -230,211 +227,210 @@ void jit_resolve_label(struct jit_label *l);
  *   number and types of operands present.
  */
 enum intelMneId {
-	imADD,
-	imOR,
-	imADC,
-	imSBB,
-	imAND,
-	imSUB,
-	imXOR,
-	imNOT,
-	imCMP,
-	imINC,
-	imDEC,
-	imPUSH,
-	imPOP,
-	imPUSHA,
-	imPOPA,
-	imIMUL,
-	imMUL,
-	imIDIV,
-	imDIV,
-	imJO,
-	imJNO,
-	imJB,
-	imJAE,
-	imJE,
-	imJNE,
-	imJBE,
-	imJA,
-	imJS,
-	imJNS,
-	imJP,
-	imJPE,
-	imJNP,
-	imLPO,
-	imJL,
-	imJGE,
-	imJLE,
-	imJG,
-	imTEST,
-	imXCHG,
-	imMOV,
-	imMOVSX,
-	imMOVZX,
-	imLEA,
-	imNOP,
-	imWAIT,
-	imPUSHFD,
-	imPUSHF,
-	imPOPFD,
-	imPOPF,
-	imSAHF,
-	imLAHF,
-	imMOVSB,
-	imMOVSD,
-	imMOVSW,
-	imSTOSB,
-	imSTOSD,
-	imSTOSW,
-	imLODSB,
-	imLODSD,
-	imLODSW,
-	imSCASB,
-	imSCASD,
-	imSCASW,
-	imCMPSB,
-	imCMPSW,
-	imCMPSD,
-	imROL,
-	imROR,
-	imRCL,
-	imRCR,
-	imSHL,
-	imSHR,
-	imSAR,
-	imRETN,
-	imRETN0,
-	imLES,
-	imLDS,
-	imLFS,
-	imLGS,
-	imLSS,
-	imENTER,
-	imLEAVE,
-	imRETF,
-	imRETF0,
-	imINT3,
-	imINT,
-	imINTO,
-	imIRET,
-	imLOOPNZ,
-	imLOOPZ,
-	imLOOP,
-	imJECXZ,
-	imJCXZ,
-	imCALL,
-	imJMP,
-	imHLT,
-	imCMC,
-	imCLC,
-	imSTC,
-	imCLI,
-	imSTI,
-	imCLD,
-	imSTD,
-	imSETA,
-	imSETBE,
-	imSETC,
-	imSETG,
-	imSETGE,
-	imSETL,
-	imSETLE,
-	imSETNC,
-	imSETNO,
-	imSETNP,
-	imSETNS,
-	imSETNZ,
-	imSETO,
-	imSETP,
-	imSETS,
-	imSETZ,
-	imCBW,
-	imCWD,
-	imCWDE,
-	imCDQ,
+    imADD,
+    imOR,
+    imADC,
+    imSBB,
+    imAND,
+    imSUB,
+    imXOR,
+    imNOT,
+    imCMP,
+    imINC,
+    imDEC,
+    imPUSH,
+    imPOP,
+    imPUSHA,
+    imPOPA,
+    imIMUL,
+    imMUL,
+    imIDIV,
+    imDIV,
+    imJO,
+    imJNO,
+    imJB,
+    imJAE,
+    imJE,
+    imJNE,
+    imJBE,
+    imJA,
+    imJS,
+    imJNS,
+    imJP,
+    imJPE,
+    imJNP,
+    imLPO,
+    imJL,
+    imJGE,
+    imJLE,
+    imJG,
+    imTEST,
+    imXCHG,
+    imMOV,
+    imMOVSX,
+    imMOVZX,
+    imLEA,
+    imNOP,
+    imWAIT,
+    imPUSHFD,
+    imPUSHF,
+    imPOPFD,
+    imPOPF,
+    imSAHF,
+    imLAHF,
+    imMOVSB,
+    imMOVSD,
+    imMOVSW,
+    imSTOSB,
+    imSTOSD,
+    imSTOSW,
+    imLODSB,
+    imLODSD,
+    imLODSW,
+    imSCASB,
+    imSCASD,
+    imSCASW,
+    imCMPSB,
+    imCMPSW,
+    imCMPSD,
+    imROL,
+    imROR,
+    imRCL,
+    imRCR,
+    imSHL,
+    imSHR,
+    imSAR,
+    imRETN,
+    imRETN0,
+    imLES,
+    imLDS,
+    imLFS,
+    imLGS,
+    imLSS,
+    imENTER,
+    imLEAVE,
+    imRETF,
+    imRETF0,
+    imINT3,
+    imINT,
+    imINTO,
+    imIRET,
+    imLOOPNZ,
+    imLOOPZ,
+    imLOOP,
+    imJECXZ,
+    imJCXZ,
+    imCALL,
+    imJMP,
+    imHLT,
+    imCMC,
+    imCLC,
+    imSTC,
+    imCLI,
+    imSTI,
+    imCLD,
+    imSTD,
+    imSETA,
+    imSETBE,
+    imSETC,
+    imSETG,
+    imSETGE,
+    imSETL,
+    imSETLE,
+    imSETNC,
+    imSETNO,
+    imSETNP,
+    imSETNS,
+    imSETNZ,
+    imSETO,
+    imSETP,
+    imSETS,
+    imSETZ,
+    imCBW,
+    imCWD,
+    imCWDE,
+    imCDQ,
 
-	nIntelMneId
+    nIntelMneId
 };
 
 /* synonyms for instructions with more than one name in the standard Intel set */
-#define imSETAE imSETNC
-#define imSETB  imSETC
-#define imSETE  imSETZ
-#define imSETNA imSETBE
-#define imSETNAE imSETB
-#define imSETNB imSETAE
-#define imSETNBE imSETA
-#define imSETNE imSETNZ
-#define imSETNG imSETLE
-#define imSETNGE imSETL
-#define imSETNL imSETGE
-#define imSETNLE imSETG
-#define imSETPE imSETP
-#define imSETPO imSETNP
+#define imSETAE          imSETNC
+#define imSETB           imSETC
+#define imSETE           imSETZ
+#define imSETNA          imSETBE
+#define imSETNAE         imSETB
+#define imSETNB          imSETAE
+#define imSETNBE         imSETA
+#define imSETNE          imSETNZ
+#define imSETNG          imSETLE
+#define imSETNGE         imSETL
+#define imSETNL          imSETGE
+#define imSETNLE         imSETG
+#define imSETPE          imSETP
+#define imSETPO          imSETNP
 
-#define imJZ    imJE
-#define imJNZ   imJNE
-#define imJNAE  imJB
-#define imJNB   imJAE
-#define imJNA   imJBE
-#define imJNBE  imJA
-#define imJNGE  imJL
-#define imJNLE  imJG
-#define imJNL   imJGE
-#define imJNG   imJLE
-#define imJNC   imJAE
-#define imJC    imJB
-
+#define imJZ             imJE
+#define imJNZ            imJNE
+#define imJNAE           imJB
+#define imJNB            imJAE
+#define imJNA            imJBE
+#define imJNBE           imJA
+#define imJNGE           imJL
+#define imJNLE           imJG
+#define imJNL            imJGE
+#define imJNG            imJLE
+#define imJNC            imJAE
+#define imJC             imJB
 
 /*
  *   Operand codes for registers.  Note that the first 8 are in the order for
  *   the 'rrr' field in instructions that encode registers this way (e.g.,
  *   PUSH, opcode 0x50 = b01010rrr, so PUSH ECX = 0101001 = 0x50 | rrr(ECX)
  */
-#define is_r32(r) (((r) & ~0x0F) == 0x100)
-#define rrr(r) ((r) & 7)  // convert from register ID to rrr opcode bit field
-#define EAX  0x100   // rrr = 000
-#define ECX  0x101   // rrr = 001
-#define EDX  0x102   // rrr = 010
-#define EBX  0x103   // rrr = 011
-#define ESP  0x104   // rrr = 100
-#define EBP  0x105   // rrr = 101
-#define ESI  0x106   // rrr = 110
-#define EDI  0x107   // rrr = 111
+#define is_r32(r)        (((r) & ~0x0F) == 0x100)
+#define rrr(r)           ((r)&7) // convert from register ID to rrr opcode bit field
+#define EAX              0x100   // rrr = 000
+#define ECX              0x101   // rrr = 001
+#define EDX              0x102   // rrr = 010
+#define EBX              0x103   // rrr = 011
+#define ESP              0x104   // rrr = 100
+#define EBP              0x105   // rrr = 101
+#define ESI              0x106   // rrr = 110
+#define EDI              0x107   // rrr = 111
 
 // the 16-bit registers are in the same order for rrr masking, but
 // note that these require the size override prefix for access
-#define is_r16(r) (((r) & ~0x0F) == 0x110)
-#define AX   0x110
-#define CX   0x111
-#define DX   0x112
-#define BX   0x113
-#define SP   0x114
-#define BP   0x115
-#define SI   0x116
-#define DI   0x117
+#define is_r16(r)        (((r) & ~0x0F) == 0x110)
+#define AX               0x110
+#define CX               0x111
+#define DX               0x112
+#define BX               0x113
+#define SP               0x114
+#define BP               0x115
+#define SI               0x116
+#define DI               0x117
 
 // the byte registers have yet another order
-#define is_r8(r) (((r) & ~0x0F) == 0x120)
-#define AL   0x120
-#define CL   0x121
-#define DL   0x122
-#define BL   0x123
-#define AH   0x124
-#define CH   0x125
-#define DH   0x126
-#define BH   0x127
+#define is_r8(r)         (((r) & ~0x0F) == 0x120)
+#define AL               0x120
+#define CL               0x121
+#define DL               0x122
+#define BL               0x123
+#define AH               0x124
+#define CH               0x125
+#define DH               0x126
+#define BH               0x127
 
 // and then there are the segment registers and the instruction pointer
-#define is_segreg(r) (((r) & ~0x0F) == 0x140)
-#define DS   0x140
-#define ES   0x141
-#define FS   0x142
-#define GS   0x143
-#define SS   0x144
-#define CS   0x145
-#define IP   0x146
+#define is_segreg(r)     (((r) & ~0x0F) == 0x140)
+#define DS               0x140
+#define ES               0x141
+#define FS               0x142
+#define GS               0x143
+#define SS               0x144
+#define CS               0x145
+#define IP               0x146
 
 /*
  *   Type tags for emit() operand arguments.  For most opcodes, each operand
@@ -450,7 +446,7 @@ enum intelMneId {
  *   the immediate data value: emit(MOV, EAX, Imm, 14) is equivalent to the
  *   assembly instruction MOV EAX, 14.
  */
-#define Imm  0x500
+#define Imm              0x500
 
 /*
  *   Memory operand size specifiers - BYTE PTR, WORD PTR, DWORD PTR.  Use one
@@ -462,9 +458,9 @@ enum intelMneId {
  *   ambiguous: MOV [SI], 1.  In such cases, a size specifier is required:
  *   MOV DWORD PTR [SI], 1.
  */
-#define BytePtr  0x501
-#define WordPtr  0x502
-#define DwordPtr 0x503
+#define BytePtr          0x501
+#define WordPtr          0x502
+#define DwordPtr         0x503
 
 /*
  *   Operand code for an indexed register.  In an emit() call, use Idx
@@ -474,48 +470,46 @@ enum intelMneId {
  *   is equivalent to MOV EAX, [1234h].
  *   
  */
-#define Idx  0x510
+#define Idx              0x510
 
 /*
  *   Operand code for index register + displacement (same as base register +
  *   displacement).  emit(MOV, EAX, BaseDisp, EBX, 0x100) means MOV EAX,
  *   EBX[100h]. 
  */
-#define BaseDisp 0x520
-#define IdxDisp  0x520
+#define BaseDisp         0x520
+#define IdxDisp          0x520
 
 /*
  *   Operand code for a base+index address.  emit(MOV, EAX, BaseIdx, EBX,
  *   ESI) means MOV EAX, [EBX+ESI].
  */
-#define BaseIdx  0x530
+#define BaseIdx          0x530
 
 /*
  *   Operand code for a base+index+displacement address.  emit(MOV, EAX,
  *   BaseIdxDisp, EBX, EDI, 16) means MOV EAX, [EBX+EDI+1234h]. 
  */
-#define BaseIdxDisp  0x540
+#define BaseIdxDisp      0x540
 
 /*
  *   Base + Index + Scale + Displacement, as in [EBX+EDI*4 + 1234h]
  */
-#define BaseIdxScaleDisp  0x550
+#define BaseIdxScaleDisp 0x550
 
 /*
  *   Index + Scale + Displacement: emit(MOV, EAX, IdxScaleDisp, ESI, 4,
  *   0x1234) means MOV EAX, [ESI*4 + 1234h]
  */
-#define IdxScaleDisp  0x560
-
+#define IdxScaleDisp     0x560
 
 /* Label, for a JMP: emit(JNE, Label, 3) */
-#define Label  0x600
+#define Label            0x600
 
 /* Offset, for a JMP: emit(JNE, Offset, 2) -> JNE $+2 */
-#define Offset 0x601
+#define Offset           0x601
 
 /* End of operands flag */
-#define EndOfOps 0x1000
-
+#define EndOfOps         0x1000
 
 #endif /* INC_JITEMIT */

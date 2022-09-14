@@ -12,7 +12,8 @@
 
 #ifndef M32UTIL_H
 #define M32UTIL_H
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
@@ -22,17 +23,17 @@ extern void __cdecl dprintf(const char* fmt, ...);
 extern UINT GetDepth(HWND hWnd);
 
 /* Open a text file */
-extern void DisplayTextFile(HWND hWnd, const char *cName);
+extern void DisplayTextFile(HWND hWnd, const char* cName);
 
-#define PACKVERSION(major,minor) MAKELONG(minor,major)
+#define PACKVERSION(major, minor) MAKELONG(minor, major)
 
 /* Check for old version of comctl32.dll */
 extern LONG GetCommonControlVersion(void);
 
-extern char * MyStrStrI(const char* pFirst, const char* pSrch);
-extern char * ConvertToWindowsNewlines(const char *source);
+extern char* MyStrStrI(const char* pFirst, const char* pSrch);
+extern char* ConvertToWindowsNewlines(const char* source);
 
-extern const char * GetDriverFilename(int nIndex);
+extern const char* GetDriverFilename(int nIndex);
 
 BOOL DriverIsClone(int driver_index);
 BOOL DriverIsBroken(int driver_index);
@@ -47,8 +48,8 @@ BOOL DriverUsesLightGun(int driver_index);
 
 void FlushFileCaches(void);
 
-void FreeIfAllocated(char **s);
+void FreeIfAllocated(char** s);
 
-BOOL StringIsSuffixedBy(const char *s, const char *suffix);
+BOOL StringIsSuffixedBy(const char* s, const char* suffix);
 
 #endif /* MAME32UTIL_H */

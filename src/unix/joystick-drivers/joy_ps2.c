@@ -73,61 +73,47 @@
 
 #ifdef PS2_JOYSTICK
 
-#include "xmame.h"
 #include "devices.h"
-#include <sys/ioctl.h>
+#include "xmame.h"
 #include <linux/ps2/pad.h>
+#include <sys/ioctl.h>
 
 /* define the following for PS2 driver debugging */
 #undef JDEBUG
-#define BUFSIZE 128
+#define BUFSIZE    128
 /* name of ps2pad device prefix */
-#define PS2PADDEV "/dev/ps2pad"
+#define PS2PADDEV  "/dev/ps2pad"
 /* name of ps2pad status device */
 #define PS2PADSTAT "/dev/ps2padstat"
 
 /* Global definitions to make code more readable.  Taken from the actual
  * PS2 pad kernel driver source code.
  */
-char *pad_type_names[16] = {
-	"type 0",
-	"type 1",
-	"NEJICON",	/* PS2PAD_TYPE_NEJICON	*/
-	"type 3",
-	"DIGITAL",	/* PS2PAD_TYPE_DIGITAL	*/
-	"ANALOG",	/* PS2PAD_TYPE_ANALOG	*/
-	"type 6",
-	"DUALSHOCK",	/* PS2PAD_TYPE_DUALSHOCK*/
-	"type 8",
-	"type 9",
-	"type A",
-	"type B",
-	"type C",
-	"type D",
-	"type E",
-	"type F",
+char* pad_type_names[16] = {
+    "type 0", "type 1",    "NEJICON", /* PS2PAD_TYPE_NEJICON	*/
+    "type 3", "DIGITAL",              /* PS2PAD_TYPE_DIGITAL	*/
+    "ANALOG",                         /* PS2PAD_TYPE_ANALOG	*/
+    "type 6", "DUALSHOCK",            /* PS2PAD_TYPE_DUALSHOCK*/
+    "type 8", "type 9",    "type A",  "type B", "type C", "type D", "type E", "type F",
 };
 
-char *pad_stat_names[4] = {
-	"Not connected",
-	"Ready",
-	"Busy",
-	"Error",
+char* pad_stat_names[4] = {
+    "Not connected",
+    "Ready",
+    "Busy",
+    "Error",
 };
 
-char *pad_rstat_names[4] = {
-	"Complete",
-	"Failed",
-	"Busy",
-	"UNKNOWN",
+char* pad_rstat_names[4] = {
+    "Complete",
+    "Failed",
+    "Busy",
+    "UNKNOWN",
 };
 
 struct rc_option joy_ps2_opts[] = {
-   /* name, shortname, type, dest, deflt, min, max, func, help */
-   { NULL,		NULL,			rc_end,		NULL,
-     NULL,		0,			0,		NULL,
-     NULL }
-};
+    /* name, shortname, type, dest, deflt, min, max, func, help */
+    {NULL, NULL, rc_end, NULL, NULL, 0, 0, NULL, NULL}};
 
 static u_char pad_data[PS2PAD_DATASIZE];
 static int numpads = 0;
@@ -135,12 +121,11 @@ static int numpads = 0;
 /* Forward declarations */
 void joy_ps2_poll(void);
 
-
 /* Lock/unlock the PS2 pad's mode. */
-static void ps2pad_lockset (
-	int fd,				/* fd pointing to pad device */
-	char padtype,			/* Controller mode/type */
-	int lock)			/* 0 = unlock, 1 = lock */
+static void
+ps2pad_lockset(int fd,       /* fd pointing to pad device */
+               char padtype, /* Controller mode/type */
+               int lock)     /* 0 = unlock, 1 = lock */
 {
     struct ps2pad_mode padmode;
     struct ps2pad_modeinfo modeinfo;
@@ -152,38 +137,34 @@ static void ps2pad_lockset (
      */
     modeinfo.term = PS2PAD_MODETABLE;
     modeinfo.offs = -1;
-    rc = ioctl (fd, PS2PAD_IOCMODEINFO, &modeinfo);
-    if (rc != 0)
-    {
-	fprintf(stderr_file, "Unexpected rc=%d from ps2 IOCMODEINFO ioctl!\n", rc);
-	return;
+    rc = ioctl(fd, PS2PAD_IOCMODEINFO, &modeinfo);
+    if (rc != 0) {
+        fprintf(stderr_file, "Unexpected rc=%d from ps2 IOCMODEINFO ioctl!\n", rc);
+        return;
     }
     max = modeinfo.result;
-    for (i=0; i<max; i++)
-    {
-	modeinfo.offs = i;
-	rc = ioctl (fd, PS2PAD_IOCMODEINFO, &modeinfo);
-	if (rc != 0)
-	{
-	    fprintf(stderr_file, "Unexpected rc=%d from ps2 IOCMODEINFO ioctl!\n", rc);
-	    return;
-	}
-	if (modeinfo.result == padtype) 
-	    break;
+    for (i = 0; i < max; i++) {
+        modeinfo.offs = i;
+        rc = ioctl(fd, PS2PAD_IOCMODEINFO, &modeinfo);
+        if (rc != 0) {
+            fprintf(stderr_file, "Unexpected rc=%d from ps2 IOCMODEINFO ioctl!\n", rc);
+            return;
+        }
+        if (modeinfo.result == padtype)
+            break;
     }
 
     if (i == max) {
-	/* Couldn't find our mode.  Use current mode. */
-	modeinfo.term = PS2PAD_MODECUROFFS;
-	rc = ioctl (fd, PS2PAD_IOCMODEINFO, &modeinfo);
-	i = modeinfo.result;
-	if (rc != 0)
-	{
-	    fprintf(stderr_file, "Unexpected rc=%d from ps2 IOCMODEINFO ioctl!\n", rc);
-	    return;
-	}
+        /* Couldn't find our mode.  Use current mode. */
+        modeinfo.term = PS2PAD_MODECUROFFS;
+        rc = ioctl(fd, PS2PAD_IOCMODEINFO, &modeinfo);
+        i = modeinfo.result;
+        if (rc != 0) {
+            fprintf(stderr_file, "Unexpected rc=%d from ps2 IOCMODEINFO ioctl!\n", rc);
+            return;
+        }
     }
-	
+
     /* Now lock or unlock our controller. */
     padmode.offs = i;
     /* Magic numbers used:  0, 1: maintain present lock status
@@ -191,25 +172,21 @@ static void ps2pad_lockset (
      *                         3: lock switch
      */
     padmode.lock = ((lock == 1) ? 3 : 2);
-    rc = ioctl (fd, PS2PAD_IOCSETMODE, &padmode);
-    if (rc != 0) 
-    {
-	fprintf (stderr_file, "PS2 Pad could not be %slocked! rc=%d \n",
-			(lock == 0) ? "un" : "", rc);
-	exit(-1);
+    rc = ioctl(fd, PS2PAD_IOCSETMODE, &padmode);
+    if (rc != 0) {
+        fprintf(stderr_file, "PS2 Pad could not be %slocked! rc=%d \n", (lock == 0) ? "un" : "", rc);
+        exit(-1);
     }
     return;
 }
 
-
 /* Initialization routine. */
-void joy_ps2_init (void)
-{
+void
+joy_ps2_init(void) {
     int i, j, res, tempfd;
     char devname[BUFSIZE];
 
-    fprintf (stderr_file, "PlayStation2 pad interface initialization...\n");
-
+    fprintf(stderr_file, "PlayStation2 pad interface initialization...\n");
 
     /* Check how many possible pads can be connected. */
     /* The following code has been commented out because it seems to
@@ -236,199 +213,167 @@ void joy_ps2_init (void)
 #endif
 
     /* Now loop through each controller. */
-    for (i = 0; i < numpads; i++)
-    {
-	sprintf (devname, "%s%1d0", PS2PADDEV, i);
+    for (i = 0; i < numpads; i++) {
+        sprintf(devname, "%s%1d0", PS2PADDEV, i);
 
-	if ((joy_data[i].fd = open (devname, O_RDONLY)) >= 0)
-	{
-	    int ires = PS2PAD_STAT_BUSY;
+        if ((joy_data[i].fd = open(devname, O_RDONLY)) >= 0) {
+            int ires = PS2PAD_STAT_BUSY;
 
-	    /* We might have just woken up the pad.  Wait for READY */
-	    while (ires == PS2PAD_STAT_READY)
-	    {
-		res = ioctl(joy_data[i].fd, PS2PAD_IOCGETSTAT, &ires);
-		if (res != 0)
-		{
-		    fprintf(stderr_file,
-			"Unexpected rc=%d from ps2 IOCGETSTAT ioctl!\n", res);
-		}
-	    }
-	    if ((ires == PS2PAD_STAT_NOTCON) ||
-			(ires == PS2PAD_STAT_ERROR))
-	    {
-		if (ires == PS2PAD_STAT_ERROR)
-		    fprintf(stderr_file,
-			"PS2 Pad #%d had PS2PAD_STAT_ERROR!\n", i);
-		fprintf(stderr_file,
-			"Pad data corrupt, closing fd %d\n", joy_data[i].fd);
-		close(joy_data[i].fd);
-		joy_data[i].fd = -1;
-		continue;
-	    }
+            /* We might have just woken up the pad.  Wait for READY */
+            while (ires == PS2PAD_STAT_READY) {
+                res = ioctl(joy_data[i].fd, PS2PAD_IOCGETSTAT, &ires);
+                if (res != 0) {
+                    fprintf(stderr_file, "Unexpected rc=%d from ps2 IOCGETSTAT ioctl!\n", res);
+                }
+            }
+            if ((ires == PS2PAD_STAT_NOTCON) || (ires == PS2PAD_STAT_ERROR)) {
+                if (ires == PS2PAD_STAT_ERROR)
+                    fprintf(stderr_file, "PS2 Pad #%d had PS2PAD_STAT_ERROR!\n", i);
+                fprintf(stderr_file, "Pad data corrupt, closing fd %d\n", joy_data[i].fd);
+                close(joy_data[i].fd);
+                joy_data[i].fd = -1;
+                continue;
+            }
 
-	    /* Lock down the controller's mode. */
-	    ps2pad_lockset(joy_data[i].fd, PS2PAD_TYPE_DUALSHOCK, 1);
+            /* Lock down the controller's mode. */
+            ps2pad_lockset(joy_data[i].fd, PS2PAD_TYPE_DUALSHOCK, 1);
 
-	    /* Read pad data and fill in default values */
-	    res = read(joy_data[i].fd, &pad_data, PS2PAD_DATASIZE);
-	    if ((res == 0) || (pad_data[0] != 0))
- 	    {
-	 	fprintf(stderr_file,
-			"Pad data corrupt, closing fd %d\n", joy_data[i].fd);
-		close(joy_data[i].fd);
-		joy_data[i].fd = -1;
-		continue;
-	    }
-	    
-	    switch(PS2PAD_TYPE(pad_data[1]))
-	    {
-		case PS2PAD_TYPE_DUALSHOCK:
-			/* 4 axes, 16 buttons. */
-			joy_data[i].num_axis = 4;
-			joy_data[i].num_buttons = 16;
-			break;
-		case PS2PAD_TYPE_DIGITAL:
-		default:
-			/* 0 axes, 16 buttons. */
-			joy_data[i].num_axis = 0;
-			joy_data[i].num_buttons = 16;
-	    }
-	    /* Sanity check. */
-	    if (joy_data[i].num_buttons > JOY_BUTTONS)
-		joy_data[i].num_buttons = JOY_BUTTONS;
-	    if (joy_data[i].num_axis > JOY_AXIS)
-		joy_data[i].num_axis = JOY_AXIS;
+            /* Read pad data and fill in default values */
+            res = read(joy_data[i].fd, &pad_data, PS2PAD_DATASIZE);
+            if ((res == 0) || (pad_data[0] != 0)) {
+                fprintf(stderr_file, "Pad data corrupt, closing fd %d\n", joy_data[i].fd);
+                close(joy_data[i].fd);
+                joy_data[i].fd = -1;
+                continue;
+            }
 
-	    if (PS2PAD_TYPE(pad_data[1]) == PS2PAD_TYPE_DUALSHOCK)
-	    {
-		joy_data[i].axis[0].center = (int)pad_data[6];
-		joy_data[i].axis[1].center = (int)pad_data[7];
-		joy_data[i].axis[2].center = (int)pad_data[4];
-		joy_data[i].axis[3].center = (int)pad_data[5];
+            switch (PS2PAD_TYPE(pad_data[1])) {
+                case PS2PAD_TYPE_DUALSHOCK:
+                    /* 4 axes, 16 buttons. */
+                    joy_data[i].num_axis = 4;
+                    joy_data[i].num_buttons = 16;
+                    break;
+                case PS2PAD_TYPE_DIGITAL:
+                default:
+                    /* 0 axes, 16 buttons. */
+                    joy_data[i].num_axis = 0;
+                    joy_data[i].num_buttons = 16;
+            }
+            /* Sanity check. */
+            if (joy_data[i].num_buttons > JOY_BUTTONS)
+                joy_data[i].num_buttons = JOY_BUTTONS;
+            if (joy_data[i].num_axis > JOY_AXIS)
+                joy_data[i].num_axis = JOY_AXIS;
 
-		/* Set min/max values to +1/-1 and let autocalibrate
+            if (PS2PAD_TYPE(pad_data[1]) == PS2PAD_TYPE_DUALSHOCK) {
+                joy_data[i].axis[0].center = (int)pad_data[6];
+                joy_data[i].axis[1].center = (int)pad_data[7];
+                joy_data[i].axis[2].center = (int)pad_data[4];
+                joy_data[i].axis[3].center = (int)pad_data[5];
+
+                /* Set min/max values to +1/-1 and let autocalibrate
 		 * take care of the rest.
                  */
-		for (j=0; j<joy_data[i].num_axis; j++)
-		{
-		    if (joy_data[i].axis[j].center == 0)
-			joy_data[i].axis[j].center = 0x7f;
-		    joy_data[i].axis[j].min = joy_data[i].axis[j].center - 1;
-		    joy_data[i].axis[j].max = joy_data[i].axis[j].center + 1;
-		}
-	    }
+                for (j = 0; j < joy_data[i].num_axis; j++) {
+                    if (joy_data[i].axis[j].center == 0)
+                        joy_data[i].axis[j].center = 0x7f;
+                    joy_data[i].axis[j].min = joy_data[i].axis[j].center - 1;
+                    joy_data[i].axis[j].max = joy_data[i].axis[j].center + 1;
+                }
+            }
 
-	    fprintf (stderr_file, "PS2 pad %s is %s\n",
-			    devname,
-			    pad_type_names[PS2PAD_TYPE(pad_data[1])]);
-	    joy_poll_func = joy_ps2_poll;
-	}
+            fprintf(stderr_file, "PS2 pad %s is %s\n", devname, pad_type_names[PS2PAD_TYPE(pad_data[1])]);
+            joy_poll_func = joy_ps2_poll;
+        }
 
     } /* for (numpads) */
 }
 
-
-void joy_ps2_poll (void)
-{
+void
+joy_ps2_poll(void) {
     int i, res, ires;
     int buttons;
 
-    for (i=0; i<numpads; i++)
-    {
-	/* Gracefully fail */
-	if (joy_data[i].fd < 0)
-	    continue;
+    for (i = 0; i < numpads; i++) {
+        /* Gracefully fail */
+        if (joy_data[i].fd < 0)
+            continue;
 
-	/* We might have just woken up the pad.  Wait for READY */
-	res = ioctl(joy_data[i].fd, PS2PAD_IOCGETSTAT, &ires);
-	if (res != 0)
-	{
-	    fprintf(stderr_file,
-		"Unexpected rc=%d from ps2 IOCGETSTAT ioctl!\n", res);
-	    fflush(stderr);
-	    return;
-	}
-	if ((ires == PS2PAD_STAT_NOTCON) ||
-		(ires == PS2PAD_STAT_ERROR))
-	{
-	    if (ires == PS2PAD_STAT_ERROR)
-		fprintf(stderr_file,
-			"PS2 Pad #%d had PS2PAD_STAT_ERROR!\n", i);
-	    fprintf(stderr_file,
-		"Pad data corrupt, closing fd %d\n", joy_data[i].fd);
-	    close(joy_data[i].fd);
-	    joy_data[i].fd = -1;
-	    continue;
-	}
+        /* We might have just woken up the pad.  Wait for READY */
+        res = ioctl(joy_data[i].fd, PS2PAD_IOCGETSTAT, &ires);
+        if (res != 0) {
+            fprintf(stderr_file, "Unexpected rc=%d from ps2 IOCGETSTAT ioctl!\n", res);
+            fflush(stderr);
+            return;
+        }
+        if ((ires == PS2PAD_STAT_NOTCON) || (ires == PS2PAD_STAT_ERROR)) {
+            if (ires == PS2PAD_STAT_ERROR)
+                fprintf(stderr_file, "PS2 Pad #%d had PS2PAD_STAT_ERROR!\n", i);
+            fprintf(stderr_file, "Pad data corrupt, closing fd %d\n", joy_data[i].fd);
+            close(joy_data[i].fd);
+            joy_data[i].fd = -1;
+            continue;
+        }
 
-	if (ires != PS2PAD_STAT_READY)
-	    continue;
+        if (ires != PS2PAD_STAT_READY)
+            continue;
 
-	res = read(joy_data[i].fd, &pad_data, PS2PAD_DATASIZE);
-	if ((res == 0) || (pad_data[0] != 0))
-	{
-	    fprintf(stderr_file,
-		"Pad data corrupt, closing fd %d\n", joy_data[i].fd);
-	    close(joy_data[i].fd);
-	    joy_data[i].fd = -1;
-	    continue;
-	}
-     
-	buttons = ((int)pad_data[2] << 8) | pad_data[3];
+        res = read(joy_data[i].fd, &pad_data, PS2PAD_DATASIZE);
+        if ((res == 0) || (pad_data[0] != 0)) {
+            fprintf(stderr_file, "Pad data corrupt, closing fd %d\n", joy_data[i].fd);
+            close(joy_data[i].fd);
+            joy_data[i].fd = -1;
+            continue;
+        }
+
+        buttons = ((int)pad_data[2] << 8) | pad_data[3];
 
 #ifdef JDEBUG
-	fprintf(stderr_file, "pad: %x %02x %02x %02x %02x\n",
-			buttons,
-			pad_data[4], pad_data[5], pad_data[6],
-			pad_data[7]);
+        fprintf(stderr_file, "pad: %x %02x %02x %02x %02x\n", buttons, pad_data[4], pad_data[5], pad_data[6],
+                pad_data[7]);
 #endif
 
-	/* get button values */
-	joy_data[i].buttons[0]  = (buttons & PS2PAD_BUTTON_SQUARE  ) ? 0 : 1;
-	joy_data[i].buttons[1]  = (buttons & PS2PAD_BUTTON_TRIANGLE) ? 0 : 1;
-	joy_data[i].buttons[2]  = (buttons & PS2PAD_BUTTON_CROSS   ) ? 0 : 1;
-	joy_data[i].buttons[3]  = (buttons & PS2PAD_BUTTON_CIRCLE  ) ? 0 : 1;
-	joy_data[i].buttons[4]  = (buttons & PS2PAD_BUTTON_L1      ) ? 0 : 1;
-	joy_data[i].buttons[5]  = (buttons & PS2PAD_BUTTON_R1      ) ? 0 : 1;
-	joy_data[i].buttons[6]  = (buttons & PS2PAD_BUTTON_SELECT  ) ? 0 : 1;
-	joy_data[i].buttons[7]  = (buttons & PS2PAD_BUTTON_START   ) ? 0 : 1;
-	joy_data[i].buttons[8]  = (buttons & PS2PAD_BUTTON_L2      ) ? 0 : 1;
-	joy_data[i].buttons[9]  = (buttons & PS2PAD_BUTTON_R2      ) ? 0 : 1;
-	joy_data[i].buttons[10]  = (buttons & PS2PAD_BUTTON_L3      ) ? 0 : 1;
-	joy_data[i].buttons[11]  = (buttons & PS2PAD_BUTTON_R3      ) ? 0 : 1;
-	joy_data[i].buttons[12]  = (buttons & PS2PAD_BUTTON_LEFT    ) ? 0 : 1;
-	joy_data[i].buttons[13]  = (buttons & PS2PAD_BUTTON_RIGHT   ) ? 0 : 1;
-	joy_data[i].buttons[14]  = (buttons & PS2PAD_BUTTON_UP      ) ? 0 : 1;
-	joy_data[i].buttons[15]  = (buttons & PS2PAD_BUTTON_DOWN    ) ? 0 : 1;
+        /* get button values */
+        joy_data[i].buttons[0] = (buttons & PS2PAD_BUTTON_SQUARE) ? 0 : 1;
+        joy_data[i].buttons[1] = (buttons & PS2PAD_BUTTON_TRIANGLE) ? 0 : 1;
+        joy_data[i].buttons[2] = (buttons & PS2PAD_BUTTON_CROSS) ? 0 : 1;
+        joy_data[i].buttons[3] = (buttons & PS2PAD_BUTTON_CIRCLE) ? 0 : 1;
+        joy_data[i].buttons[4] = (buttons & PS2PAD_BUTTON_L1) ? 0 : 1;
+        joy_data[i].buttons[5] = (buttons & PS2PAD_BUTTON_R1) ? 0 : 1;
+        joy_data[i].buttons[6] = (buttons & PS2PAD_BUTTON_SELECT) ? 0 : 1;
+        joy_data[i].buttons[7] = (buttons & PS2PAD_BUTTON_START) ? 0 : 1;
+        joy_data[i].buttons[8] = (buttons & PS2PAD_BUTTON_L2) ? 0 : 1;
+        joy_data[i].buttons[9] = (buttons & PS2PAD_BUTTON_R2) ? 0 : 1;
+        joy_data[i].buttons[10] = (buttons & PS2PAD_BUTTON_L3) ? 0 : 1;
+        joy_data[i].buttons[11] = (buttons & PS2PAD_BUTTON_R3) ? 0 : 1;
+        joy_data[i].buttons[12] = (buttons & PS2PAD_BUTTON_LEFT) ? 0 : 1;
+        joy_data[i].buttons[13] = (buttons & PS2PAD_BUTTON_RIGHT) ? 0 : 1;
+        joy_data[i].buttons[14] = (buttons & PS2PAD_BUTTON_UP) ? 0 : 1;
+        joy_data[i].buttons[15] = (buttons & PS2PAD_BUTTON_DOWN) ? 0 : 1;
 
-	/* Only read analog data if the pad is in DualShock mode */
-	if (PS2PAD_TYPE(pad_data[1]) == PS2PAD_TYPE_DUALSHOCK)
-	{
-	    joy_data[i].axis[0].val = (int) pad_data[6];
-	    joy_data[i].axis[1].val = (int) pad_data[7];
-	    joy_data[i].axis[2].val = (int) pad_data[4];
-	    joy_data[i].axis[3].val = (int) pad_data[5];
-	}
-
+        /* Only read analog data if the pad is in DualShock mode */
+        if (PS2PAD_TYPE(pad_data[1]) == PS2PAD_TYPE_DUALSHOCK) {
+            joy_data[i].axis[0].val = (int)pad_data[6];
+            joy_data[i].axis[1].val = (int)pad_data[7];
+            joy_data[i].axis[2].val = (int)pad_data[4];
+            joy_data[i].axis[3].val = (int)pad_data[5];
+        }
     }
 
     /* evaluate joystick movements */
-   joy_evaluate_moves ();
+    joy_evaluate_moves();
 }
 
+void
+joy_ps2_exit() {
 
-void joy_ps2_exit()
-{
-
-   int i;
-   for (i=0; i<numpads; i++)
-   {
-      /* A -1 as the joytype will leave the pad in its current state,
+    int i;
+    for (i = 0; i < numpads; i++) {
+        /* A -1 as the joytype will leave the pad in its current state,
        * since it will never match a real joypad type
        */
-      ps2pad_lockset(joy_data[i].fd, -1, 0);
-   }
+        ps2pad_lockset(joy_data[i].fd, -1, 0);
+    }
 }
 
-#endif	/* PS2_JOYSTICK */
+#endif /* PS2_JOYSTICK */

@@ -18,8 +18,8 @@
 */
 #ifndef __SYSDEP_MIXER_PLUGINS_H
 #define __SYSDEP_MIXER_PLUGINS_H
-#include "plugin_manager.h"
 #include "begin_code.h"
+#include "plugin_manager.h"
 
 #ifdef SYSDEP_MIXER_OSS
 extern struct plugin_struct sysdep_mixer_oss;

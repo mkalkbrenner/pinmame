@@ -19,27 +19,25 @@
 */
 #ifndef __SYSDEP_MIXER_PRIV_H
 #define __SYSDEP_MIXER_PRIV_H
-#include "sysdep_mixer.h"
 #include "begin_code.h"
+#include "sysdep_mixer.h"
 
 struct sysdep_mixer_struct {
-   int flags;
-   char channel_available[SYSDEP_MIXER_CHANNELS];
-   char restore_channel[SYSDEP_MIXER_CHANNELS];
-   int cache_left[SYSDEP_MIXER_CHANNELS];
-   int cache_right[SYSDEP_MIXER_CHANNELS];
-   int orig_left[SYSDEP_MIXER_CHANNELS];
-   int orig_right[SYSDEP_MIXER_CHANNELS];
-   void *_priv;
-   int (*set)(struct sysdep_mixer_struct *mixer, int channel, int left,
-      int right);
-   int (*get)(struct sysdep_mixer_struct *mixer, int channel, int *left,
-      int *right);
-   void (*destroy)(struct sysdep_mixer_struct *mixer);
+    int flags;
+    char channel_available[SYSDEP_MIXER_CHANNELS];
+    char restore_channel[SYSDEP_MIXER_CHANNELS];
+    int cache_left[SYSDEP_MIXER_CHANNELS];
+    int cache_right[SYSDEP_MIXER_CHANNELS];
+    int orig_left[SYSDEP_MIXER_CHANNELS];
+    int orig_right[SYSDEP_MIXER_CHANNELS];
+    void* _priv;
+    int (*set)(struct sysdep_mixer_struct* mixer, int channel, int left, int right);
+    int (*get)(struct sysdep_mixer_struct* mixer, int channel, int* left, int* right);
+    void (*destroy)(struct sysdep_mixer_struct* mixer);
 };
 
 struct sysdep_mixer_create_params {
-   const char *device;
+    const char* device;
 };
 
 #include "end_code.h"

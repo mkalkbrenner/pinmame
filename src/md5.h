@@ -22,7 +22,8 @@
 
 #ifndef MD5_H
 #define MD5_H
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
@@ -35,14 +36,14 @@ typedef unsigned int UWORD32;
 #define md5byte unsigned char
 
 struct MD5Context {
-	UWORD32 buf[4];
-	UWORD32 bytes[2];
-	UWORD32 in[16];
+    UWORD32 buf[4];
+    UWORD32 bytes[2];
+    UWORD32 in[16];
 };
 
-void MD5Init(struct MD5Context *context);
-void MD5Update(struct MD5Context *context, md5byte const *buf, unsigned len);
-void MD5Final(unsigned char digest[16], struct MD5Context *context);
+void MD5Init(struct MD5Context* context);
+void MD5Update(struct MD5Context* context, md5byte const* buf, unsigned len);
+void MD5Final(unsigned char digest[16], struct MD5Context* context);
 void MD5Transform(UWORD32 buf[4], UWORD32 const in[16]);
 
 #ifdef __cplusplus
@@ -50,4 +51,3 @@ void MD5Transform(UWORD32 buf[4], UWORD32 const in[16]);
 #endif
 
 #endif /* !MD5_H */
-

@@ -9,7 +9,7 @@
   that you have read the license and understand and accept it fully.
 
 ***************************************************************************/
- 
+
 /***************************************************************************
 
   history.c
@@ -19,28 +19,28 @@
 ***************************************************************************/
 
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 #include <stdio.h>
+#include <windows.h>
 
-#include <driver.h>
 #include "M32Util.h"
+#include <driver.h>
 
 #include "history.h"
 
-extern int load_driver_history(const struct GameDriver *drv, char *buffer, int bufsize);
+extern int load_driver_history(const struct GameDriver* drv, char* buffer, int bufsize);
 
 /**************************************************************
  * functions
  **************************************************************/
 
 // Load indexes from history.dat if found
-char * GetGameHistory(int driver_index)
-{
-	static char buffer[8192];
-	buffer[0] = '\0';
+char*
+GetGameHistory(int driver_index) {
+    static char buffer[8192];
+    buffer[0] = '\0';
 
-	if (load_driver_history(drivers[driver_index],buffer,sizeof(buffer)) != 0)
-		return buffer;
+    if (load_driver_history(drivers[driver_index], buffer, sizeof(buffer)) != 0)
+        return buffer;
 
-	return ConvertToWindowsNewlines(buffer);
+    return ConvertToWindowsNewlines(buffer);
 }

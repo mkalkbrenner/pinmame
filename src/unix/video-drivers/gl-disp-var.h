@@ -3,8 +3,7 @@
    DO NOT MAKE ANY CHANGES *** MAKE CHANGES IN THE SKELETON FILES !!!
 */
 
-
-	LIBAPI const GLubyte *(CALLBACK * disp__glGetString )( GLenum name );
+LIBAPI const GLubyte*(CALLBACK* disp__glGetString)(GLenum name);
 /**
  * C2J Parser Version 2.0
  * Jausoft - Sven Goethel Software Development
@@ -18,7 +17,7 @@
    extern void glClearIndex ( GLfloat c ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glClearIndex )(GLfloat);
+LIBAPI void(CALLBACK* disp__glClearIndex)(GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -26,7 +25,7 @@
    extern void glClearColor ( GLclampf red , GLclampf green , GLclampf blue , GLclampf alpha ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glClearColor )(GLclampf, GLclampf, GLclampf, GLclampf);
+LIBAPI void(CALLBACK* disp__glClearColor)(GLclampf, GLclampf, GLclampf, GLclampf);
 
 /**
  * Original Function-Prototype :
@@ -34,7 +33,7 @@
    extern void glClear ( GLbitfield mask ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glClear )(GLbitfield);
+LIBAPI void(CALLBACK* disp__glClear)(GLbitfield);
 
 /**
  * Original Function-Prototype :
@@ -42,7 +41,7 @@
    extern void glIndexMask ( GLuint mask ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glIndexMask )(GLuint);
+LIBAPI void(CALLBACK* disp__glIndexMask)(GLuint);
 
 /**
  * Original Function-Prototype :
@@ -50,7 +49,7 @@
    extern void glColorMask ( GLboolean red , GLboolean green , GLboolean blue , GLboolean alpha ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColorMask )(GLboolean, GLboolean, GLboolean, GLboolean);
+LIBAPI void(CALLBACK* disp__glColorMask)(GLboolean, GLboolean, GLboolean, GLboolean);
 
 /**
  * Original Function-Prototype :
@@ -58,7 +57,7 @@
    extern void glAlphaFunc ( GLenum func , GLclampf ref ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glAlphaFunc )(GLenum, GLclampf);
+LIBAPI void(CALLBACK* disp__glAlphaFunc)(GLenum, GLclampf);
 
 /**
  * Original Function-Prototype :
@@ -66,7 +65,7 @@
    extern void glBlendFunc ( GLenum sfactor , GLenum dfactor ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glBlendFunc )(GLenum, GLenum);
+LIBAPI void(CALLBACK* disp__glBlendFunc)(GLenum, GLenum);
 
 /**
  * Original Function-Prototype :
@@ -74,7 +73,7 @@
    extern void glLogicOp ( GLenum opcode ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glLogicOp )(GLenum);
+LIBAPI void(CALLBACK* disp__glLogicOp)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -82,7 +81,7 @@
    extern void glCullFace ( GLenum mode ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glCullFace )(GLenum);
+LIBAPI void(CALLBACK* disp__glCullFace)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -90,7 +89,7 @@
    extern void glFrontFace ( GLenum mode ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glFrontFace )(GLenum);
+LIBAPI void(CALLBACK* disp__glFrontFace)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -98,7 +97,7 @@
    extern void glPointSize ( GLfloat size ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPointSize )(GLfloat);
+LIBAPI void(CALLBACK* disp__glPointSize)(GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -106,7 +105,7 @@
    extern void glLineWidth ( GLfloat width ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glLineWidth )(GLfloat);
+LIBAPI void(CALLBACK* disp__glLineWidth)(GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -114,7 +113,7 @@
    extern void glLineStipple ( GLint factor , GLushort pattern ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glLineStipple )(GLint, GLushort);
+LIBAPI void(CALLBACK* disp__glLineStipple)(GLint, GLushort);
 
 /**
  * Original Function-Prototype :
@@ -122,7 +121,7 @@
    extern void glPolygonMode ( GLenum face , GLenum mode ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPolygonMode )(GLenum, GLenum);
+LIBAPI void(CALLBACK* disp__glPolygonMode)(GLenum, GLenum);
 
 /**
  * Original Function-Prototype :
@@ -130,7 +129,7 @@
    extern void glPolygonOffset ( GLfloat factor , GLfloat units ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPolygonOffset )(GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glPolygonOffset)(GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -138,7 +137,7 @@
    extern void glPolygonStipple ( const GLubyte * mask ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPolygonStipple )(const GLubyte *);
+LIBAPI void(CALLBACK* disp__glPolygonStipple)(const GLubyte*);
 
 /**
  * Original Function-Prototype :
@@ -146,7 +145,7 @@
    extern void glGetPolygonStipple ( GLubyte * mask ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetPolygonStipple )(GLubyte *);
+LIBAPI void(CALLBACK* disp__glGetPolygonStipple)(GLubyte*);
 
 /**
  * Original Function-Prototype :
@@ -154,7 +153,7 @@
    extern void glEdgeFlag ( GLboolean flag ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEdgeFlag )(GLboolean);
+LIBAPI void(CALLBACK* disp__glEdgeFlag)(GLboolean);
 
 /**
  * Original Function-Prototype :
@@ -162,7 +161,7 @@
    extern void glEdgeFlagv ( const GLboolean * flag ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEdgeFlagv )(const GLboolean *);
+LIBAPI void(CALLBACK* disp__glEdgeFlagv)(const GLboolean*);
 
 /**
  * Original Function-Prototype :
@@ -170,7 +169,7 @@
    extern void glScissor ( GLint x , GLint y , GLsizei width , GLsizei height ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glScissor )(GLint, GLint, GLsizei, GLsizei);
+LIBAPI void(CALLBACK* disp__glScissor)(GLint, GLint, GLsizei, GLsizei);
 
 /**
  * Original Function-Prototype :
@@ -178,7 +177,7 @@
    extern void glClipPlane ( GLenum plane , const GLdouble * equation ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glClipPlane )(GLenum, const GLdouble *);
+LIBAPI void(CALLBACK* disp__glClipPlane)(GLenum, const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -186,7 +185,7 @@
    extern void glGetClipPlane ( GLenum plane , GLdouble * equation ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetClipPlane )(GLenum, GLdouble *);
+LIBAPI void(CALLBACK* disp__glGetClipPlane)(GLenum, GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -194,7 +193,7 @@
    extern void glDrawBuffer ( GLenum mode ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glDrawBuffer )(GLenum);
+LIBAPI void(CALLBACK* disp__glDrawBuffer)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -202,7 +201,7 @@
    extern void glReadBuffer ( GLenum mode ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glReadBuffer )(GLenum);
+LIBAPI void(CALLBACK* disp__glReadBuffer)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -210,7 +209,7 @@
    extern void glEnable ( GLenum cap ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEnable )(GLenum);
+LIBAPI void(CALLBACK* disp__glEnable)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -218,7 +217,7 @@
    extern void glDisable ( GLenum cap ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glDisable )(GLenum);
+LIBAPI void(CALLBACK* disp__glDisable)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -226,7 +225,7 @@
    extern GLboolean glIsEnabled ( GLenum cap ) ;
  * </pre> 
  */
-	LIBAPI GLboolean (CALLBACK * disp__glIsEnabled )(GLenum);
+LIBAPI GLboolean(CALLBACK* disp__glIsEnabled)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -234,7 +233,7 @@
    extern void glEnableClientState ( GLenum cap ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEnableClientState )(GLenum);
+LIBAPI void(CALLBACK* disp__glEnableClientState)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -242,7 +241,7 @@
    extern void glDisableClientState ( GLenum cap ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glDisableClientState )(GLenum);
+LIBAPI void(CALLBACK* disp__glDisableClientState)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -250,7 +249,7 @@
    extern void glGetBooleanv ( GLenum pname , GLboolean * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetBooleanv )(GLenum, GLboolean *);
+LIBAPI void(CALLBACK* disp__glGetBooleanv)(GLenum, GLboolean*);
 
 /**
  * Original Function-Prototype :
@@ -258,7 +257,7 @@
    extern void glGetDoublev ( GLenum pname , GLdouble * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetDoublev )(GLenum, GLdouble *);
+LIBAPI void(CALLBACK* disp__glGetDoublev)(GLenum, GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -266,7 +265,7 @@
    extern void glGetFloatv ( GLenum pname , GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetFloatv )(GLenum, GLfloat *);
+LIBAPI void(CALLBACK* disp__glGetFloatv)(GLenum, GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -274,7 +273,7 @@
    extern void glGetIntegerv ( GLenum pname , GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetIntegerv )(GLenum, GLint *);
+LIBAPI void(CALLBACK* disp__glGetIntegerv)(GLenum, GLint*);
 
 /**
  * Original Function-Prototype :
@@ -282,7 +281,7 @@
    extern void glPushAttrib ( GLbitfield mask ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPushAttrib )(GLbitfield);
+LIBAPI void(CALLBACK* disp__glPushAttrib)(GLbitfield);
 
 /**
  * Original Function-Prototype :
@@ -290,7 +289,7 @@
    extern void glPopAttrib ( void ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPopAttrib )(void);
+LIBAPI void(CALLBACK* disp__glPopAttrib)(void);
 
 /**
  * Original Function-Prototype :
@@ -298,7 +297,7 @@
    extern void glPushClientAttrib ( GLbitfield mask ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPushClientAttrib )(GLbitfield);
+LIBAPI void(CALLBACK* disp__glPushClientAttrib)(GLbitfield);
 
 /**
  * Original Function-Prototype :
@@ -306,7 +305,7 @@
    extern void glPopClientAttrib ( void ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPopClientAttrib )(void);
+LIBAPI void(CALLBACK* disp__glPopClientAttrib)(void);
 
 /**
  * Original Function-Prototype :
@@ -314,7 +313,7 @@
    extern GLint glRenderMode ( GLenum mode ) ;
  * </pre> 
  */
-	LIBAPI GLint (CALLBACK * disp__glRenderMode )(GLenum);
+LIBAPI GLint(CALLBACK* disp__glRenderMode)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -322,7 +321,7 @@
    extern GLenum glGetError ( void ) ;
  * </pre> 
  */
-	LIBAPI GLenum (CALLBACK * disp__glGetError )(void);
+LIBAPI GLenum(CALLBACK* disp__glGetError)(void);
 
 /**
  * Original Function-Prototype :
@@ -330,7 +329,7 @@
    extern void glFinish ( void ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glFinish )(void);
+LIBAPI void(CALLBACK* disp__glFinish)(void);
 
 /**
  * Original Function-Prototype :
@@ -338,7 +337,7 @@
    extern void glFlush ( void ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glFlush )(void);
+LIBAPI void(CALLBACK* disp__glFlush)(void);
 
 /**
  * Original Function-Prototype :
@@ -346,7 +345,7 @@
    extern void glHint ( GLenum target , GLenum mode ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glHint )(GLenum, GLenum);
+LIBAPI void(CALLBACK* disp__glHint)(GLenum, GLenum);
 
 /**
  * Original Function-Prototype :
@@ -354,7 +353,7 @@
    extern void glClearDepth ( GLclampd depth ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glClearDepth )(GLclampd);
+LIBAPI void(CALLBACK* disp__glClearDepth)(GLclampd);
 
 /**
  * Original Function-Prototype :
@@ -362,7 +361,7 @@
    extern void glDepthFunc ( GLenum func ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glDepthFunc )(GLenum);
+LIBAPI void(CALLBACK* disp__glDepthFunc)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -370,7 +369,7 @@
    extern void glDepthMask ( GLboolean flag ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glDepthMask )(GLboolean);
+LIBAPI void(CALLBACK* disp__glDepthMask)(GLboolean);
 
 /**
  * Original Function-Prototype :
@@ -378,7 +377,7 @@
    extern void glDepthRange ( GLclampd near_val , GLclampd far_val ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glDepthRange )(GLclampd, GLclampd);
+LIBAPI void(CALLBACK* disp__glDepthRange)(GLclampd, GLclampd);
 
 /**
  * Original Function-Prototype :
@@ -386,7 +385,7 @@
    extern void glClearAccum ( GLfloat red , GLfloat green , GLfloat blue , GLfloat alpha ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glClearAccum )(GLfloat, GLfloat, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glClearAccum)(GLfloat, GLfloat, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -394,7 +393,7 @@
    extern void glAccum ( GLenum op , GLfloat value ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glAccum )(GLenum, GLfloat);
+LIBAPI void(CALLBACK* disp__glAccum)(GLenum, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -402,7 +401,7 @@
    extern void glMatrixMode ( GLenum mode ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMatrixMode )(GLenum);
+LIBAPI void(CALLBACK* disp__glMatrixMode)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -410,7 +409,7 @@
    extern void glOrtho ( GLdouble left , GLdouble right , GLdouble bottom , GLdouble top , GLdouble near_val , GLdouble far_val ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glOrtho )(GLdouble, GLdouble, GLdouble, GLdouble, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glOrtho)(GLdouble, GLdouble, GLdouble, GLdouble, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -418,7 +417,7 @@
    extern void glFrustum ( GLdouble left , GLdouble right , GLdouble bottom , GLdouble top , GLdouble near_val , GLdouble far_val ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glFrustum )(GLdouble, GLdouble, GLdouble, GLdouble, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glFrustum)(GLdouble, GLdouble, GLdouble, GLdouble, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -426,7 +425,7 @@
    extern void glViewport ( GLint x , GLint y , GLsizei width , GLsizei height ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glViewport )(GLint, GLint, GLsizei, GLsizei);
+LIBAPI void(CALLBACK* disp__glViewport)(GLint, GLint, GLsizei, GLsizei);
 
 /**
  * Original Function-Prototype :
@@ -434,7 +433,7 @@
    extern void glPushMatrix ( void ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPushMatrix )(void);
+LIBAPI void(CALLBACK* disp__glPushMatrix)(void);
 
 /**
  * Original Function-Prototype :
@@ -442,7 +441,7 @@
    extern void glPopMatrix ( void ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPopMatrix )(void);
+LIBAPI void(CALLBACK* disp__glPopMatrix)(void);
 
 /**
  * Original Function-Prototype :
@@ -450,7 +449,7 @@
    extern void glLoadIdentity ( void ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glLoadIdentity )(void);
+LIBAPI void(CALLBACK* disp__glLoadIdentity)(void);
 
 /**
  * Original Function-Prototype :
@@ -458,7 +457,7 @@
    extern void glLoadMatrixd ( const GLdouble * m ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glLoadMatrixd )(const GLdouble *);
+LIBAPI void(CALLBACK* disp__glLoadMatrixd)(const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -466,7 +465,7 @@
    extern void glLoadMatrixf ( const GLfloat * m ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glLoadMatrixf )(const GLfloat *);
+LIBAPI void(CALLBACK* disp__glLoadMatrixf)(const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -474,7 +473,7 @@
    extern void glMultMatrixd ( const GLdouble * m ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultMatrixd )(const GLdouble *);
+LIBAPI void(CALLBACK* disp__glMultMatrixd)(const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -482,7 +481,7 @@
    extern void glMultMatrixf ( const GLfloat * m ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultMatrixf )(const GLfloat *);
+LIBAPI void(CALLBACK* disp__glMultMatrixf)(const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -490,7 +489,7 @@
    extern void glRotated ( GLdouble angle , GLdouble x , GLdouble y , GLdouble z ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRotated )(GLdouble, GLdouble, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glRotated)(GLdouble, GLdouble, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -498,7 +497,7 @@
    extern void glRotatef ( GLfloat angle , GLfloat x , GLfloat y , GLfloat z ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRotatef )(GLfloat, GLfloat, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glRotatef)(GLfloat, GLfloat, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -506,7 +505,7 @@
    extern void glScaled ( GLdouble x , GLdouble y , GLdouble z ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glScaled )(GLdouble, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glScaled)(GLdouble, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -514,7 +513,7 @@
    extern void glScalef ( GLfloat x , GLfloat y , GLfloat z ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glScalef )(GLfloat, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glScalef)(GLfloat, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -522,7 +521,7 @@
    extern void glTranslated ( GLdouble x , GLdouble y , GLdouble z ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTranslated )(GLdouble, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glTranslated)(GLdouble, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -530,7 +529,7 @@
    extern void glTranslatef ( GLfloat x , GLfloat y , GLfloat z ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTranslatef )(GLfloat, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glTranslatef)(GLfloat, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -538,7 +537,7 @@
    extern GLboolean glIsList ( GLuint list ) ;
  * </pre> 
  */
-	LIBAPI GLboolean (CALLBACK * disp__glIsList )(GLuint);
+LIBAPI GLboolean(CALLBACK* disp__glIsList)(GLuint);
 
 /**
  * Original Function-Prototype :
@@ -546,7 +545,7 @@
    extern void glDeleteLists ( GLuint list , GLsizei range ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glDeleteLists )(GLuint, GLsizei);
+LIBAPI void(CALLBACK* disp__glDeleteLists)(GLuint, GLsizei);
 
 /**
  * Original Function-Prototype :
@@ -554,7 +553,7 @@
    extern GLuint glGenLists ( GLsizei range ) ;
  * </pre> 
  */
-	LIBAPI GLuint (CALLBACK * disp__glGenLists )(GLsizei);
+LIBAPI GLuint(CALLBACK* disp__glGenLists)(GLsizei);
 
 /**
  * Original Function-Prototype :
@@ -562,7 +561,7 @@
    extern void glNewList ( GLuint list , GLenum mode ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glNewList )(GLuint, GLenum);
+LIBAPI void(CALLBACK* disp__glNewList)(GLuint, GLenum);
 
 /**
  * Original Function-Prototype :
@@ -570,7 +569,7 @@
    extern void glEndList ( void ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEndList )(void);
+LIBAPI void(CALLBACK* disp__glEndList)(void);
 
 /**
  * Original Function-Prototype :
@@ -578,7 +577,7 @@
    extern void glCallList ( GLuint list ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glCallList )(GLuint);
+LIBAPI void(CALLBACK* disp__glCallList)(GLuint);
 
 /**
  * Original Function-Prototype :
@@ -586,7 +585,7 @@
    extern void glCallLists ( GLsizei n , GLenum type , const GLvoid * lists ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glCallLists )(GLsizei, GLenum, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glCallLists)(GLsizei, GLenum, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -594,7 +593,7 @@
    extern void glListBase ( GLuint base ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glListBase )(GLuint);
+LIBAPI void(CALLBACK* disp__glListBase)(GLuint);
 
 /**
  * Original Function-Prototype :
@@ -602,7 +601,7 @@
    extern void glBegin ( GLenum mode ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glBegin )(GLenum);
+LIBAPI void(CALLBACK* disp__glBegin)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -610,7 +609,7 @@
    extern void glEnd ( void ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEnd )(void);
+LIBAPI void(CALLBACK* disp__glEnd)(void);
 
 /**
  * Original Function-Prototype :
@@ -618,7 +617,7 @@
    extern void glVertex2d ( GLdouble x , GLdouble y ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex2d )(GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glVertex2d)(GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -626,7 +625,7 @@
    extern void glVertex2f ( GLfloat x , GLfloat y ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex2f )(GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glVertex2f)(GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -634,7 +633,7 @@
    extern void glVertex2i ( GLint x , GLint y ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex2i )(GLint, GLint);
+LIBAPI void(CALLBACK* disp__glVertex2i)(GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -642,7 +641,7 @@
    extern void glVertex2s ( GLshort x , GLshort y ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex2s )(GLshort, GLshort);
+LIBAPI void(CALLBACK* disp__glVertex2s)(GLshort, GLshort);
 
 /**
  * Original Function-Prototype :
@@ -650,7 +649,7 @@
    extern void glVertex3d ( GLdouble x , GLdouble y , GLdouble z ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex3d )(GLdouble, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glVertex3d)(GLdouble, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -658,7 +657,7 @@
    extern void glVertex3f ( GLfloat x , GLfloat y , GLfloat z ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex3f )(GLfloat, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glVertex3f)(GLfloat, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -666,7 +665,7 @@
    extern void glVertex3i ( GLint x , GLint y , GLint z ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex3i )(GLint, GLint, GLint);
+LIBAPI void(CALLBACK* disp__glVertex3i)(GLint, GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -674,7 +673,7 @@
    extern void glVertex3s ( GLshort x , GLshort y , GLshort z ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex3s )(GLshort, GLshort, GLshort);
+LIBAPI void(CALLBACK* disp__glVertex3s)(GLshort, GLshort, GLshort);
 
 /**
  * Original Function-Prototype :
@@ -682,7 +681,7 @@
    extern void glVertex4d ( GLdouble x , GLdouble y , GLdouble z , GLdouble w ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex4d )(GLdouble, GLdouble, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glVertex4d)(GLdouble, GLdouble, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -690,7 +689,7 @@
    extern void glVertex4f ( GLfloat x , GLfloat y , GLfloat z , GLfloat w ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex4f )(GLfloat, GLfloat, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glVertex4f)(GLfloat, GLfloat, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -698,7 +697,7 @@
    extern void glVertex4i ( GLint x , GLint y , GLint z , GLint w ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex4i )(GLint, GLint, GLint, GLint);
+LIBAPI void(CALLBACK* disp__glVertex4i)(GLint, GLint, GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -706,7 +705,7 @@
    extern void glVertex4s ( GLshort x , GLshort y , GLshort z , GLshort w ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex4s )(GLshort, GLshort, GLshort, GLshort);
+LIBAPI void(CALLBACK* disp__glVertex4s)(GLshort, GLshort, GLshort, GLshort);
 
 /**
  * Original Function-Prototype :
@@ -714,7 +713,7 @@
    extern void glVertex2dv ( const GLdouble * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex2dv )(const GLdouble *);
+LIBAPI void(CALLBACK* disp__glVertex2dv)(const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -722,7 +721,7 @@
    extern void glVertex2fv ( const GLfloat * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex2fv )(const GLfloat *);
+LIBAPI void(CALLBACK* disp__glVertex2fv)(const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -730,7 +729,7 @@
    extern void glVertex2iv ( const GLint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex2iv )(const GLint *);
+LIBAPI void(CALLBACK* disp__glVertex2iv)(const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -738,7 +737,7 @@
    extern void glVertex2sv ( const GLshort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex2sv )(const GLshort *);
+LIBAPI void(CALLBACK* disp__glVertex2sv)(const GLshort*);
 
 /**
  * Original Function-Prototype :
@@ -746,7 +745,7 @@
    extern void glVertex3dv ( const GLdouble * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex3dv )(const GLdouble *);
+LIBAPI void(CALLBACK* disp__glVertex3dv)(const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -754,7 +753,7 @@
    extern void glVertex3fv ( const GLfloat * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex3fv )(const GLfloat *);
+LIBAPI void(CALLBACK* disp__glVertex3fv)(const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -762,7 +761,7 @@
    extern void glVertex3iv ( const GLint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex3iv )(const GLint *);
+LIBAPI void(CALLBACK* disp__glVertex3iv)(const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -770,7 +769,7 @@
    extern void glVertex3sv ( const GLshort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex3sv )(const GLshort *);
+LIBAPI void(CALLBACK* disp__glVertex3sv)(const GLshort*);
 
 /**
  * Original Function-Prototype :
@@ -778,7 +777,7 @@
    extern void glVertex4dv ( const GLdouble * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex4dv )(const GLdouble *);
+LIBAPI void(CALLBACK* disp__glVertex4dv)(const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -786,7 +785,7 @@
    extern void glVertex4fv ( const GLfloat * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex4fv )(const GLfloat *);
+LIBAPI void(CALLBACK* disp__glVertex4fv)(const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -794,7 +793,7 @@
    extern void glVertex4iv ( const GLint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex4iv )(const GLint *);
+LIBAPI void(CALLBACK* disp__glVertex4iv)(const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -802,7 +801,7 @@
    extern void glVertex4sv ( const GLshort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertex4sv )(const GLshort *);
+LIBAPI void(CALLBACK* disp__glVertex4sv)(const GLshort*);
 
 /**
  * Original Function-Prototype :
@@ -810,7 +809,7 @@
    extern void glNormal3b ( GLbyte nx , GLbyte ny , GLbyte nz ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glNormal3b )(GLbyte, GLbyte, GLbyte);
+LIBAPI void(CALLBACK* disp__glNormal3b)(GLbyte, GLbyte, GLbyte);
 
 /**
  * Original Function-Prototype :
@@ -818,7 +817,7 @@
    extern void glNormal3d ( GLdouble nx , GLdouble ny , GLdouble nz ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glNormal3d )(GLdouble, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glNormal3d)(GLdouble, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -826,7 +825,7 @@
    extern void glNormal3f ( GLfloat nx , GLfloat ny , GLfloat nz ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glNormal3f )(GLfloat, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glNormal3f)(GLfloat, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -834,7 +833,7 @@
    extern void glNormal3i ( GLint nx , GLint ny , GLint nz ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glNormal3i )(GLint, GLint, GLint);
+LIBAPI void(CALLBACK* disp__glNormal3i)(GLint, GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -842,7 +841,7 @@
    extern void glNormal3s ( GLshort nx , GLshort ny , GLshort nz ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glNormal3s )(GLshort, GLshort, GLshort);
+LIBAPI void(CALLBACK* disp__glNormal3s)(GLshort, GLshort, GLshort);
 
 /**
  * Original Function-Prototype :
@@ -850,7 +849,7 @@
    extern void glNormal3bv ( const GLbyte * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glNormal3bv )(const GLbyte *);
+LIBAPI void(CALLBACK* disp__glNormal3bv)(const GLbyte*);
 
 /**
  * Original Function-Prototype :
@@ -858,7 +857,7 @@
    extern void glNormal3dv ( const GLdouble * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glNormal3dv )(const GLdouble *);
+LIBAPI void(CALLBACK* disp__glNormal3dv)(const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -866,7 +865,7 @@
    extern void glNormal3fv ( const GLfloat * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glNormal3fv )(const GLfloat *);
+LIBAPI void(CALLBACK* disp__glNormal3fv)(const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -874,7 +873,7 @@
    extern void glNormal3iv ( const GLint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glNormal3iv )(const GLint *);
+LIBAPI void(CALLBACK* disp__glNormal3iv)(const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -882,7 +881,7 @@
    extern void glNormal3sv ( const GLshort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glNormal3sv )(const GLshort *);
+LIBAPI void(CALLBACK* disp__glNormal3sv)(const GLshort*);
 
 /**
  * Original Function-Prototype :
@@ -890,7 +889,7 @@
    extern void glIndexd ( GLdouble c ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glIndexd )(GLdouble);
+LIBAPI void(CALLBACK* disp__glIndexd)(GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -898,7 +897,7 @@
    extern void glIndexf ( GLfloat c ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glIndexf )(GLfloat);
+LIBAPI void(CALLBACK* disp__glIndexf)(GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -906,7 +905,7 @@
    extern void glIndexi ( GLint c ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glIndexi )(GLint);
+LIBAPI void(CALLBACK* disp__glIndexi)(GLint);
 
 /**
  * Original Function-Prototype :
@@ -914,7 +913,7 @@
    extern void glIndexs ( GLshort c ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glIndexs )(GLshort);
+LIBAPI void(CALLBACK* disp__glIndexs)(GLshort);
 
 /**
  * Original Function-Prototype :
@@ -922,7 +921,7 @@
    extern void glIndexub ( GLubyte c ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glIndexub )(GLubyte);
+LIBAPI void(CALLBACK* disp__glIndexub)(GLubyte);
 
 /**
  * Original Function-Prototype :
@@ -930,7 +929,7 @@
    extern void glIndexdv ( const GLdouble * c ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glIndexdv )(const GLdouble *);
+LIBAPI void(CALLBACK* disp__glIndexdv)(const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -938,7 +937,7 @@
    extern void glIndexfv ( const GLfloat * c ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glIndexfv )(const GLfloat *);
+LIBAPI void(CALLBACK* disp__glIndexfv)(const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -946,7 +945,7 @@
    extern void glIndexiv ( const GLint * c ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glIndexiv )(const GLint *);
+LIBAPI void(CALLBACK* disp__glIndexiv)(const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -954,7 +953,7 @@
    extern void glIndexsv ( const GLshort * c ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glIndexsv )(const GLshort *);
+LIBAPI void(CALLBACK* disp__glIndexsv)(const GLshort*);
 
 /**
  * Original Function-Prototype :
@@ -962,7 +961,7 @@
    extern void glIndexubv ( const GLubyte * c ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glIndexubv )(const GLubyte *);
+LIBAPI void(CALLBACK* disp__glIndexubv)(const GLubyte*);
 
 /**
  * Original Function-Prototype :
@@ -970,7 +969,7 @@
    extern void glColor3b ( GLbyte red , GLbyte green , GLbyte blue ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor3b )(GLbyte, GLbyte, GLbyte);
+LIBAPI void(CALLBACK* disp__glColor3b)(GLbyte, GLbyte, GLbyte);
 
 /**
  * Original Function-Prototype :
@@ -978,7 +977,7 @@
    extern void glColor3d ( GLdouble red , GLdouble green , GLdouble blue ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor3d )(GLdouble, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glColor3d)(GLdouble, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -986,7 +985,7 @@
    extern void glColor3f ( GLfloat red , GLfloat green , GLfloat blue ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor3f )(GLfloat, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glColor3f)(GLfloat, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -994,7 +993,7 @@
    extern void glColor3i ( GLint red , GLint green , GLint blue ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor3i )(GLint, GLint, GLint);
+LIBAPI void(CALLBACK* disp__glColor3i)(GLint, GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -1002,7 +1001,7 @@
    extern void glColor3s ( GLshort red , GLshort green , GLshort blue ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor3s )(GLshort, GLshort, GLshort);
+LIBAPI void(CALLBACK* disp__glColor3s)(GLshort, GLshort, GLshort);
 
 /**
  * Original Function-Prototype :
@@ -1010,7 +1009,7 @@
    extern void glColor3ub ( GLubyte red , GLubyte green , GLubyte blue ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor3ub )(GLubyte, GLubyte, GLubyte);
+LIBAPI void(CALLBACK* disp__glColor3ub)(GLubyte, GLubyte, GLubyte);
 
 /**
  * Original Function-Prototype :
@@ -1018,7 +1017,7 @@
    extern void glColor3ui ( GLuint red , GLuint green , GLuint blue ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor3ui )(GLuint, GLuint, GLuint);
+LIBAPI void(CALLBACK* disp__glColor3ui)(GLuint, GLuint, GLuint);
 
 /**
  * Original Function-Prototype :
@@ -1026,7 +1025,7 @@
    extern void glColor3us ( GLushort red , GLushort green , GLushort blue ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor3us )(GLushort, GLushort, GLushort);
+LIBAPI void(CALLBACK* disp__glColor3us)(GLushort, GLushort, GLushort);
 
 /**
  * Original Function-Prototype :
@@ -1034,7 +1033,7 @@
    extern void glColor4b ( GLbyte red , GLbyte green , GLbyte blue , GLbyte alpha ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor4b )(GLbyte, GLbyte, GLbyte, GLbyte);
+LIBAPI void(CALLBACK* disp__glColor4b)(GLbyte, GLbyte, GLbyte, GLbyte);
 
 /**
  * Original Function-Prototype :
@@ -1042,7 +1041,7 @@
    extern void glColor4d ( GLdouble red , GLdouble green , GLdouble blue , GLdouble alpha ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor4d )(GLdouble, GLdouble, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glColor4d)(GLdouble, GLdouble, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -1050,7 +1049,7 @@
    extern void glColor4f ( GLfloat red , GLfloat green , GLfloat blue , GLfloat alpha ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor4f )(GLfloat, GLfloat, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glColor4f)(GLfloat, GLfloat, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -1058,7 +1057,7 @@
    extern void glColor4i ( GLint red , GLint green , GLint blue , GLint alpha ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor4i )(GLint, GLint, GLint, GLint);
+LIBAPI void(CALLBACK* disp__glColor4i)(GLint, GLint, GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -1066,7 +1065,7 @@
    extern void glColor4s ( GLshort red , GLshort green , GLshort blue , GLshort alpha ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor4s )(GLshort, GLshort, GLshort, GLshort);
+LIBAPI void(CALLBACK* disp__glColor4s)(GLshort, GLshort, GLshort, GLshort);
 
 /**
  * Original Function-Prototype :
@@ -1074,7 +1073,7 @@
    extern void glColor4ub ( GLubyte red , GLubyte green , GLubyte blue , GLubyte alpha ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor4ub )(GLubyte, GLubyte, GLubyte, GLubyte);
+LIBAPI void(CALLBACK* disp__glColor4ub)(GLubyte, GLubyte, GLubyte, GLubyte);
 
 /**
  * Original Function-Prototype :
@@ -1082,7 +1081,7 @@
    extern void glColor4ui ( GLuint red , GLuint green , GLuint blue , GLuint alpha ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor4ui )(GLuint, GLuint, GLuint, GLuint);
+LIBAPI void(CALLBACK* disp__glColor4ui)(GLuint, GLuint, GLuint, GLuint);
 
 /**
  * Original Function-Prototype :
@@ -1090,7 +1089,7 @@
    extern void glColor4us ( GLushort red , GLushort green , GLushort blue , GLushort alpha ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor4us )(GLushort, GLushort, GLushort, GLushort);
+LIBAPI void(CALLBACK* disp__glColor4us)(GLushort, GLushort, GLushort, GLushort);
 
 /**
  * Original Function-Prototype :
@@ -1098,7 +1097,7 @@
    extern void glColor3bv ( const GLbyte * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor3bv )(const GLbyte *);
+LIBAPI void(CALLBACK* disp__glColor3bv)(const GLbyte*);
 
 /**
  * Original Function-Prototype :
@@ -1106,7 +1105,7 @@
    extern void glColor3dv ( const GLdouble * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor3dv )(const GLdouble *);
+LIBAPI void(CALLBACK* disp__glColor3dv)(const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -1114,7 +1113,7 @@
    extern void glColor3fv ( const GLfloat * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor3fv )(const GLfloat *);
+LIBAPI void(CALLBACK* disp__glColor3fv)(const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -1122,7 +1121,7 @@
    extern void glColor3iv ( const GLint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor3iv )(const GLint *);
+LIBAPI void(CALLBACK* disp__glColor3iv)(const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -1130,7 +1129,7 @@
    extern void glColor3sv ( const GLshort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor3sv )(const GLshort *);
+LIBAPI void(CALLBACK* disp__glColor3sv)(const GLshort*);
 
 /**
  * Original Function-Prototype :
@@ -1138,7 +1137,7 @@
    extern void glColor3ubv ( const GLubyte * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor3ubv )(const GLubyte *);
+LIBAPI void(CALLBACK* disp__glColor3ubv)(const GLubyte*);
 
 /**
  * Original Function-Prototype :
@@ -1146,7 +1145,7 @@
    extern void glColor3uiv ( const GLuint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor3uiv )(const GLuint *);
+LIBAPI void(CALLBACK* disp__glColor3uiv)(const GLuint*);
 
 /**
  * Original Function-Prototype :
@@ -1154,7 +1153,7 @@
    extern void glColor3usv ( const GLushort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor3usv )(const GLushort *);
+LIBAPI void(CALLBACK* disp__glColor3usv)(const GLushort*);
 
 /**
  * Original Function-Prototype :
@@ -1162,7 +1161,7 @@
    extern void glColor4bv ( const GLbyte * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor4bv )(const GLbyte *);
+LIBAPI void(CALLBACK* disp__glColor4bv)(const GLbyte*);
 
 /**
  * Original Function-Prototype :
@@ -1170,7 +1169,7 @@
    extern void glColor4dv ( const GLdouble * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor4dv )(const GLdouble *);
+LIBAPI void(CALLBACK* disp__glColor4dv)(const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -1178,7 +1177,7 @@
    extern void glColor4fv ( const GLfloat * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor4fv )(const GLfloat *);
+LIBAPI void(CALLBACK* disp__glColor4fv)(const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -1186,7 +1185,7 @@
    extern void glColor4iv ( const GLint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor4iv )(const GLint *);
+LIBAPI void(CALLBACK* disp__glColor4iv)(const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -1194,7 +1193,7 @@
    extern void glColor4sv ( const GLshort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor4sv )(const GLshort *);
+LIBAPI void(CALLBACK* disp__glColor4sv)(const GLshort*);
 
 /**
  * Original Function-Prototype :
@@ -1202,7 +1201,7 @@
    extern void glColor4ubv ( const GLubyte * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor4ubv )(const GLubyte *);
+LIBAPI void(CALLBACK* disp__glColor4ubv)(const GLubyte*);
 
 /**
  * Original Function-Prototype :
@@ -1210,7 +1209,7 @@
    extern void glColor4uiv ( const GLuint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor4uiv )(const GLuint *);
+LIBAPI void(CALLBACK* disp__glColor4uiv)(const GLuint*);
 
 /**
  * Original Function-Prototype :
@@ -1218,7 +1217,7 @@
    extern void glColor4usv ( const GLushort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColor4usv )(const GLushort *);
+LIBAPI void(CALLBACK* disp__glColor4usv)(const GLushort*);
 
 /**
  * Original Function-Prototype :
@@ -1226,7 +1225,7 @@
    extern void glTexCoord1d ( GLdouble s ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord1d )(GLdouble);
+LIBAPI void(CALLBACK* disp__glTexCoord1d)(GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -1234,7 +1233,7 @@
    extern void glTexCoord1f ( GLfloat s ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord1f )(GLfloat);
+LIBAPI void(CALLBACK* disp__glTexCoord1f)(GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -1242,7 +1241,7 @@
    extern void glTexCoord1i ( GLint s ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord1i )(GLint);
+LIBAPI void(CALLBACK* disp__glTexCoord1i)(GLint);
 
 /**
  * Original Function-Prototype :
@@ -1250,7 +1249,7 @@
    extern void glTexCoord1s ( GLshort s ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord1s )(GLshort);
+LIBAPI void(CALLBACK* disp__glTexCoord1s)(GLshort);
 
 /**
  * Original Function-Prototype :
@@ -1258,7 +1257,7 @@
    extern void glTexCoord2d ( GLdouble s , GLdouble t ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord2d )(GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glTexCoord2d)(GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -1266,7 +1265,7 @@
    extern void glTexCoord2f ( GLfloat s , GLfloat t ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord2f )(GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glTexCoord2f)(GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -1274,7 +1273,7 @@
    extern void glTexCoord2i ( GLint s , GLint t ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord2i )(GLint, GLint);
+LIBAPI void(CALLBACK* disp__glTexCoord2i)(GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -1282,7 +1281,7 @@
    extern void glTexCoord2s ( GLshort s , GLshort t ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord2s )(GLshort, GLshort);
+LIBAPI void(CALLBACK* disp__glTexCoord2s)(GLshort, GLshort);
 
 /**
  * Original Function-Prototype :
@@ -1290,7 +1289,7 @@
    extern void glTexCoord3d ( GLdouble s , GLdouble t , GLdouble r ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord3d )(GLdouble, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glTexCoord3d)(GLdouble, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -1298,7 +1297,7 @@
    extern void glTexCoord3f ( GLfloat s , GLfloat t , GLfloat r ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord3f )(GLfloat, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glTexCoord3f)(GLfloat, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -1306,7 +1305,7 @@
    extern void glTexCoord3i ( GLint s , GLint t , GLint r ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord3i )(GLint, GLint, GLint);
+LIBAPI void(CALLBACK* disp__glTexCoord3i)(GLint, GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -1314,7 +1313,7 @@
    extern void glTexCoord3s ( GLshort s , GLshort t , GLshort r ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord3s )(GLshort, GLshort, GLshort);
+LIBAPI void(CALLBACK* disp__glTexCoord3s)(GLshort, GLshort, GLshort);
 
 /**
  * Original Function-Prototype :
@@ -1322,7 +1321,7 @@
    extern void glTexCoord4d ( GLdouble s , GLdouble t , GLdouble r , GLdouble q ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord4d )(GLdouble, GLdouble, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glTexCoord4d)(GLdouble, GLdouble, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -1330,7 +1329,7 @@
    extern void glTexCoord4f ( GLfloat s , GLfloat t , GLfloat r , GLfloat q ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord4f )(GLfloat, GLfloat, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glTexCoord4f)(GLfloat, GLfloat, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -1338,7 +1337,7 @@
    extern void glTexCoord4i ( GLint s , GLint t , GLint r , GLint q ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord4i )(GLint, GLint, GLint, GLint);
+LIBAPI void(CALLBACK* disp__glTexCoord4i)(GLint, GLint, GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -1346,7 +1345,7 @@
    extern void glTexCoord4s ( GLshort s , GLshort t , GLshort r , GLshort q ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord4s )(GLshort, GLshort, GLshort, GLshort);
+LIBAPI void(CALLBACK* disp__glTexCoord4s)(GLshort, GLshort, GLshort, GLshort);
 
 /**
  * Original Function-Prototype :
@@ -1354,7 +1353,7 @@
    extern void glTexCoord1dv ( const GLdouble * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord1dv )(const GLdouble *);
+LIBAPI void(CALLBACK* disp__glTexCoord1dv)(const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -1362,7 +1361,7 @@
    extern void glTexCoord1fv ( const GLfloat * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord1fv )(const GLfloat *);
+LIBAPI void(CALLBACK* disp__glTexCoord1fv)(const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -1370,7 +1369,7 @@
    extern void glTexCoord1iv ( const GLint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord1iv )(const GLint *);
+LIBAPI void(CALLBACK* disp__glTexCoord1iv)(const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -1378,7 +1377,7 @@
    extern void glTexCoord1sv ( const GLshort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord1sv )(const GLshort *);
+LIBAPI void(CALLBACK* disp__glTexCoord1sv)(const GLshort*);
 
 /**
  * Original Function-Prototype :
@@ -1386,7 +1385,7 @@
    extern void glTexCoord2dv ( const GLdouble * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord2dv )(const GLdouble *);
+LIBAPI void(CALLBACK* disp__glTexCoord2dv)(const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -1394,7 +1393,7 @@
    extern void glTexCoord2fv ( const GLfloat * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord2fv )(const GLfloat *);
+LIBAPI void(CALLBACK* disp__glTexCoord2fv)(const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -1402,7 +1401,7 @@
    extern void glTexCoord2iv ( const GLint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord2iv )(const GLint *);
+LIBAPI void(CALLBACK* disp__glTexCoord2iv)(const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -1410,7 +1409,7 @@
    extern void glTexCoord2sv ( const GLshort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord2sv )(const GLshort *);
+LIBAPI void(CALLBACK* disp__glTexCoord2sv)(const GLshort*);
 
 /**
  * Original Function-Prototype :
@@ -1418,7 +1417,7 @@
    extern void glTexCoord3dv ( const GLdouble * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord3dv )(const GLdouble *);
+LIBAPI void(CALLBACK* disp__glTexCoord3dv)(const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -1426,7 +1425,7 @@
    extern void glTexCoord3fv ( const GLfloat * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord3fv )(const GLfloat *);
+LIBAPI void(CALLBACK* disp__glTexCoord3fv)(const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -1434,7 +1433,7 @@
    extern void glTexCoord3iv ( const GLint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord3iv )(const GLint *);
+LIBAPI void(CALLBACK* disp__glTexCoord3iv)(const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -1442,7 +1441,7 @@
    extern void glTexCoord3sv ( const GLshort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord3sv )(const GLshort *);
+LIBAPI void(CALLBACK* disp__glTexCoord3sv)(const GLshort*);
 
 /**
  * Original Function-Prototype :
@@ -1450,7 +1449,7 @@
    extern void glTexCoord4dv ( const GLdouble * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord4dv )(const GLdouble *);
+LIBAPI void(CALLBACK* disp__glTexCoord4dv)(const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -1458,7 +1457,7 @@
    extern void glTexCoord4fv ( const GLfloat * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord4fv )(const GLfloat *);
+LIBAPI void(CALLBACK* disp__glTexCoord4fv)(const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -1466,7 +1465,7 @@
    extern void glTexCoord4iv ( const GLint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord4iv )(const GLint *);
+LIBAPI void(CALLBACK* disp__glTexCoord4iv)(const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -1474,7 +1473,7 @@
    extern void glTexCoord4sv ( const GLshort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoord4sv )(const GLshort *);
+LIBAPI void(CALLBACK* disp__glTexCoord4sv)(const GLshort*);
 
 /**
  * Original Function-Prototype :
@@ -1482,7 +1481,7 @@
    extern void glRasterPos2d ( GLdouble x , GLdouble y ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos2d )(GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glRasterPos2d)(GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -1490,7 +1489,7 @@
    extern void glRasterPos2f ( GLfloat x , GLfloat y ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos2f )(GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glRasterPos2f)(GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -1498,7 +1497,7 @@
    extern void glRasterPos2i ( GLint x , GLint y ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos2i )(GLint, GLint);
+LIBAPI void(CALLBACK* disp__glRasterPos2i)(GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -1506,7 +1505,7 @@
    extern void glRasterPos2s ( GLshort x , GLshort y ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos2s )(GLshort, GLshort);
+LIBAPI void(CALLBACK* disp__glRasterPos2s)(GLshort, GLshort);
 
 /**
  * Original Function-Prototype :
@@ -1514,7 +1513,7 @@
    extern void glRasterPos3d ( GLdouble x , GLdouble y , GLdouble z ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos3d )(GLdouble, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glRasterPos3d)(GLdouble, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -1522,7 +1521,7 @@
    extern void glRasterPos3f ( GLfloat x , GLfloat y , GLfloat z ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos3f )(GLfloat, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glRasterPos3f)(GLfloat, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -1530,7 +1529,7 @@
    extern void glRasterPos3i ( GLint x , GLint y , GLint z ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos3i )(GLint, GLint, GLint);
+LIBAPI void(CALLBACK* disp__glRasterPos3i)(GLint, GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -1538,7 +1537,7 @@
    extern void glRasterPos3s ( GLshort x , GLshort y , GLshort z ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos3s )(GLshort, GLshort, GLshort);
+LIBAPI void(CALLBACK* disp__glRasterPos3s)(GLshort, GLshort, GLshort);
 
 /**
  * Original Function-Prototype :
@@ -1546,7 +1545,7 @@
    extern void glRasterPos4d ( GLdouble x , GLdouble y , GLdouble z , GLdouble w ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos4d )(GLdouble, GLdouble, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glRasterPos4d)(GLdouble, GLdouble, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -1554,7 +1553,7 @@
    extern void glRasterPos4f ( GLfloat x , GLfloat y , GLfloat z , GLfloat w ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos4f )(GLfloat, GLfloat, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glRasterPos4f)(GLfloat, GLfloat, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -1562,7 +1561,7 @@
    extern void glRasterPos4i ( GLint x , GLint y , GLint z , GLint w ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos4i )(GLint, GLint, GLint, GLint);
+LIBAPI void(CALLBACK* disp__glRasterPos4i)(GLint, GLint, GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -1570,7 +1569,7 @@
    extern void glRasterPos4s ( GLshort x , GLshort y , GLshort z , GLshort w ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos4s )(GLshort, GLshort, GLshort, GLshort);
+LIBAPI void(CALLBACK* disp__glRasterPos4s)(GLshort, GLshort, GLshort, GLshort);
 
 /**
  * Original Function-Prototype :
@@ -1578,7 +1577,7 @@
    extern void glRasterPos2dv ( const GLdouble * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos2dv )(const GLdouble *);
+LIBAPI void(CALLBACK* disp__glRasterPos2dv)(const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -1586,7 +1585,7 @@
    extern void glRasterPos2fv ( const GLfloat * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos2fv )(const GLfloat *);
+LIBAPI void(CALLBACK* disp__glRasterPos2fv)(const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -1594,7 +1593,7 @@
    extern void glRasterPos2iv ( const GLint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos2iv )(const GLint *);
+LIBAPI void(CALLBACK* disp__glRasterPos2iv)(const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -1602,7 +1601,7 @@
    extern void glRasterPos2sv ( const GLshort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos2sv )(const GLshort *);
+LIBAPI void(CALLBACK* disp__glRasterPos2sv)(const GLshort*);
 
 /**
  * Original Function-Prototype :
@@ -1610,7 +1609,7 @@
    extern void glRasterPos3dv ( const GLdouble * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos3dv )(const GLdouble *);
+LIBAPI void(CALLBACK* disp__glRasterPos3dv)(const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -1618,7 +1617,7 @@
    extern void glRasterPos3fv ( const GLfloat * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos3fv )(const GLfloat *);
+LIBAPI void(CALLBACK* disp__glRasterPos3fv)(const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -1626,7 +1625,7 @@
    extern void glRasterPos3iv ( const GLint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos3iv )(const GLint *);
+LIBAPI void(CALLBACK* disp__glRasterPos3iv)(const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -1634,7 +1633,7 @@
    extern void glRasterPos3sv ( const GLshort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos3sv )(const GLshort *);
+LIBAPI void(CALLBACK* disp__glRasterPos3sv)(const GLshort*);
 
 /**
  * Original Function-Prototype :
@@ -1642,7 +1641,7 @@
    extern void glRasterPos4dv ( const GLdouble * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos4dv )(const GLdouble *);
+LIBAPI void(CALLBACK* disp__glRasterPos4dv)(const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -1650,7 +1649,7 @@
    extern void glRasterPos4fv ( const GLfloat * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos4fv )(const GLfloat *);
+LIBAPI void(CALLBACK* disp__glRasterPos4fv)(const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -1658,7 +1657,7 @@
    extern void glRasterPos4iv ( const GLint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos4iv )(const GLint *);
+LIBAPI void(CALLBACK* disp__glRasterPos4iv)(const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -1666,7 +1665,7 @@
    extern void glRasterPos4sv ( const GLshort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRasterPos4sv )(const GLshort *);
+LIBAPI void(CALLBACK* disp__glRasterPos4sv)(const GLshort*);
 
 /**
  * Original Function-Prototype :
@@ -1674,7 +1673,7 @@
    extern void glRectd ( GLdouble x1 , GLdouble y1 , GLdouble x2 , GLdouble y2 ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRectd )(GLdouble, GLdouble, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glRectd)(GLdouble, GLdouble, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -1682,7 +1681,7 @@
    extern void glRectf ( GLfloat x1 , GLfloat y1 , GLfloat x2 , GLfloat y2 ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRectf )(GLfloat, GLfloat, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glRectf)(GLfloat, GLfloat, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -1690,7 +1689,7 @@
    extern void glRecti ( GLint x1 , GLint y1 , GLint x2 , GLint y2 ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRecti )(GLint, GLint, GLint, GLint);
+LIBAPI void(CALLBACK* disp__glRecti)(GLint, GLint, GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -1698,7 +1697,7 @@
    extern void glRects ( GLshort x1 , GLshort y1 , GLshort x2 , GLshort y2 ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRects )(GLshort, GLshort, GLshort, GLshort);
+LIBAPI void(CALLBACK* disp__glRects)(GLshort, GLshort, GLshort, GLshort);
 
 /**
  * Original Function-Prototype :
@@ -1706,7 +1705,7 @@
    extern void glRectdv ( const GLdouble * v1 , const GLdouble * v2 ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRectdv )(const GLdouble *, const GLdouble *);
+LIBAPI void(CALLBACK* disp__glRectdv)(const GLdouble*, const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -1714,7 +1713,7 @@
    extern void glRectfv ( const GLfloat * v1 , const GLfloat * v2 ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRectfv )(const GLfloat *, const GLfloat *);
+LIBAPI void(CALLBACK* disp__glRectfv)(const GLfloat*, const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -1722,7 +1721,7 @@
    extern void glRectiv ( const GLint * v1 , const GLint * v2 ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRectiv )(const GLint *, const GLint *);
+LIBAPI void(CALLBACK* disp__glRectiv)(const GLint*, const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -1730,7 +1729,7 @@
    extern void glRectsv ( const GLshort * v1 , const GLshort * v2 ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glRectsv )(const GLshort *, const GLshort *);
+LIBAPI void(CALLBACK* disp__glRectsv)(const GLshort*, const GLshort*);
 
 /**
  * Original Function-Prototype :
@@ -1738,7 +1737,7 @@
    extern void glVertexPointer ( GLint size , GLenum type , GLsizei stride , const GLvoid * ptr ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertexPointer )(GLint, GLenum, GLsizei, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glVertexPointer)(GLint, GLenum, GLsizei, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -1746,7 +1745,7 @@
    extern void glNormalPointer ( GLenum type , GLsizei stride , const GLvoid * ptr ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glNormalPointer )(GLenum, GLsizei, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glNormalPointer)(GLenum, GLsizei, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -1754,7 +1753,7 @@
    extern void glColorPointer ( GLint size , GLenum type , GLsizei stride , const GLvoid * ptr ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColorPointer )(GLint, GLenum, GLsizei, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glColorPointer)(GLint, GLenum, GLsizei, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -1762,7 +1761,7 @@
    extern void glIndexPointer ( GLenum type , GLsizei stride , const GLvoid * ptr ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glIndexPointer )(GLenum, GLsizei, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glIndexPointer)(GLenum, GLsizei, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -1770,7 +1769,7 @@
    extern void glTexCoordPointer ( GLint size , GLenum type , GLsizei stride , const GLvoid * ptr ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoordPointer )(GLint, GLenum, GLsizei, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glTexCoordPointer)(GLint, GLenum, GLsizei, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -1778,7 +1777,7 @@
    extern void glEdgeFlagPointer ( GLsizei stride , const GLvoid * ptr ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEdgeFlagPointer )(GLsizei, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glEdgeFlagPointer)(GLsizei, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -1786,7 +1785,7 @@
    extern void glGetPointerv ( GLenum pname , void * * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetPointerv )(GLenum, void **);
+LIBAPI void(CALLBACK* disp__glGetPointerv)(GLenum, void**);
 
 /**
  * Original Function-Prototype :
@@ -1794,7 +1793,7 @@
    extern void glArrayElement ( GLint i ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glArrayElement )(GLint);
+LIBAPI void(CALLBACK* disp__glArrayElement)(GLint);
 
 /**
  * Original Function-Prototype :
@@ -1802,7 +1801,7 @@
    extern void glDrawArrays ( GLenum mode , GLint first , GLsizei count ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glDrawArrays )(GLenum, GLint, GLsizei);
+LIBAPI void(CALLBACK* disp__glDrawArrays)(GLenum, GLint, GLsizei);
 
 /**
  * Original Function-Prototype :
@@ -1810,7 +1809,7 @@
    extern void glDrawElements ( GLenum mode , GLsizei count , GLenum type , const GLvoid * indices ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glDrawElements )(GLenum, GLsizei, GLenum, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glDrawElements)(GLenum, GLsizei, GLenum, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -1818,7 +1817,7 @@
    extern void glInterleavedArrays ( GLenum format , GLsizei stride , const GLvoid * pointer ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glInterleavedArrays )(GLenum, GLsizei, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glInterleavedArrays)(GLenum, GLsizei, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -1826,7 +1825,7 @@
    extern void glShadeModel ( GLenum mode ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glShadeModel )(GLenum);
+LIBAPI void(CALLBACK* disp__glShadeModel)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -1834,7 +1833,7 @@
    extern void glLightf ( GLenum light , GLenum pname , GLfloat param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glLightf )(GLenum, GLenum, GLfloat);
+LIBAPI void(CALLBACK* disp__glLightf)(GLenum, GLenum, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -1842,7 +1841,7 @@
    extern void glLighti ( GLenum light , GLenum pname , GLint param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glLighti )(GLenum, GLenum, GLint);
+LIBAPI void(CALLBACK* disp__glLighti)(GLenum, GLenum, GLint);
 
 /**
  * Original Function-Prototype :
@@ -1850,7 +1849,7 @@
    extern void glLightfv ( GLenum light , GLenum pname , const GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glLightfv )(GLenum, GLenum, const GLfloat *);
+LIBAPI void(CALLBACK* disp__glLightfv)(GLenum, GLenum, const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -1858,7 +1857,7 @@
    extern void glLightiv ( GLenum light , GLenum pname , const GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glLightiv )(GLenum, GLenum, const GLint *);
+LIBAPI void(CALLBACK* disp__glLightiv)(GLenum, GLenum, const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -1866,7 +1865,7 @@
    extern void glGetLightfv ( GLenum light , GLenum pname , GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetLightfv )(GLenum, GLenum, GLfloat *);
+LIBAPI void(CALLBACK* disp__glGetLightfv)(GLenum, GLenum, GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -1874,7 +1873,7 @@
    extern void glGetLightiv ( GLenum light , GLenum pname , GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetLightiv )(GLenum, GLenum, GLint *);
+LIBAPI void(CALLBACK* disp__glGetLightiv)(GLenum, GLenum, GLint*);
 
 /**
  * Original Function-Prototype :
@@ -1882,7 +1881,7 @@
    extern void glLightModelf ( GLenum pname , GLfloat param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glLightModelf )(GLenum, GLfloat);
+LIBAPI void(CALLBACK* disp__glLightModelf)(GLenum, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -1890,7 +1889,7 @@
    extern void glLightModeli ( GLenum pname , GLint param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glLightModeli )(GLenum, GLint);
+LIBAPI void(CALLBACK* disp__glLightModeli)(GLenum, GLint);
 
 /**
  * Original Function-Prototype :
@@ -1898,7 +1897,7 @@
    extern void glLightModelfv ( GLenum pname , const GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glLightModelfv )(GLenum, const GLfloat *);
+LIBAPI void(CALLBACK* disp__glLightModelfv)(GLenum, const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -1906,7 +1905,7 @@
    extern void glLightModeliv ( GLenum pname , const GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glLightModeliv )(GLenum, const GLint *);
+LIBAPI void(CALLBACK* disp__glLightModeliv)(GLenum, const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -1914,7 +1913,7 @@
    extern void glMaterialf ( GLenum face , GLenum pname , GLfloat param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMaterialf )(GLenum, GLenum, GLfloat);
+LIBAPI void(CALLBACK* disp__glMaterialf)(GLenum, GLenum, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -1922,7 +1921,7 @@
    extern void glMateriali ( GLenum face , GLenum pname , GLint param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMateriali )(GLenum, GLenum, GLint);
+LIBAPI void(CALLBACK* disp__glMateriali)(GLenum, GLenum, GLint);
 
 /**
  * Original Function-Prototype :
@@ -1930,7 +1929,7 @@
    extern void glMaterialfv ( GLenum face , GLenum pname , const GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMaterialfv )(GLenum, GLenum, const GLfloat *);
+LIBAPI void(CALLBACK* disp__glMaterialfv)(GLenum, GLenum, const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -1938,7 +1937,7 @@
    extern void glMaterialiv ( GLenum face , GLenum pname , const GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMaterialiv )(GLenum, GLenum, const GLint *);
+LIBAPI void(CALLBACK* disp__glMaterialiv)(GLenum, GLenum, const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -1946,7 +1945,7 @@
    extern void glGetMaterialfv ( GLenum face , GLenum pname , GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetMaterialfv )(GLenum, GLenum, GLfloat *);
+LIBAPI void(CALLBACK* disp__glGetMaterialfv)(GLenum, GLenum, GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -1954,7 +1953,7 @@
    extern void glGetMaterialiv ( GLenum face , GLenum pname , GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetMaterialiv )(GLenum, GLenum, GLint *);
+LIBAPI void(CALLBACK* disp__glGetMaterialiv)(GLenum, GLenum, GLint*);
 
 /**
  * Original Function-Prototype :
@@ -1962,7 +1961,7 @@
    extern void glColorMaterial ( GLenum face , GLenum mode ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColorMaterial )(GLenum, GLenum);
+LIBAPI void(CALLBACK* disp__glColorMaterial)(GLenum, GLenum);
 
 /**
  * Original Function-Prototype :
@@ -1970,7 +1969,7 @@
    extern void glPixelZoom ( GLfloat xfactor , GLfloat yfactor ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPixelZoom )(GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glPixelZoom)(GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -1978,7 +1977,7 @@
    extern void glPixelStoref ( GLenum pname , GLfloat param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPixelStoref )(GLenum, GLfloat);
+LIBAPI void(CALLBACK* disp__glPixelStoref)(GLenum, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -1986,7 +1985,7 @@
    extern void glPixelStorei ( GLenum pname , GLint param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPixelStorei )(GLenum, GLint);
+LIBAPI void(CALLBACK* disp__glPixelStorei)(GLenum, GLint);
 
 /**
  * Original Function-Prototype :
@@ -1994,7 +1993,7 @@
    extern void glPixelTransferf ( GLenum pname , GLfloat param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPixelTransferf )(GLenum, GLfloat);
+LIBAPI void(CALLBACK* disp__glPixelTransferf)(GLenum, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -2002,7 +2001,7 @@
    extern void glPixelTransferi ( GLenum pname , GLint param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPixelTransferi )(GLenum, GLint);
+LIBAPI void(CALLBACK* disp__glPixelTransferi)(GLenum, GLint);
 
 /**
  * Original Function-Prototype :
@@ -2010,7 +2009,7 @@
    extern void glPixelMapfv ( GLenum map , GLint mapsize , const GLfloat * values ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPixelMapfv )(GLenum, GLint, const GLfloat *);
+LIBAPI void(CALLBACK* disp__glPixelMapfv)(GLenum, GLint, const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2018,7 +2017,7 @@
    extern void glPixelMapuiv ( GLenum map , GLint mapsize , const GLuint * values ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPixelMapuiv )(GLenum, GLint, const GLuint *);
+LIBAPI void(CALLBACK* disp__glPixelMapuiv)(GLenum, GLint, const GLuint*);
 
 /**
  * Original Function-Prototype :
@@ -2026,7 +2025,7 @@
    extern void glPixelMapusv ( GLenum map , GLint mapsize , const GLushort * values ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPixelMapusv )(GLenum, GLint, const GLushort *);
+LIBAPI void(CALLBACK* disp__glPixelMapusv)(GLenum, GLint, const GLushort*);
 
 /**
  * Original Function-Prototype :
@@ -2034,7 +2033,7 @@
    extern void glGetPixelMapfv ( GLenum map , GLfloat * values ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetPixelMapfv )(GLenum, GLfloat *);
+LIBAPI void(CALLBACK* disp__glGetPixelMapfv)(GLenum, GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2042,7 +2041,7 @@
    extern void glGetPixelMapuiv ( GLenum map , GLuint * values ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetPixelMapuiv )(GLenum, GLuint *);
+LIBAPI void(CALLBACK* disp__glGetPixelMapuiv)(GLenum, GLuint*);
 
 /**
  * Original Function-Prototype :
@@ -2050,7 +2049,7 @@
    extern void glGetPixelMapusv ( GLenum map , GLushort * values ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetPixelMapusv )(GLenum, GLushort *);
+LIBAPI void(CALLBACK* disp__glGetPixelMapusv)(GLenum, GLushort*);
 
 /**
  * Original Function-Prototype :
@@ -2058,7 +2057,7 @@
    extern void glBitmap ( GLsizei width , GLsizei height , GLfloat xorig , GLfloat yorig , GLfloat xmove , GLfloat ymove , const GLubyte * bitmap ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glBitmap )(GLsizei, GLsizei, GLfloat, GLfloat, GLfloat, GLfloat, const GLubyte *);
+LIBAPI void(CALLBACK* disp__glBitmap)(GLsizei, GLsizei, GLfloat, GLfloat, GLfloat, GLfloat, const GLubyte*);
 
 /**
  * Original Function-Prototype :
@@ -2066,7 +2065,7 @@
    extern void glReadPixels ( GLint x , GLint y , GLsizei width , GLsizei height , GLenum format , GLenum type , GLvoid * pixels ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glReadPixels )(GLint, GLint, GLsizei, GLsizei, GLenum, GLenum, GLvoid *);
+LIBAPI void(CALLBACK* disp__glReadPixels)(GLint, GLint, GLsizei, GLsizei, GLenum, GLenum, GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2074,7 +2073,7 @@
    extern void glDrawPixels ( GLsizei width , GLsizei height , GLenum format , GLenum type , const GLvoid * pixels ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glDrawPixels )(GLsizei, GLsizei, GLenum, GLenum, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glDrawPixels)(GLsizei, GLsizei, GLenum, GLenum, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2082,7 +2081,7 @@
    extern void glCopyPixels ( GLint x , GLint y , GLsizei width , GLsizei height , GLenum type ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glCopyPixels )(GLint, GLint, GLsizei, GLsizei, GLenum);
+LIBAPI void(CALLBACK* disp__glCopyPixels)(GLint, GLint, GLsizei, GLsizei, GLenum);
 
 /**
  * Original Function-Prototype :
@@ -2090,7 +2089,7 @@
    extern void glStencilFunc ( GLenum func , GLint ref , GLuint mask ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glStencilFunc )(GLenum, GLint, GLuint);
+LIBAPI void(CALLBACK* disp__glStencilFunc)(GLenum, GLint, GLuint);
 
 /**
  * Original Function-Prototype :
@@ -2098,7 +2097,7 @@
    extern void glStencilMask ( GLuint mask ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glStencilMask )(GLuint);
+LIBAPI void(CALLBACK* disp__glStencilMask)(GLuint);
 
 /**
  * Original Function-Prototype :
@@ -2106,7 +2105,7 @@
    extern void glStencilOp ( GLenum fail , GLenum zfail , GLenum zpass ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glStencilOp )(GLenum, GLenum, GLenum);
+LIBAPI void(CALLBACK* disp__glStencilOp)(GLenum, GLenum, GLenum);
 
 /**
  * Original Function-Prototype :
@@ -2114,7 +2113,7 @@
    extern void glClearStencil ( GLint s ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glClearStencil )(GLint);
+LIBAPI void(CALLBACK* disp__glClearStencil)(GLint);
 
 /**
  * Original Function-Prototype :
@@ -2122,7 +2121,7 @@
    extern void glTexGend ( GLenum coord , GLenum pname , GLdouble param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexGend )(GLenum, GLenum, GLdouble);
+LIBAPI void(CALLBACK* disp__glTexGend)(GLenum, GLenum, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -2130,7 +2129,7 @@
    extern void glTexGenf ( GLenum coord , GLenum pname , GLfloat param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexGenf )(GLenum, GLenum, GLfloat);
+LIBAPI void(CALLBACK* disp__glTexGenf)(GLenum, GLenum, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -2138,7 +2137,7 @@
    extern void glTexGeni ( GLenum coord , GLenum pname , GLint param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexGeni )(GLenum, GLenum, GLint);
+LIBAPI void(CALLBACK* disp__glTexGeni)(GLenum, GLenum, GLint);
 
 /**
  * Original Function-Prototype :
@@ -2146,7 +2145,7 @@
    extern void glTexGendv ( GLenum coord , GLenum pname , const GLdouble * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexGendv )(GLenum, GLenum, const GLdouble *);
+LIBAPI void(CALLBACK* disp__glTexGendv)(GLenum, GLenum, const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -2154,7 +2153,7 @@
    extern void glTexGenfv ( GLenum coord , GLenum pname , const GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexGenfv )(GLenum, GLenum, const GLfloat *);
+LIBAPI void(CALLBACK* disp__glTexGenfv)(GLenum, GLenum, const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2162,7 +2161,7 @@
    extern void glTexGeniv ( GLenum coord , GLenum pname , const GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexGeniv )(GLenum, GLenum, const GLint *);
+LIBAPI void(CALLBACK* disp__glTexGeniv)(GLenum, GLenum, const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -2170,7 +2169,7 @@
    extern void glGetTexGendv ( GLenum coord , GLenum pname , GLdouble * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetTexGendv )(GLenum, GLenum, GLdouble *);
+LIBAPI void(CALLBACK* disp__glGetTexGendv)(GLenum, GLenum, GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -2178,7 +2177,7 @@
    extern void glGetTexGenfv ( GLenum coord , GLenum pname , GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetTexGenfv )(GLenum, GLenum, GLfloat *);
+LIBAPI void(CALLBACK* disp__glGetTexGenfv)(GLenum, GLenum, GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2186,7 +2185,7 @@
    extern void glGetTexGeniv ( GLenum coord , GLenum pname , GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetTexGeniv )(GLenum, GLenum, GLint *);
+LIBAPI void(CALLBACK* disp__glGetTexGeniv)(GLenum, GLenum, GLint*);
 
 /**
  * Original Function-Prototype :
@@ -2194,7 +2193,7 @@
    extern void glTexEnvf ( GLenum target , GLenum pname , GLfloat param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexEnvf )(GLenum, GLenum, GLfloat);
+LIBAPI void(CALLBACK* disp__glTexEnvf)(GLenum, GLenum, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -2202,7 +2201,7 @@
    extern void glTexEnvi ( GLenum target , GLenum pname , GLint param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexEnvi )(GLenum, GLenum, GLint);
+LIBAPI void(CALLBACK* disp__glTexEnvi)(GLenum, GLenum, GLint);
 
 /**
  * Original Function-Prototype :
@@ -2210,7 +2209,7 @@
    extern void glTexEnvfv ( GLenum target , GLenum pname , const GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexEnvfv )(GLenum, GLenum, const GLfloat *);
+LIBAPI void(CALLBACK* disp__glTexEnvfv)(GLenum, GLenum, const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2218,7 +2217,7 @@
    extern void glTexEnviv ( GLenum target , GLenum pname , const GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexEnviv )(GLenum, GLenum, const GLint *);
+LIBAPI void(CALLBACK* disp__glTexEnviv)(GLenum, GLenum, const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -2226,7 +2225,7 @@
    extern void glGetTexEnvfv ( GLenum target , GLenum pname , GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetTexEnvfv )(GLenum, GLenum, GLfloat *);
+LIBAPI void(CALLBACK* disp__glGetTexEnvfv)(GLenum, GLenum, GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2234,7 +2233,7 @@
    extern void glGetTexEnviv ( GLenum target , GLenum pname , GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetTexEnviv )(GLenum, GLenum, GLint *);
+LIBAPI void(CALLBACK* disp__glGetTexEnviv)(GLenum, GLenum, GLint*);
 
 /**
  * Original Function-Prototype :
@@ -2242,7 +2241,7 @@
    extern void glTexParameterf ( GLenum target , GLenum pname , GLfloat param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexParameterf )(GLenum, GLenum, GLfloat);
+LIBAPI void(CALLBACK* disp__glTexParameterf)(GLenum, GLenum, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -2250,7 +2249,7 @@
    extern void glTexParameteri ( GLenum target , GLenum pname , GLint param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexParameteri )(GLenum, GLenum, GLint);
+LIBAPI void(CALLBACK* disp__glTexParameteri)(GLenum, GLenum, GLint);
 
 /**
  * Original Function-Prototype :
@@ -2258,7 +2257,7 @@
    extern void glTexParameterfv ( GLenum target , GLenum pname , const GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexParameterfv )(GLenum, GLenum, const GLfloat *);
+LIBAPI void(CALLBACK* disp__glTexParameterfv)(GLenum, GLenum, const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2266,7 +2265,7 @@
    extern void glTexParameteriv ( GLenum target , GLenum pname , const GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexParameteriv )(GLenum, GLenum, const GLint *);
+LIBAPI void(CALLBACK* disp__glTexParameteriv)(GLenum, GLenum, const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -2274,7 +2273,7 @@
    extern void glGetTexParameterfv ( GLenum target , GLenum pname , GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetTexParameterfv )(GLenum, GLenum, GLfloat *);
+LIBAPI void(CALLBACK* disp__glGetTexParameterfv)(GLenum, GLenum, GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2282,7 +2281,7 @@
    extern void glGetTexParameteriv ( GLenum target , GLenum pname , GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetTexParameteriv )(GLenum, GLenum, GLint *);
+LIBAPI void(CALLBACK* disp__glGetTexParameteriv)(GLenum, GLenum, GLint*);
 
 /**
  * Original Function-Prototype :
@@ -2290,7 +2289,7 @@
    extern void glGetTexLevelParameterfv ( GLenum target , GLint level , GLenum pname , GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetTexLevelParameterfv )(GLenum, GLint, GLenum, GLfloat *);
+LIBAPI void(CALLBACK* disp__glGetTexLevelParameterfv)(GLenum, GLint, GLenum, GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2298,7 +2297,7 @@
    extern void glGetTexLevelParameteriv ( GLenum target , GLint level , GLenum pname , GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetTexLevelParameteriv )(GLenum, GLint, GLenum, GLint *);
+LIBAPI void(CALLBACK* disp__glGetTexLevelParameteriv)(GLenum, GLint, GLenum, GLint*);
 
 /**
  * Original Function-Prototype :
@@ -2306,7 +2305,7 @@
    extern void glTexImage1D ( GLenum target , GLint level , GLint internalFormat , GLsizei width , GLint border , GLenum format , GLenum type , const GLvoid * pixels ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexImage1D )(GLenum, GLint, GLint, GLsizei, GLint, GLenum, GLenum, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glTexImage1D)(GLenum, GLint, GLint, GLsizei, GLint, GLenum, GLenum, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2314,7 +2313,7 @@
    extern void glTexImage2D ( GLenum target , GLint level , GLint internalFormat , GLsizei width , GLsizei height , GLint border , GLenum format , GLenum type , const GLvoid * pixels ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexImage2D )(GLenum, GLint, GLint, GLsizei, GLsizei, GLint, GLenum, GLenum, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glTexImage2D)(GLenum, GLint, GLint, GLsizei, GLsizei, GLint, GLenum, GLenum, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2322,7 +2321,7 @@
    extern void glGetTexImage ( GLenum target , GLint level , GLenum format , GLenum type , GLvoid * pixels ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetTexImage )(GLenum, GLint, GLenum, GLenum, GLvoid *);
+LIBAPI void(CALLBACK* disp__glGetTexImage)(GLenum, GLint, GLenum, GLenum, GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2330,7 +2329,7 @@
    extern void glGenTextures ( GLsizei n , GLuint * textures ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGenTextures )(GLsizei, GLuint *);
+LIBAPI void(CALLBACK* disp__glGenTextures)(GLsizei, GLuint*);
 
 /**
  * Original Function-Prototype :
@@ -2338,7 +2337,7 @@
    extern void glDeleteTextures ( GLsizei n , const GLuint * textures ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glDeleteTextures )(GLsizei, const GLuint *);
+LIBAPI void(CALLBACK* disp__glDeleteTextures)(GLsizei, const GLuint*);
 
 /**
  * Original Function-Prototype :
@@ -2346,7 +2345,7 @@
    extern void glBindTexture ( GLenum target , GLuint texture ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glBindTexture )(GLenum, GLuint);
+LIBAPI void(CALLBACK* disp__glBindTexture)(GLenum, GLuint);
 
 /**
  * Original Function-Prototype :
@@ -2354,7 +2353,7 @@
    extern void glPrioritizeTextures ( GLsizei n , const GLuint * textures , const GLclampf * priorities ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPrioritizeTextures )(GLsizei, const GLuint *, const GLclampf *);
+LIBAPI void(CALLBACK* disp__glPrioritizeTextures)(GLsizei, const GLuint*, const GLclampf*);
 
 /**
  * Original Function-Prototype :
@@ -2362,7 +2361,7 @@
    extern GLboolean glAreTexturesResident ( GLsizei n , const GLuint * textures , GLboolean * residences ) ;
  * </pre> 
  */
-	LIBAPI GLboolean (CALLBACK * disp__glAreTexturesResident )(GLsizei, const GLuint *, GLboolean *);
+LIBAPI GLboolean(CALLBACK* disp__glAreTexturesResident)(GLsizei, const GLuint*, GLboolean*);
 
 /**
  * Original Function-Prototype :
@@ -2370,7 +2369,7 @@
    extern GLboolean glIsTexture ( GLuint texture ) ;
  * </pre> 
  */
-	LIBAPI GLboolean (CALLBACK * disp__glIsTexture )(GLuint);
+LIBAPI GLboolean(CALLBACK* disp__glIsTexture)(GLuint);
 
 /**
  * Original Function-Prototype :
@@ -2378,7 +2377,7 @@
    extern void glTexSubImage1D ( GLenum target , GLint level , GLint xoffset , GLsizei width , GLenum format , GLenum type , const GLvoid * pixels ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexSubImage1D )(GLenum, GLint, GLint, GLsizei, GLenum, GLenum, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glTexSubImage1D)(GLenum, GLint, GLint, GLsizei, GLenum, GLenum, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2386,7 +2385,8 @@
    extern void glTexSubImage2D ( GLenum target , GLint level , GLint xoffset , GLint yoffset , GLsizei width , GLsizei height , GLenum format , GLenum type , const GLvoid * pixels ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexSubImage2D )(GLenum, GLint, GLint, GLint, GLsizei, GLsizei, GLenum, GLenum, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glTexSubImage2D)(GLenum, GLint, GLint, GLint, GLsizei, GLsizei, GLenum, GLenum,
+                                             const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2394,7 +2394,7 @@
    extern void glCopyTexImage1D ( GLenum target , GLint level , GLenum internalformat , GLint x , GLint y , GLsizei width , GLint border ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glCopyTexImage1D )(GLenum, GLint, GLenum, GLint, GLint, GLsizei, GLint);
+LIBAPI void(CALLBACK* disp__glCopyTexImage1D)(GLenum, GLint, GLenum, GLint, GLint, GLsizei, GLint);
 
 /**
  * Original Function-Prototype :
@@ -2402,7 +2402,7 @@
    extern void glCopyTexImage2D ( GLenum target , GLint level , GLenum internalformat , GLint x , GLint y , GLsizei width , GLsizei height , GLint border ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glCopyTexImage2D )(GLenum, GLint, GLenum, GLint, GLint, GLsizei, GLsizei, GLint);
+LIBAPI void(CALLBACK* disp__glCopyTexImage2D)(GLenum, GLint, GLenum, GLint, GLint, GLsizei, GLsizei, GLint);
 
 /**
  * Original Function-Prototype :
@@ -2410,7 +2410,7 @@
    extern void glCopyTexSubImage1D ( GLenum target , GLint level , GLint xoffset , GLint x , GLint y , GLsizei width ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glCopyTexSubImage1D )(GLenum, GLint, GLint, GLint, GLint, GLsizei);
+LIBAPI void(CALLBACK* disp__glCopyTexSubImage1D)(GLenum, GLint, GLint, GLint, GLint, GLsizei);
 
 /**
  * Original Function-Prototype :
@@ -2418,7 +2418,7 @@
    extern void glCopyTexSubImage2D ( GLenum target , GLint level , GLint xoffset , GLint yoffset , GLint x , GLint y , GLsizei width , GLsizei height ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glCopyTexSubImage2D )(GLenum, GLint, GLint, GLint, GLint, GLint, GLsizei, GLsizei);
+LIBAPI void(CALLBACK* disp__glCopyTexSubImage2D)(GLenum, GLint, GLint, GLint, GLint, GLint, GLsizei, GLsizei);
 
 /**
  * Original Function-Prototype :
@@ -2426,7 +2426,7 @@
    extern void glMap1d ( GLenum target , GLdouble u1 , GLdouble u2 , GLint stride , GLint order , const GLdouble * points ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMap1d )(GLenum, GLdouble, GLdouble, GLint, GLint, const GLdouble *);
+LIBAPI void(CALLBACK* disp__glMap1d)(GLenum, GLdouble, GLdouble, GLint, GLint, const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -2434,7 +2434,7 @@
    extern void glMap1f ( GLenum target , GLfloat u1 , GLfloat u2 , GLint stride , GLint order , const GLfloat * points ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMap1f )(GLenum, GLfloat, GLfloat, GLint, GLint, const GLfloat *);
+LIBAPI void(CALLBACK* disp__glMap1f)(GLenum, GLfloat, GLfloat, GLint, GLint, const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2442,7 +2442,8 @@
    extern void glMap2d ( GLenum target , GLdouble u1 , GLdouble u2 , GLint ustride , GLint uorder , GLdouble v1 , GLdouble v2 , GLint vstride , GLint vorder , const GLdouble * points ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMap2d )(GLenum, GLdouble, GLdouble, GLint, GLint, GLdouble, GLdouble, GLint, GLint, const GLdouble *);
+LIBAPI void(CALLBACK* disp__glMap2d)(GLenum, GLdouble, GLdouble, GLint, GLint, GLdouble, GLdouble, GLint, GLint,
+                                     const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -2450,7 +2451,8 @@
    extern void glMap2f ( GLenum target , GLfloat u1 , GLfloat u2 , GLint ustride , GLint uorder , GLfloat v1 , GLfloat v2 , GLint vstride , GLint vorder , const GLfloat * points ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMap2f )(GLenum, GLfloat, GLfloat, GLint, GLint, GLfloat, GLfloat, GLint, GLint, const GLfloat *);
+LIBAPI void(CALLBACK* disp__glMap2f)(GLenum, GLfloat, GLfloat, GLint, GLint, GLfloat, GLfloat, GLint, GLint,
+                                     const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2458,7 +2460,7 @@
    extern void glGetMapdv ( GLenum target , GLenum query , GLdouble * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetMapdv )(GLenum, GLenum, GLdouble *);
+LIBAPI void(CALLBACK* disp__glGetMapdv)(GLenum, GLenum, GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -2466,7 +2468,7 @@
    extern void glGetMapfv ( GLenum target , GLenum query , GLfloat * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetMapfv )(GLenum, GLenum, GLfloat *);
+LIBAPI void(CALLBACK* disp__glGetMapfv)(GLenum, GLenum, GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2474,7 +2476,7 @@
    extern void glGetMapiv ( GLenum target , GLenum query , GLint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetMapiv )(GLenum, GLenum, GLint *);
+LIBAPI void(CALLBACK* disp__glGetMapiv)(GLenum, GLenum, GLint*);
 
 /**
  * Original Function-Prototype :
@@ -2482,7 +2484,7 @@
    extern void glEvalCoord1d ( GLdouble u ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEvalCoord1d )(GLdouble);
+LIBAPI void(CALLBACK* disp__glEvalCoord1d)(GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -2490,7 +2492,7 @@
    extern void glEvalCoord1f ( GLfloat u ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEvalCoord1f )(GLfloat);
+LIBAPI void(CALLBACK* disp__glEvalCoord1f)(GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -2498,7 +2500,7 @@
    extern void glEvalCoord1dv ( const GLdouble * u ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEvalCoord1dv )(const GLdouble *);
+LIBAPI void(CALLBACK* disp__glEvalCoord1dv)(const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -2506,7 +2508,7 @@
    extern void glEvalCoord1fv ( const GLfloat * u ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEvalCoord1fv )(const GLfloat *);
+LIBAPI void(CALLBACK* disp__glEvalCoord1fv)(const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2514,7 +2516,7 @@
    extern void glEvalCoord2d ( GLdouble u , GLdouble v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEvalCoord2d )(GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glEvalCoord2d)(GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -2522,7 +2524,7 @@
    extern void glEvalCoord2f ( GLfloat u , GLfloat v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEvalCoord2f )(GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glEvalCoord2f)(GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -2530,7 +2532,7 @@
    extern void glEvalCoord2dv ( const GLdouble * u ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEvalCoord2dv )(const GLdouble *);
+LIBAPI void(CALLBACK* disp__glEvalCoord2dv)(const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -2538,7 +2540,7 @@
    extern void glEvalCoord2fv ( const GLfloat * u ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEvalCoord2fv )(const GLfloat *);
+LIBAPI void(CALLBACK* disp__glEvalCoord2fv)(const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2546,7 +2548,7 @@
    extern void glMapGrid1d ( GLint un , GLdouble u1 , GLdouble u2 ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMapGrid1d )(GLint, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glMapGrid1d)(GLint, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -2554,7 +2556,7 @@
    extern void glMapGrid1f ( GLint un , GLfloat u1 , GLfloat u2 ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMapGrid1f )(GLint, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glMapGrid1f)(GLint, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -2562,7 +2564,7 @@
    extern void glMapGrid2d ( GLint un , GLdouble u1 , GLdouble u2 , GLint vn , GLdouble v1 , GLdouble v2 ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMapGrid2d )(GLint, GLdouble, GLdouble, GLint, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glMapGrid2d)(GLint, GLdouble, GLdouble, GLint, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -2570,7 +2572,7 @@
    extern void glMapGrid2f ( GLint un , GLfloat u1 , GLfloat u2 , GLint vn , GLfloat v1 , GLfloat v2 ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMapGrid2f )(GLint, GLfloat, GLfloat, GLint, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glMapGrid2f)(GLint, GLfloat, GLfloat, GLint, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -2578,7 +2580,7 @@
    extern void glEvalPoint1 ( GLint i ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEvalPoint1 )(GLint);
+LIBAPI void(CALLBACK* disp__glEvalPoint1)(GLint);
 
 /**
  * Original Function-Prototype :
@@ -2586,7 +2588,7 @@
    extern void glEvalPoint2 ( GLint i , GLint j ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEvalPoint2 )(GLint, GLint);
+LIBAPI void(CALLBACK* disp__glEvalPoint2)(GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -2594,7 +2596,7 @@
    extern void glEvalMesh1 ( GLenum mode , GLint i1 , GLint i2 ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEvalMesh1 )(GLenum, GLint, GLint);
+LIBAPI void(CALLBACK* disp__glEvalMesh1)(GLenum, GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -2602,7 +2604,7 @@
    extern void glEvalMesh2 ( GLenum mode , GLint i1 , GLint i2 , GLint j1 , GLint j2 ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEvalMesh2 )(GLenum, GLint, GLint, GLint, GLint);
+LIBAPI void(CALLBACK* disp__glEvalMesh2)(GLenum, GLint, GLint, GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -2610,7 +2612,7 @@
    extern void glFogf ( GLenum pname , GLfloat param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glFogf )(GLenum, GLfloat);
+LIBAPI void(CALLBACK* disp__glFogf)(GLenum, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -2618,7 +2620,7 @@
    extern void glFogi ( GLenum pname , GLint param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glFogi )(GLenum, GLint);
+LIBAPI void(CALLBACK* disp__glFogi)(GLenum, GLint);
 
 /**
  * Original Function-Prototype :
@@ -2626,7 +2628,7 @@
    extern void glFogfv ( GLenum pname , const GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glFogfv )(GLenum, const GLfloat *);
+LIBAPI void(CALLBACK* disp__glFogfv)(GLenum, const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2634,7 +2636,7 @@
    extern void glFogiv ( GLenum pname , const GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glFogiv )(GLenum, const GLint *);
+LIBAPI void(CALLBACK* disp__glFogiv)(GLenum, const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -2642,7 +2644,7 @@
    extern void glFeedbackBuffer ( GLsizei size , GLenum type , GLfloat * buffer ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glFeedbackBuffer )(GLsizei, GLenum, GLfloat *);
+LIBAPI void(CALLBACK* disp__glFeedbackBuffer)(GLsizei, GLenum, GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2650,7 +2652,7 @@
    extern void glPassThrough ( GLfloat token ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPassThrough )(GLfloat);
+LIBAPI void(CALLBACK* disp__glPassThrough)(GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -2658,7 +2660,7 @@
    extern void glSelectBuffer ( GLsizei size , GLuint * buffer ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glSelectBuffer )(GLsizei, GLuint *);
+LIBAPI void(CALLBACK* disp__glSelectBuffer)(GLsizei, GLuint*);
 
 /**
  * Original Function-Prototype :
@@ -2666,7 +2668,7 @@
    extern void glInitNames ( void ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glInitNames )(void);
+LIBAPI void(CALLBACK* disp__glInitNames)(void);
 
 /**
  * Original Function-Prototype :
@@ -2674,7 +2676,7 @@
    extern void glLoadName ( GLuint name ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glLoadName )(GLuint);
+LIBAPI void(CALLBACK* disp__glLoadName)(GLuint);
 
 /**
  * Original Function-Prototype :
@@ -2682,7 +2684,7 @@
    extern void glPushName ( GLuint name ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPushName )(GLuint);
+LIBAPI void(CALLBACK* disp__glPushName)(GLuint);
 
 /**
  * Original Function-Prototype :
@@ -2690,7 +2692,7 @@
    extern void glPopName ( void ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPopName )(void);
+LIBAPI void(CALLBACK* disp__glPopName)(void);
 
 /**
  * Original Function-Prototype :
@@ -2698,7 +2700,7 @@
    extern void glDrawRangeElements ( GLenum mode , GLuint start , GLuint end , GLsizei count , GLenum type , const GLvoid * indices ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glDrawRangeElements )(GLenum, GLuint, GLuint, GLsizei, GLenum, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glDrawRangeElements)(GLenum, GLuint, GLuint, GLsizei, GLenum, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2706,7 +2708,8 @@
    extern void glTexImage3D ( GLenum target , GLint level , GLint internalFormat , GLsizei width , GLsizei height , GLsizei depth , GLint border , GLenum format , GLenum type , const GLvoid * pixels ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexImage3D )(GLenum, GLint, GLint, GLsizei, GLsizei, GLsizei, GLint, GLenum, GLenum, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glTexImage3D)(GLenum, GLint, GLint, GLsizei, GLsizei, GLsizei, GLint, GLenum, GLenum,
+                                          const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2714,7 +2717,8 @@
    extern void glTexSubImage3D ( GLenum target , GLint level , GLint xoffset , GLint yoffset , GLint zoffset , GLsizei width , GLsizei height , GLsizei depth , GLenum format , GLenum type , const GLvoid * pixels ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexSubImage3D )(GLenum, GLint, GLint, GLint, GLint, GLsizei, GLsizei, GLsizei, GLenum, GLenum, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glTexSubImage3D)(GLenum, GLint, GLint, GLint, GLint, GLsizei, GLsizei, GLsizei, GLenum,
+                                             GLenum, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2722,7 +2726,7 @@
    extern void glCopyTexSubImage3D ( GLenum target , GLint level , GLint xoffset , GLint yoffset , GLint zoffset , GLint x , GLint y , GLsizei width , GLsizei height ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glCopyTexSubImage3D )(GLenum, GLint, GLint, GLint, GLint, GLint, GLint, GLsizei, GLsizei);
+LIBAPI void(CALLBACK* disp__glCopyTexSubImage3D)(GLenum, GLint, GLint, GLint, GLint, GLint, GLint, GLsizei, GLsizei);
 
 /**
  * Original Function-Prototype :
@@ -2730,7 +2734,7 @@
    extern void glColorTable ( GLenum target , GLenum internalformat , GLsizei width , GLenum format , GLenum type , const GLvoid * table ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColorTable )(GLenum, GLenum, GLsizei, GLenum, GLenum, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glColorTable)(GLenum, GLenum, GLsizei, GLenum, GLenum, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2738,7 +2742,7 @@
    extern void glColorSubTable ( GLenum target , GLsizei start , GLsizei count , GLenum format , GLenum type , const GLvoid * data ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColorSubTable )(GLenum, GLsizei, GLsizei, GLenum, GLenum, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glColorSubTable)(GLenum, GLsizei, GLsizei, GLenum, GLenum, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2746,7 +2750,7 @@
    extern void glColorTableParameteriv ( GLenum target , GLenum pname , const GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColorTableParameteriv )(GLenum, GLenum, const GLint *);
+LIBAPI void(CALLBACK* disp__glColorTableParameteriv)(GLenum, GLenum, const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -2754,7 +2758,7 @@
    extern void glColorTableParameterfv ( GLenum target , GLenum pname , const GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColorTableParameterfv )(GLenum, GLenum, const GLfloat *);
+LIBAPI void(CALLBACK* disp__glColorTableParameterfv)(GLenum, GLenum, const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2762,7 +2766,7 @@
    extern void glCopyColorSubTable ( GLenum target , GLsizei start , GLint x , GLint y , GLsizei width ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glCopyColorSubTable )(GLenum, GLsizei, GLint, GLint, GLsizei);
+LIBAPI void(CALLBACK* disp__glCopyColorSubTable)(GLenum, GLsizei, GLint, GLint, GLsizei);
 
 /**
  * Original Function-Prototype :
@@ -2770,7 +2774,7 @@
    extern void glCopyColorTable ( GLenum target , GLenum internalformat , GLint x , GLint y , GLsizei width ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glCopyColorTable )(GLenum, GLenum, GLint, GLint, GLsizei);
+LIBAPI void(CALLBACK* disp__glCopyColorTable)(GLenum, GLenum, GLint, GLint, GLsizei);
 
 /**
  * Original Function-Prototype :
@@ -2778,7 +2782,7 @@
    extern void glGetColorTable ( GLenum target , GLenum format , GLenum type , GLvoid * table ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetColorTable )(GLenum, GLenum, GLenum, GLvoid *);
+LIBAPI void(CALLBACK* disp__glGetColorTable)(GLenum, GLenum, GLenum, GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2786,7 +2790,7 @@
    extern void glGetColorTableParameterfv ( GLenum target , GLenum pname , GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetColorTableParameterfv )(GLenum, GLenum, GLfloat *);
+LIBAPI void(CALLBACK* disp__glGetColorTableParameterfv)(GLenum, GLenum, GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2794,7 +2798,7 @@
    extern void glGetColorTableParameteriv ( GLenum target , GLenum pname , GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetColorTableParameteriv )(GLenum, GLenum, GLint *);
+LIBAPI void(CALLBACK* disp__glGetColorTableParameteriv)(GLenum, GLenum, GLint*);
 
 /**
  * Original Function-Prototype :
@@ -2802,7 +2806,7 @@
    extern void glBlendEquation ( GLenum mode ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glBlendEquation )(GLenum);
+LIBAPI void(CALLBACK* disp__glBlendEquation)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -2810,7 +2814,7 @@
    extern void glBlendColor ( GLclampf red , GLclampf green , GLclampf blue , GLclampf alpha ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glBlendColor )(GLclampf, GLclampf, GLclampf, GLclampf);
+LIBAPI void(CALLBACK* disp__glBlendColor)(GLclampf, GLclampf, GLclampf, GLclampf);
 
 /**
  * Original Function-Prototype :
@@ -2818,7 +2822,7 @@
    extern void glHistogram ( GLenum target , GLsizei width , GLenum internalformat , GLboolean sink ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glHistogram )(GLenum, GLsizei, GLenum, GLboolean);
+LIBAPI void(CALLBACK* disp__glHistogram)(GLenum, GLsizei, GLenum, GLboolean);
 
 /**
  * Original Function-Prototype :
@@ -2826,7 +2830,7 @@
    extern void glResetHistogram ( GLenum target ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glResetHistogram )(GLenum);
+LIBAPI void(CALLBACK* disp__glResetHistogram)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -2834,7 +2838,7 @@
    extern void glGetHistogram ( GLenum target , GLboolean reset , GLenum format , GLenum type , GLvoid * values ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetHistogram )(GLenum, GLboolean, GLenum, GLenum, GLvoid *);
+LIBAPI void(CALLBACK* disp__glGetHistogram)(GLenum, GLboolean, GLenum, GLenum, GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2842,7 +2846,7 @@
    extern void glGetHistogramParameterfv ( GLenum target , GLenum pname , GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetHistogramParameterfv )(GLenum, GLenum, GLfloat *);
+LIBAPI void(CALLBACK* disp__glGetHistogramParameterfv)(GLenum, GLenum, GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2850,7 +2854,7 @@
    extern void glGetHistogramParameteriv ( GLenum target , GLenum pname , GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetHistogramParameteriv )(GLenum, GLenum, GLint *);
+LIBAPI void(CALLBACK* disp__glGetHistogramParameteriv)(GLenum, GLenum, GLint*);
 
 /**
  * Original Function-Prototype :
@@ -2858,7 +2862,7 @@
    extern void glMinmax ( GLenum target , GLenum internalformat , GLboolean sink ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMinmax )(GLenum, GLenum, GLboolean);
+LIBAPI void(CALLBACK* disp__glMinmax)(GLenum, GLenum, GLboolean);
 
 /**
  * Original Function-Prototype :
@@ -2866,7 +2870,7 @@
    extern void glResetMinmax ( GLenum target ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glResetMinmax )(GLenum);
+LIBAPI void(CALLBACK* disp__glResetMinmax)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -2874,7 +2878,7 @@
    extern void glGetMinmax ( GLenum target , GLboolean reset , GLenum format , GLenum types , GLvoid * values ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetMinmax )(GLenum, GLboolean, GLenum, GLenum, GLvoid *);
+LIBAPI void(CALLBACK* disp__glGetMinmax)(GLenum, GLboolean, GLenum, GLenum, GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2882,7 +2886,7 @@
    extern void glGetMinmaxParameterfv ( GLenum target , GLenum pname , GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetMinmaxParameterfv )(GLenum, GLenum, GLfloat *);
+LIBAPI void(CALLBACK* disp__glGetMinmaxParameterfv)(GLenum, GLenum, GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2890,7 +2894,7 @@
    extern void glGetMinmaxParameteriv ( GLenum target , GLenum pname , GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetMinmaxParameteriv )(GLenum, GLenum, GLint *);
+LIBAPI void(CALLBACK* disp__glGetMinmaxParameteriv)(GLenum, GLenum, GLint*);
 
 /**
  * Original Function-Prototype :
@@ -2898,7 +2902,7 @@
    extern void glConvolutionFilter1D ( GLenum target , GLenum internalformat , GLsizei width , GLenum format , GLenum type , const GLvoid * image ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glConvolutionFilter1D )(GLenum, GLenum, GLsizei, GLenum, GLenum, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glConvolutionFilter1D)(GLenum, GLenum, GLsizei, GLenum, GLenum, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2906,7 +2910,7 @@
    extern void glConvolutionFilter2D ( GLenum target , GLenum internalformat , GLsizei width , GLsizei height , GLenum format , GLenum type , const GLvoid * image ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glConvolutionFilter2D )(GLenum, GLenum, GLsizei, GLsizei, GLenum, GLenum, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glConvolutionFilter2D)(GLenum, GLenum, GLsizei, GLsizei, GLenum, GLenum, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2914,7 +2918,7 @@
    extern void glConvolutionParameterf ( GLenum target , GLenum pname , GLfloat params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glConvolutionParameterf )(GLenum, GLenum, GLfloat);
+LIBAPI void(CALLBACK* disp__glConvolutionParameterf)(GLenum, GLenum, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -2922,7 +2926,7 @@
    extern void glConvolutionParameterfv ( GLenum target , GLenum pname , const GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glConvolutionParameterfv )(GLenum, GLenum, const GLfloat *);
+LIBAPI void(CALLBACK* disp__glConvolutionParameterfv)(GLenum, GLenum, const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2930,7 +2934,7 @@
    extern void glConvolutionParameteri ( GLenum target , GLenum pname , GLint params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glConvolutionParameteri )(GLenum, GLenum, GLint);
+LIBAPI void(CALLBACK* disp__glConvolutionParameteri)(GLenum, GLenum, GLint);
 
 /**
  * Original Function-Prototype :
@@ -2938,7 +2942,7 @@
    extern void glConvolutionParameteriv ( GLenum target , GLenum pname , const GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glConvolutionParameteriv )(GLenum, GLenum, const GLint *);
+LIBAPI void(CALLBACK* disp__glConvolutionParameteriv)(GLenum, GLenum, const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -2946,7 +2950,7 @@
    extern void glCopyConvolutionFilter1D ( GLenum target , GLenum internalformat , GLint x , GLint y , GLsizei width ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glCopyConvolutionFilter1D )(GLenum, GLenum, GLint, GLint, GLsizei);
+LIBAPI void(CALLBACK* disp__glCopyConvolutionFilter1D)(GLenum, GLenum, GLint, GLint, GLsizei);
 
 /**
  * Original Function-Prototype :
@@ -2954,7 +2958,7 @@
    extern void glCopyConvolutionFilter2D ( GLenum target , GLenum internalformat , GLint x , GLint y , GLsizei width , GLsizei height ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glCopyConvolutionFilter2D )(GLenum, GLenum, GLint, GLint, GLsizei, GLsizei);
+LIBAPI void(CALLBACK* disp__glCopyConvolutionFilter2D)(GLenum, GLenum, GLint, GLint, GLsizei, GLsizei);
 
 /**
  * Original Function-Prototype :
@@ -2962,7 +2966,7 @@
    extern void glGetConvolutionFilter ( GLenum target , GLenum format , GLenum type , GLvoid * image ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetConvolutionFilter )(GLenum, GLenum, GLenum, GLvoid *);
+LIBAPI void(CALLBACK* disp__glGetConvolutionFilter)(GLenum, GLenum, GLenum, GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2970,7 +2974,7 @@
    extern void glGetConvolutionParameterfv ( GLenum target , GLenum pname , GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetConvolutionParameterfv )(GLenum, GLenum, GLfloat *);
+LIBAPI void(CALLBACK* disp__glGetConvolutionParameterfv)(GLenum, GLenum, GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -2978,7 +2982,7 @@
    extern void glGetConvolutionParameteriv ( GLenum target , GLenum pname , GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetConvolutionParameteriv )(GLenum, GLenum, GLint *);
+LIBAPI void(CALLBACK* disp__glGetConvolutionParameteriv)(GLenum, GLenum, GLint*);
 
 /**
  * Original Function-Prototype :
@@ -2986,7 +2990,8 @@
    extern void glSeparableFilter2D ( GLenum target , GLenum internalformat , GLsizei width , GLsizei height , GLenum format , GLenum type , const GLvoid * row , const GLvoid * column ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glSeparableFilter2D )(GLenum, GLenum, GLsizei, GLsizei, GLenum, GLenum, const GLvoid *, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glSeparableFilter2D)(GLenum, GLenum, GLsizei, GLsizei, GLenum, GLenum, const GLvoid*,
+                                                 const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -2994,7 +2999,7 @@
    extern void glGetSeparableFilter ( GLenum target , GLenum format , GLenum type , GLvoid * row , GLvoid * column , GLvoid * span ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetSeparableFilter )(GLenum, GLenum, GLenum, GLvoid *, GLvoid *, GLvoid *);
+LIBAPI void(CALLBACK* disp__glGetSeparableFilter)(GLenum, GLenum, GLenum, GLvoid*, GLvoid*, GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -3002,7 +3007,7 @@
    extern void glBlendColorEXT ( GLclampf red , GLclampf green , GLclampf blue , GLclampf alpha ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glBlendColorEXT )(GLclampf, GLclampf, GLclampf, GLclampf);
+LIBAPI void(CALLBACK* disp__glBlendColorEXT)(GLclampf, GLclampf, GLclampf, GLclampf);
 
 /**
  * Original Function-Prototype :
@@ -3010,7 +3015,7 @@
    extern void glPolygonOffsetEXT ( GLfloat factor , GLfloat bias ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPolygonOffsetEXT )(GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glPolygonOffsetEXT)(GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -3018,7 +3023,8 @@
    extern void glTexImage3DEXT ( GLenum target , GLint level , GLenum internalFormat , GLsizei width , GLsizei height , GLsizei depth , GLint border , GLenum format , GLenum type , const GLvoid * pixels ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexImage3DEXT )(GLenum, GLint, GLenum, GLsizei, GLsizei, GLsizei, GLint, GLenum, GLenum, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glTexImage3DEXT)(GLenum, GLint, GLenum, GLsizei, GLsizei, GLsizei, GLint, GLenum, GLenum,
+                                             const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -3026,7 +3032,8 @@
    extern void glTexSubImage3DEXT ( GLenum target , GLint level , GLint xoffset , GLint yoffset , GLint zoffset , GLsizei width , GLsizei height , GLsizei depth , GLenum format , GLenum type , const GLvoid * pixels ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexSubImage3DEXT )(GLenum, GLint, GLint, GLint, GLint, GLsizei, GLsizei, GLsizei, GLenum, GLenum, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glTexSubImage3DEXT)(GLenum, GLint, GLint, GLint, GLint, GLsizei, GLsizei, GLsizei, GLenum,
+                                                GLenum, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -3034,7 +3041,7 @@
    extern void glCopyTexSubImage3DEXT ( GLenum target , GLint level , GLint xoffset , GLint yoffset , GLint zoffset , GLint x , GLint y , GLsizei width , GLsizei height ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glCopyTexSubImage3DEXT )(GLenum, GLint, GLint, GLint, GLint, GLint, GLint, GLsizei, GLsizei);
+LIBAPI void(CALLBACK* disp__glCopyTexSubImage3DEXT)(GLenum, GLint, GLint, GLint, GLint, GLint, GLint, GLsizei, GLsizei);
 
 /**
  * Original Function-Prototype :
@@ -3042,7 +3049,7 @@
    extern void glGenTexturesEXT ( GLsizei n , GLuint * textures ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGenTexturesEXT )(GLsizei, GLuint *);
+LIBAPI void(CALLBACK* disp__glGenTexturesEXT)(GLsizei, GLuint*);
 
 /**
  * Original Function-Prototype :
@@ -3050,7 +3057,7 @@
    extern void glDeleteTexturesEXT ( GLsizei n , const GLuint * textures ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glDeleteTexturesEXT )(GLsizei, const GLuint *);
+LIBAPI void(CALLBACK* disp__glDeleteTexturesEXT)(GLsizei, const GLuint*);
 
 /**
  * Original Function-Prototype :
@@ -3058,7 +3065,7 @@
    extern void glBindTextureEXT ( GLenum target , GLuint texture ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glBindTextureEXT )(GLenum, GLuint);
+LIBAPI void(CALLBACK* disp__glBindTextureEXT)(GLenum, GLuint);
 
 /**
  * Original Function-Prototype :
@@ -3066,7 +3073,7 @@
    extern void glPrioritizeTexturesEXT ( GLsizei n , const GLuint * textures , const GLclampf * priorities ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPrioritizeTexturesEXT )(GLsizei, const GLuint *, const GLclampf *);
+LIBAPI void(CALLBACK* disp__glPrioritizeTexturesEXT)(GLsizei, const GLuint*, const GLclampf*);
 
 /**
  * Original Function-Prototype :
@@ -3074,7 +3081,7 @@
    extern GLboolean glAreTexturesResidentEXT ( GLsizei n , const GLuint * textures , GLboolean * residences ) ;
  * </pre> 
  */
-	LIBAPI GLboolean (CALLBACK * disp__glAreTexturesResidentEXT )(GLsizei, const GLuint *, GLboolean *);
+LIBAPI GLboolean(CALLBACK* disp__glAreTexturesResidentEXT)(GLsizei, const GLuint*, GLboolean*);
 
 /**
  * Original Function-Prototype :
@@ -3082,7 +3089,7 @@
    extern GLboolean glIsTextureEXT ( GLuint texture ) ;
  * </pre> 
  */
-	LIBAPI GLboolean (CALLBACK * disp__glIsTextureEXT )(GLuint);
+LIBAPI GLboolean(CALLBACK* disp__glIsTextureEXT)(GLuint);
 
 /**
  * Original Function-Prototype :
@@ -3090,7 +3097,7 @@
    extern void glVertexPointerEXT ( GLint size , GLenum type , GLsizei stride , GLsizei count , const GLvoid * ptr ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glVertexPointerEXT )(GLint, GLenum, GLsizei, GLsizei, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glVertexPointerEXT)(GLint, GLenum, GLsizei, GLsizei, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -3098,7 +3105,7 @@
    extern void glNormalPointerEXT ( GLenum type , GLsizei stride , GLsizei count , const GLvoid * ptr ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glNormalPointerEXT )(GLenum, GLsizei, GLsizei, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glNormalPointerEXT)(GLenum, GLsizei, GLsizei, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -3106,7 +3113,7 @@
    extern void glColorPointerEXT ( GLint size , GLenum type , GLsizei stride , GLsizei count , const GLvoid * ptr ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColorPointerEXT )(GLint, GLenum, GLsizei, GLsizei, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glColorPointerEXT)(GLint, GLenum, GLsizei, GLsizei, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -3114,7 +3121,7 @@
    extern void glIndexPointerEXT ( GLenum type , GLsizei stride , GLsizei count , const GLvoid * ptr ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glIndexPointerEXT )(GLenum, GLsizei, GLsizei, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glIndexPointerEXT)(GLenum, GLsizei, GLsizei, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -3122,7 +3129,7 @@
    extern void glTexCoordPointerEXT ( GLint size , GLenum type , GLsizei stride , GLsizei count , const GLvoid * ptr ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glTexCoordPointerEXT )(GLint, GLenum, GLsizei, GLsizei, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glTexCoordPointerEXT)(GLint, GLenum, GLsizei, GLsizei, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -3130,7 +3137,7 @@
    extern void glEdgeFlagPointerEXT ( GLsizei stride , GLsizei count , const GLboolean * ptr ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glEdgeFlagPointerEXT )(GLsizei, GLsizei, const GLboolean *);
+LIBAPI void(CALLBACK* disp__glEdgeFlagPointerEXT)(GLsizei, GLsizei, const GLboolean*);
 
 /**
  * Original Function-Prototype :
@@ -3138,7 +3145,7 @@
    extern void glGetPointervEXT ( GLenum pname , void * * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetPointervEXT )(GLenum, void **);
+LIBAPI void(CALLBACK* disp__glGetPointervEXT)(GLenum, void**);
 
 /**
  * Original Function-Prototype :
@@ -3146,7 +3153,7 @@
    extern void glArrayElementEXT ( GLint i ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glArrayElementEXT )(GLint);
+LIBAPI void(CALLBACK* disp__glArrayElementEXT)(GLint);
 
 /**
  * Original Function-Prototype :
@@ -3154,7 +3161,7 @@
    extern void glDrawArraysEXT ( GLenum mode , GLint first , GLsizei count ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glDrawArraysEXT )(GLenum, GLint, GLsizei);
+LIBAPI void(CALLBACK* disp__glDrawArraysEXT)(GLenum, GLint, GLsizei);
 
 /**
  * Original Function-Prototype :
@@ -3162,7 +3169,7 @@
    extern void glBlendEquationEXT ( GLenum mode ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glBlendEquationEXT )(GLenum);
+LIBAPI void(CALLBACK* disp__glBlendEquationEXT)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -3170,7 +3177,7 @@
    extern void glPointParameterfEXT ( GLenum pname , GLfloat param ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPointParameterfEXT )(GLenum, GLfloat);
+LIBAPI void(CALLBACK* disp__glPointParameterfEXT)(GLenum, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -3178,7 +3185,7 @@
    extern void glPointParameterfvEXT ( GLenum pname , const GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glPointParameterfvEXT )(GLenum, const GLfloat *);
+LIBAPI void(CALLBACK* disp__glPointParameterfvEXT)(GLenum, const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -3186,7 +3193,7 @@
    extern void glColorTableEXT ( GLenum target , GLenum internalformat , GLsizei width , GLenum format , GLenum type , const GLvoid * table ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColorTableEXT )(GLenum, GLenum, GLsizei, GLenum, GLenum, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glColorTableEXT)(GLenum, GLenum, GLsizei, GLenum, GLenum, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -3194,7 +3201,7 @@
    extern void glColorSubTableEXT ( GLenum target , GLsizei start , GLsizei count , GLenum format , GLenum type , const GLvoid * data ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glColorSubTableEXT )(GLenum, GLsizei, GLsizei, GLenum, GLenum, const GLvoid *);
+LIBAPI void(CALLBACK* disp__glColorSubTableEXT)(GLenum, GLsizei, GLsizei, GLenum, GLenum, const GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -3202,7 +3209,7 @@
    extern void glGetColorTableEXT ( GLenum target , GLenum format , GLenum type , GLvoid * table ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetColorTableEXT )(GLenum, GLenum, GLenum, GLvoid *);
+LIBAPI void(CALLBACK* disp__glGetColorTableEXT)(GLenum, GLenum, GLenum, GLvoid*);
 
 /**
  * Original Function-Prototype :
@@ -3210,7 +3217,7 @@
    extern void glGetColorTableParameterfvEXT ( GLenum target , GLenum pname , GLfloat * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetColorTableParameterfvEXT )(GLenum, GLenum, GLfloat *);
+LIBAPI void(CALLBACK* disp__glGetColorTableParameterfvEXT)(GLenum, GLenum, GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -3218,7 +3225,7 @@
    extern void glGetColorTableParameterivEXT ( GLenum target , GLenum pname , GLint * params ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glGetColorTableParameterivEXT )(GLenum, GLenum, GLint *);
+LIBAPI void(CALLBACK* disp__glGetColorTableParameterivEXT)(GLenum, GLenum, GLint*);
 
 /**
  * Original Function-Prototype :
@@ -3226,7 +3233,7 @@
    extern void glLockArraysEXT ( GLint first , GLsizei count ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glLockArraysEXT )(GLint, GLsizei);
+LIBAPI void(CALLBACK* disp__glLockArraysEXT)(GLint, GLsizei);
 
 /**
  * Original Function-Prototype :
@@ -3234,7 +3241,7 @@
    extern void glUnlockArraysEXT ( void ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glUnlockArraysEXT )(void);
+LIBAPI void(CALLBACK* disp__glUnlockArraysEXT)(void);
 
 /**
  * Original Function-Prototype :
@@ -3242,7 +3249,7 @@
    extern void glActiveTextureARB ( GLenum texture ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glActiveTextureARB )(GLenum);
+LIBAPI void(CALLBACK* disp__glActiveTextureARB)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -3250,7 +3257,7 @@
    extern void glClientActiveTextureARB ( GLenum texture ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glClientActiveTextureARB )(GLenum);
+LIBAPI void(CALLBACK* disp__glClientActiveTextureARB)(GLenum);
 
 /**
  * Original Function-Prototype :
@@ -3258,7 +3265,7 @@
    extern void glMultiTexCoord1dARB ( GLenum target , GLdouble s ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord1dARB )(GLenum, GLdouble);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord1dARB)(GLenum, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -3266,7 +3273,7 @@
    extern void glMultiTexCoord1dvARB ( GLenum target , const GLdouble * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord1dvARB )(GLenum, const GLdouble *);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord1dvARB)(GLenum, const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -3274,7 +3281,7 @@
    extern void glMultiTexCoord1fARB ( GLenum target , GLfloat s ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord1fARB )(GLenum, GLfloat);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord1fARB)(GLenum, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -3282,7 +3289,7 @@
    extern void glMultiTexCoord1fvARB ( GLenum target , const GLfloat * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord1fvARB )(GLenum, const GLfloat *);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord1fvARB)(GLenum, const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -3290,7 +3297,7 @@
    extern void glMultiTexCoord1iARB ( GLenum target , GLint s ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord1iARB )(GLenum, GLint);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord1iARB)(GLenum, GLint);
 
 /**
  * Original Function-Prototype :
@@ -3298,7 +3305,7 @@
    extern void glMultiTexCoord1ivARB ( GLenum target , const GLint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord1ivARB )(GLenum, const GLint *);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord1ivARB)(GLenum, const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -3306,7 +3313,7 @@
    extern void glMultiTexCoord1sARB ( GLenum target , GLshort s ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord1sARB )(GLenum, GLshort);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord1sARB)(GLenum, GLshort);
 
 /**
  * Original Function-Prototype :
@@ -3314,7 +3321,7 @@
    extern void glMultiTexCoord1svARB ( GLenum target , const GLshort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord1svARB )(GLenum, const GLshort *);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord1svARB)(GLenum, const GLshort*);
 
 /**
  * Original Function-Prototype :
@@ -3322,7 +3329,7 @@
    extern void glMultiTexCoord2dARB ( GLenum target , GLdouble s , GLdouble t ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord2dARB )(GLenum, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord2dARB)(GLenum, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -3330,7 +3337,7 @@
    extern void glMultiTexCoord2dvARB ( GLenum target , const GLdouble * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord2dvARB )(GLenum, const GLdouble *);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord2dvARB)(GLenum, const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -3338,7 +3345,7 @@
    extern void glMultiTexCoord2fARB ( GLenum target , GLfloat s , GLfloat t ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord2fARB )(GLenum, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord2fARB)(GLenum, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -3346,7 +3353,7 @@
    extern void glMultiTexCoord2fvARB ( GLenum target , const GLfloat * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord2fvARB )(GLenum, const GLfloat *);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord2fvARB)(GLenum, const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -3354,7 +3361,7 @@
    extern void glMultiTexCoord2iARB ( GLenum target , GLint s , GLint t ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord2iARB )(GLenum, GLint, GLint);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord2iARB)(GLenum, GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -3362,7 +3369,7 @@
    extern void glMultiTexCoord2ivARB ( GLenum target , const GLint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord2ivARB )(GLenum, const GLint *);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord2ivARB)(GLenum, const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -3370,7 +3377,7 @@
    extern void glMultiTexCoord2sARB ( GLenum target , GLshort s , GLshort t ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord2sARB )(GLenum, GLshort, GLshort);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord2sARB)(GLenum, GLshort, GLshort);
 
 /**
  * Original Function-Prototype :
@@ -3378,7 +3385,7 @@
    extern void glMultiTexCoord2svARB ( GLenum target , const GLshort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord2svARB )(GLenum, const GLshort *);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord2svARB)(GLenum, const GLshort*);
 
 /**
  * Original Function-Prototype :
@@ -3386,7 +3393,7 @@
    extern void glMultiTexCoord3dARB ( GLenum target , GLdouble s , GLdouble t , GLdouble r ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord3dARB )(GLenum, GLdouble, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord3dARB)(GLenum, GLdouble, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -3394,7 +3401,7 @@
    extern void glMultiTexCoord3dvARB ( GLenum target , const GLdouble * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord3dvARB )(GLenum, const GLdouble *);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord3dvARB)(GLenum, const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -3402,7 +3409,7 @@
    extern void glMultiTexCoord3fARB ( GLenum target , GLfloat s , GLfloat t , GLfloat r ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord3fARB )(GLenum, GLfloat, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord3fARB)(GLenum, GLfloat, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -3410,7 +3417,7 @@
    extern void glMultiTexCoord3fvARB ( GLenum target , const GLfloat * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord3fvARB )(GLenum, const GLfloat *);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord3fvARB)(GLenum, const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -3418,7 +3425,7 @@
    extern void glMultiTexCoord3iARB ( GLenum target , GLint s , GLint t , GLint r ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord3iARB )(GLenum, GLint, GLint, GLint);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord3iARB)(GLenum, GLint, GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -3426,7 +3433,7 @@
    extern void glMultiTexCoord3ivARB ( GLenum target , const GLint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord3ivARB )(GLenum, const GLint *);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord3ivARB)(GLenum, const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -3434,7 +3441,7 @@
    extern void glMultiTexCoord3sARB ( GLenum target , GLshort s , GLshort t , GLshort r ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord3sARB )(GLenum, GLshort, GLshort, GLshort);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord3sARB)(GLenum, GLshort, GLshort, GLshort);
 
 /**
  * Original Function-Prototype :
@@ -3442,7 +3449,7 @@
    extern void glMultiTexCoord3svARB ( GLenum target , const GLshort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord3svARB )(GLenum, const GLshort *);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord3svARB)(GLenum, const GLshort*);
 
 /**
  * Original Function-Prototype :
@@ -3450,7 +3457,7 @@
    extern void glMultiTexCoord4dARB ( GLenum target , GLdouble s , GLdouble t , GLdouble r , GLdouble q ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord4dARB )(GLenum, GLdouble, GLdouble, GLdouble, GLdouble);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord4dARB)(GLenum, GLdouble, GLdouble, GLdouble, GLdouble);
 
 /**
  * Original Function-Prototype :
@@ -3458,7 +3465,7 @@
    extern void glMultiTexCoord4dvARB ( GLenum target , const GLdouble * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord4dvARB )(GLenum, const GLdouble *);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord4dvARB)(GLenum, const GLdouble*);
 
 /**
  * Original Function-Prototype :
@@ -3466,7 +3473,7 @@
    extern void glMultiTexCoord4fARB ( GLenum target , GLfloat s , GLfloat t , GLfloat r , GLfloat q ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord4fARB )(GLenum, GLfloat, GLfloat, GLfloat, GLfloat);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord4fARB)(GLenum, GLfloat, GLfloat, GLfloat, GLfloat);
 
 /**
  * Original Function-Prototype :
@@ -3474,7 +3481,7 @@
    extern void glMultiTexCoord4fvARB ( GLenum target , const GLfloat * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord4fvARB )(GLenum, const GLfloat *);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord4fvARB)(GLenum, const GLfloat*);
 
 /**
  * Original Function-Prototype :
@@ -3482,7 +3489,7 @@
    extern void glMultiTexCoord4iARB ( GLenum target , GLint s , GLint t , GLint r , GLint q ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord4iARB )(GLenum, GLint, GLint, GLint, GLint);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord4iARB)(GLenum, GLint, GLint, GLint, GLint);
 
 /**
  * Original Function-Prototype :
@@ -3490,7 +3497,7 @@
    extern void glMultiTexCoord4ivARB ( GLenum target , const GLint * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord4ivARB )(GLenum, const GLint *);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord4ivARB)(GLenum, const GLint*);
 
 /**
  * Original Function-Prototype :
@@ -3498,7 +3505,7 @@
    extern void glMultiTexCoord4sARB ( GLenum target , GLshort s , GLshort t , GLshort r , GLshort q ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord4sARB )(GLenum, GLshort, GLshort, GLshort, GLshort);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord4sARB)(GLenum, GLshort, GLshort, GLshort, GLshort);
 
 /**
  * Original Function-Prototype :
@@ -3506,6 +3513,6 @@
    extern void glMultiTexCoord4svARB ( GLenum target , const GLshort * v ) ;
  * </pre> 
  */
-	LIBAPI void (CALLBACK * disp__glMultiTexCoord4svARB )(GLenum, const GLshort *);
+LIBAPI void(CALLBACK* disp__glMultiTexCoord4svARB)(GLenum, const GLshort*);
 
-/* C2J Parser Version 2.0:  Java program parsed successfully. */ 
+/* C2J Parser Version 2.0:  Java program parsed successfully. */

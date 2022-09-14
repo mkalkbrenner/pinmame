@@ -6,7 +6,8 @@
 
 #ifndef __MULTIDEF__
 #define __MULTIDEF__
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
@@ -27,13 +28,12 @@
 #undef MONITOR_DEFAULTTONEAREST
 #undef MONITORINFOF_PRIMARY
 
-#define MONITOR_DEFAULTTONULL       0x00000000
-#define MONITOR_DEFAULTTOPRIMARY    0x00000001
-#define MONITOR_DEFAULTTONEAREST    0x00000002
-#define MONITORINFOF_PRIMARY        0x00000001
+#define MONITOR_DEFAULTTONULL    0x00000000
+#define MONITOR_DEFAULTTOPRIMARY 0x00000001
+#define MONITOR_DEFAULTTONEAREST 0x00000002
+#define MONITORINFOF_PRIMARY     0x00000001
 
 #endif /* (SM_CMONITORS) && (WINVER < 0x0500) */
-
 
 #define COMPILE_MULTIMON_STUBS
 #include <multimon.h>

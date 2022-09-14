@@ -19,7 +19,8 @@
 */
 #ifndef __MISC_H
 #define __MISC_H
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
@@ -31,7 +32,7 @@ uclock_t uclock(void);
 #define UCLOCKS_PER_SEC 1000000
 
 /* print colum stuff */
-void print_columns(const char *text1, const char *text2);
-void fprint_columns(FILE *f, const char *text1, const char *text2);
+void print_columns(const char* text1, const char* text2);
+void fprint_columns(FILE* f, const char* text1, const char* text2);
 
 #endif /* ifndef __MISC_H */

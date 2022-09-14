@@ -1,22 +1,21 @@
-#include "xmame.h"
 #include "sound.h"
+#include "xmame.h"
 
-int sysdep_audio_init(void)
-{
-   play_sound = FALSE;
-   return OSD_OK;
+int
+sysdep_audio_init(void) {
+    play_sound = FALSE;
+    return OSD_OK;
 }
 
-void sysdep_audio_close(void)
-{
+void
+sysdep_audio_close(void) {}
+
+int
+sysdep_audio_play(unsigned char* buf, int bufsize) {
+    return 0;
 }
 
-int sysdep_audio_play(unsigned char *buf, int bufsize)
-{
-   return 0;
-}
-
-long sysdep_audio_get_freespace(void)
-{
-   return 0;
+long
+sysdep_audio_get_freespace(void) {
+    return 0;
 }

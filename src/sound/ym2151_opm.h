@@ -29,8 +29,8 @@
 #ifndef _OPM_H_
 #define _OPM_H_
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,7 +40,7 @@ extern "C" {
 #include "memory.h"
 
 // from VGM port
-#define OPN_WRITEBUF_SIZE 2048
+#define OPN_WRITEBUF_SIZE  2048
 #define OPN_WRITEBUF_DELAY 36
 
 typedef struct {
@@ -126,7 +126,6 @@ typedef struct {
     uint32_t eg_serial;
     bool eg_serial_bit;
     bool eg_test;
-
 
     // Phase Gen
     uint16_t pg_fnum[32];
@@ -220,7 +219,6 @@ typedef struct {
     bool noise_en;
     uint8_t noise_freq;
 
-
     // Timer
     uint16_t timer_a_reg;
     uint8_t timer_b_reg;
@@ -279,27 +277,27 @@ typedef struct {
     opm_writebuf writebuf[OPN_WRITEBUF_SIZE];
 
     // PinMAME specific
-    void(*irqhandler)(int irq);		/* IRQ function handler */
-    mem_write_handler porthandler;	/* port write function handler */
+    void (*irqhandler)(int irq);   /* IRQ function handler */
+    mem_write_handler porthandler; /* port write function handler */
 
     unsigned short vgm_idx;
 #endif
 } opm_t;
 
-void OPM_Clock(opm_t *chip, int16_t *output, bool *sh1, bool *sh2, bool *so);
-void OPM_Write(opm_t *chip, uint8_t port, uint8_t data);
-uint8_t OPM_Read(const opm_t *chip, uint8_t port);
-bool OPM_ReadIRQ(const opm_t *chip);
-bool OPM_ReadCT1(const opm_t *chip);
-bool OPM_ReadCT2(const opm_t *chip);
-void OPM_SetIC(opm_t *chip, bool ic);
-void OPM_Reset(opm_t *chip, double clock);
+void OPM_Clock(opm_t* chip, int16_t* output, bool* sh1, bool* sh2, bool* so);
+void OPM_Write(opm_t* chip, uint8_t port, uint8_t data);
+uint8_t OPM_Read(const opm_t* chip, uint8_t port);
+bool OPM_ReadIRQ(const opm_t* chip);
+bool OPM_ReadCT1(const opm_t* chip);
+bool OPM_ReadCT2(const opm_t* chip);
+void OPM_SetIC(opm_t* chip, bool ic);
+void OPM_Reset(opm_t* chip, double clock);
 #ifdef PINMAME
-void OPM_FlushBuffer(opm_t *chip);
-void OPM_WriteBuffered(opm_t *chip, uint8_t port, uint8_t data);
-void OPM_GenerateStream(opm_t *chip, float **sndptr, uint32_t numsamples);
-void OPM_SetPortWriteHandler(opm_t *chip, mem_write_handler handler);
-void OPM_SetIrqHandler(opm_t *chip, void(*handler)(int irq));
+void OPM_FlushBuffer(opm_t* chip);
+void OPM_WriteBuffered(opm_t* chip, uint8_t port, uint8_t data);
+void OPM_GenerateStream(opm_t* chip, float** sndptr, uint32_t numsamples);
+void OPM_SetPortWriteHandler(opm_t* chip, mem_write_handler handler);
+void OPM_SetIrqHandler(opm_t* chip, void (*handler)(int irq));
 #endif
 
 #ifdef __cplusplus

@@ -1,42 +1,36 @@
-#include "driver.h"
-#include "sndbrd.h"
 #include "core.h"
+#include "driver.h"
 #include "sim.h"
+#include "sndbrd.h"
 #include "taito.h"
 #include "taitos.h"
 
-static const core_tLCDLayout dispTaito[] = {
-  { 0, 0,  0, 6, CORE_SEG7 },
-  { 3, 0,  6, 6, CORE_SEG7 },
-  { 6, 0, 12, 6, CORE_SEG7 },
-  { 9, 0, 18, 6, CORE_SEG7 },
-  {12,10, 24, 1, CORE_SEG7 }, {12, 0, 25, 1, CORE_SEG7 },
-  {0}
-};
+static const core_tLCDLayout dispTaito[] = {{0, 0, 0, 6, CORE_SEG7},
+                                            {3, 0, 6, 6, CORE_SEG7},
+                                            {6, 0, 12, 6, CORE_SEG7},
+                                            {9, 0, 18, 6, CORE_SEG7},
+                                            {12, 10, 24, 1, CORE_SEG7},
+                                            {12, 0, 25, 1, CORE_SEG7},
+                                            {0}};
 
 static const core_tLCDLayout dispTaito2[] = {
-  { 3, 0,  0, 6, CORE_SEG7 },
-  { 6, 0,  6, 6, CORE_SEG7 },
-  { 9, 0, 12, 6, CORE_SEG7 },
-  {12, 0, 18, 6, CORE_SEG7 },
-  {15,10, 24, 1, CORE_SEG7 }, { 0,10, 27, 1, CORE_SEG7 },
-  {15, 0, 25, 1, CORE_SEG7 }, { 0, 0, 26, 1, CORE_SEG7 },
-  {0}
-};
+    {3, 0, 0, 6, CORE_SEG7},   {6, 0, 6, 6, CORE_SEG7},    {9, 0, 12, 6, CORE_SEG7},
+    {12, 0, 18, 6, CORE_SEG7}, {15, 10, 24, 1, CORE_SEG7}, {0, 10, 27, 1, CORE_SEG7},
+    {15, 0, 25, 1, CORE_SEG7}, {0, 0, 26, 1, CORE_SEG7},   {0}};
 
 TAITO_INPUT_PORTS_START(taito,1)        TAITO_INPUT_PORTS_END
 
-#define INITGAME1(name,sb) \
-static core_tGameData name##GameData = {0,dispTaito2,{FLIP_SW(FLIP_L),0,0,0,sb,0}}; \
-static void init_##name(void) { core_gameData = &name##GameData; }
+#define INITGAME1(name, sb)                                                                                            \
+    static core_tGameData name##GameData = {0, dispTaito2, {FLIP_SW(FLIP_L), 0, 0, 0, sb, 0}};                         \
+    static void init_##name(void) { core_gameData = &name##GameData; }
 
-#define INITGAME(name,sb) \
-static core_tGameData name##GameData = {0,dispTaito,{FLIP_SW(FLIP_L),0,0,0,sb,0}}; \
-static void init_##name(void) { core_gameData = &name##GameData; }
+#define INITGAME(name, sb)                                                                                             \
+    static core_tGameData name##GameData = {0, dispTaito, {FLIP_SW(FLIP_L), 0, 0, 0, sb, 0}};                          \
+    static void init_##name(void) { core_gameData = &name##GameData; }
 
-#define INITGAME2(name,sb) \
-static core_tGameData name##GameData = {0,dispTaito,{FLIP_SW(FLIP_L),0,0,0,sb,0,1}}; \
-static void init_##name(void) { core_gameData = &name##GameData; }
+#define INITGAME2(name, sb)                                                                                            \
+    static core_tGameData name##GameData = {0, dispTaito, {FLIP_SW(FLIP_L), 0, 0, 0, sb, 0, 1}};                       \
+    static void init_##name(void) { core_gameData = &name##GameData; }
 
 /*--------------------------------
 / Football
@@ -90,7 +84,7 @@ TAITO_ROMSTART22_2(obaoba1,"ob1a.bin",CRC(f5a468d6) SHA1(01108281298fd092834f3a7
 TAITO_SOUNDROMS22("ob_s1a.bin", CRC(fa106de6) SHA1(be4dee9c2f10cf64a3b71cf65386e02323f040c7),
                   "ob_s2a.bin", CRC(08d22ca7) SHA1(9121f0d21a796c10adf443b63e1c5451468d9f9f))
 TAITO_ROMEND
-#define init_obaoba1 init_obaoba
+#define init_obaoba1        init_obaoba
 #define input_ports_obaoba1 input_ports_obaoba
 CORE_CLONEDEFNV(obaoba1,obaoba,"Oba-Oba (alternate set)",1980,"Taito",taito_sintetizador,0)
 
@@ -102,7 +96,7 @@ TAITO_ROMSTART11111(obaobao,"oba01.bin", CRC(fd5d5b73) SHA1(06996254637a71a0543b
 TAITO_SOUNDROMS22("ob_s1.bin", CRC(812a362b) SHA1(22b5f5f2d467ca1b0ab55db2e01ef6579f8ee390),
                   "ob_s2.bin", CRC(f7dbb715) SHA1(70d1331612fe497f48520726c5f39accdcbdb205))
 TAITO_ROMEND
-#define init_obaobao init_obaoba
+#define init_obaobao        init_obaoba
 #define input_ports_obaobao input_ports_obaoba
 CORE_CLONEDEFNV(obaobao,obaoba,"Oba-Oba (old hardware)",1980,"Taito",taito_old,0)
 
@@ -165,7 +159,7 @@ TAITO_ROMSTART2222(cavnegr1,"cn1.bin", CRC(6b414089) SHA1(5f6042cc85a9319b3e34bd
 TAITO_SOUNDROMS22("cn_s1.bin", CRC(aec5069a) SHA1(4ec1f1f054e010caf9ffdda60071f96ba772c01a),
                   "cn_s2.bin", CRC(a0508863) SHA1(b4f343ed48960048c6b2b36c5ce0bad0fdb7ac62))
 TAITO_ROMEND
-#define init_cavnegr1 init_cavnegro
+#define init_cavnegr1        init_cavnegro
 #define input_ports_cavnegr1 input_ports_cavnegro
 CORE_CLONEDEFNV(cavnegr1,cavnegro,"Cavaleiro Negro (alternate set 1)",1981,"Taito",taito_sintevox,0)
 
@@ -176,7 +170,7 @@ TAITO_ROMSTART2222(cavnegr2,"cn1.bin", CRC(6b414089) SHA1(5f6042cc85a9319b3e34bd
 TAITO_SOUNDROMS22("cn_s1.bin", CRC(aec5069a) SHA1(4ec1f1f054e010caf9ffdda60071f96ba772c01a),
                   "cn_s2.bin", CRC(a0508863) SHA1(b4f343ed48960048c6b2b36c5ce0bad0fdb7ac62))
 TAITO_ROMEND
-#define init_cavnegr2 init_cavnegro
+#define init_cavnegr2        init_cavnegro
 #define input_ports_cavnegr2 input_ports_cavnegro
 CORE_CLONEDEFNV(cavnegr2,cavnegro,"Cavaleiro Negro (alternate set 2)",1981,"Taito",taito_sintevox,0)
 
@@ -219,7 +213,7 @@ TAITO_ROMSTART2222(vegast,"lluck1.bin",CRC(be242895) SHA1(0528e9049e44b5ae7bba4a
 TAITO_SOUNDROMS22("vegas_s1.bin", CRC(78ed85b4) SHA1(72fee3e337f2d2174a41434084699c3a472d798e),
                   "vegas_s2.bin", CRC(b0b05e9f) SHA1(1b5b5701ece241913367960eba7f58ca1a528548))
 TAITO_ROMEND
-#define init_vegast init_ladylukt
+#define init_vegast        init_ladylukt
 #define input_ports_vegast input_ports_ladylukt
 CORE_CLONEDEFNV(vegast,ladylukt,"Vegas (Taito)",198?,"Taito",taito_sintevox,0)
 
@@ -258,7 +252,7 @@ TAITO_ROMSTART2222(gemini1,"gemini1a.bin",CRC(947017c5) SHA1(81456bc0f09e2d34189
 TAITO_SOUNDROMS22("gemin_s1.bin", CRC(b9a80ab2) SHA1(9fdfeae5c9bc735e6a9ad42d925a1217c30a3386),
                   "gemin_s2.bin", CRC(312a5c35) SHA1(82be0ca6f4430e54bbf963a879b85636537146a1))
 TAITO_ROMEND
-#define init_gemini1 init_gemini
+#define init_gemini1        init_gemini
 #define input_ports_gemini1 input_ports_gemini
 CORE_CLONEDEFNV(gemini1,gemini,"Gemini 2000 (alternate set)",1982,"Taito",taito_sintetizador,0)
 
@@ -297,7 +291,7 @@ TAITO_ROMSTART2222(titan1,"titan1a.bin",CRC(d5437261) SHA1(649e1852dece8fcd036b9
 TAITO_SOUNDROMS22("titn_s1a.bin", CRC(9840dd80) SHA1(44217dcf7ae5c6f4f4801568e020ee770b4c994b),
                   "titn_s2a.bin", CRC(5c91592d) SHA1(567d646652e441f83bc4797d1c8c004b3d071744))
 TAITO_ROMEND
-#define init_titan1 init_titan
+#define init_titan1        init_titan
 #define input_ports_titan1 input_ports_titan
 CORE_CLONEDEFNV(titan1, titan,"Titan (alternate set)",1982,"Taito",taito_sintevox,0)
 
@@ -322,7 +316,7 @@ TAITO_ROMSTART2222(zarza1,"zarza1.bin", CRC(81a35f85) SHA1(3086f47573c683f86c371
 TAITO_SOUNDROMS22("zarza_s1.bin", CRC(f076c2a8) SHA1(f626556e1aea7a36a801e8f0fc9a762f8eea636f),
                   "zarza_s2.bin", CRC(a98e13b7) SHA1(7416a941ee87fd456a5c4115e6933b8b7ad69681))
 TAITO_ROMEND
-#define init_zarza1 init_zarza
+#define init_zarza1        init_zarza
 #define input_ports_zarza1 input_ports_zarza
 CORE_CLONEDEFNV(zarza1,zarza,"Zarza (alternate set)",1982,"Taito",taito_sintetizador,0)
 
@@ -360,7 +354,7 @@ TAITO_ROMSTART2222(hawkman1,"hawk1a.bin",CRC(b4fe0cbd) SHA1(5b0cdcbcc144eb94d3c6
 TAITO_SOUNDROMS22("hawk_s1.bin", CRC(47549394) SHA1(f5731200db73e8751d2ec4a072b679127b6f0afa),
                   "hawk_s2.bin", CRC(29bef82f) SHA1(5f393cc1cb6047cba1186e332e840bce8e59509b))
 TAITO_ROMEND
-#define init_hawkman1 init_hawkman
+#define init_hawkman1        init_hawkman
 #define input_ports_hawkman1 input_ports_hawkman
 CORE_CLONEDEFNV(hawkman1,hawkman,"Hawkman (alternate set)",1982,"Taito",taito_sintevox,0)
 
@@ -475,7 +469,7 @@ TAITO_SOUNDROMS444("mrb_s1.bin", CRC(ff28b2b9) SHA1(3106811740e0206ad4ba7845e204
                    "mrb_s2.bin", CRC(34d52449) SHA1(bdd5db5e58ca997d413d18f291928ad1a45c194e),
                    "mrb_s3.bin", CRC(276fb897) SHA1(b1a4323a4d921e3ae4beefaa04cd95e18cc33b9d))
 TAITO_ROMEND
-#define init_mrblack1 init_mrblack
+#define init_mrblack1        init_mrblack
 #define input_ports_mrblack1 input_ports_mrblack
 CORE_CLONEDEFNV(mrblack1,mrblack,"Mr. Black (alternate set)",1985,"Taito",taito_sintetizadorpp_nmi,0)
 
@@ -517,7 +511,7 @@ TAITO_SOUNDROMS444("sshtl_s1.bin", CRC(5a6211e7) SHA1(9e53f76f76203c20f1933bf491
                    "sshtl_s2.bin", CRC(3af4707e) SHA1(b7231ede973a0c83e009333f0377b81c34826117),
                    "sshtl_s3.bin", CRC(0788990b) SHA1(7197018d1ede74def864411afad99f98ddbab78a))
 TAITO_ROMEND
-#define init_sshuttl1 init_sshuttle
+#define init_sshuttl1        init_sshuttle
 #define input_ports_sshuttl1 input_ports_sshuttle
 CORE_CLONEDEFNV(sshuttl1,sshuttle,"Space Shuttle (Taito) (alternate set)",1985,"Taito",taito_sintetizadorpp,0)
 

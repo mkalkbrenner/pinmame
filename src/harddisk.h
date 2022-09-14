@@ -6,7 +6,6 @@
 
 #include "driver.h"
 
-
 /***************************************************************************
 
 	MAME compressed hard disk header format. All numbers are stored in
@@ -41,41 +40,38 @@
  *
  *************************************/
 
-#define HARD_DISK_HEADER_VERSION	1
-#define HARD_DISK_V1_HEADER_SIZE	76
-#define HARD_DISK_V2_HEADER_SIZE	80
-#define HARD_DISK_MAX_HEADER_SIZE	80
+#define HARD_DISK_HEADER_VERSION  1
+#define HARD_DISK_V1_HEADER_SIZE  76
+#define HARD_DISK_V2_HEADER_SIZE  80
+#define HARD_DISK_MAX_HEADER_SIZE 80
 
-#define HDFLAGS_HAS_PARENT			0x00000001
-#define HDFLAGS_IS_WRITEABLE		0x00000002
+#define HDFLAGS_HAS_PARENT        0x00000001
+#define HDFLAGS_IS_WRITEABLE      0x00000002
 
-#define HDCOMPRESSION_NONE			0
-#define HDCOMPRESSION_ZLIB			1
-#define HDCOMPRESSION_MAX			2
+#define HDCOMPRESSION_NONE        0
+#define HDCOMPRESSION_ZLIB        1
+#define HDCOMPRESSION_MAX         2
 
-enum
-{
-	HDERR_NONE,
-	HDERR_NO_INTERFACE,
-	HDERR_OUT_OF_MEMORY,
-	HDERR_INVALID_FILE,
-	HDERR_INVALID_PARAMETER,
-	HDERR_INVALID_DATA,
-	HDERR_FILE_NOT_FOUND,
-	HDERR_REQUIRES_PARENT,
-	HDERR_FILE_NOT_WRITEABLE,
-	HDERR_READ_ERROR,
-	HDERR_WRITE_ERROR,
-	HDERR_CODEC_ERROR,
-	HDERR_INVALID_PARENT,
-	HDERR_SECTOR_OUT_OF_RANGE,
-	HDERR_DECOMPRESSION_ERROR,
-	HDERR_COMPRESSION_ERROR,
-	HDERR_CANT_CREATE_FILE,
-	HDERR_CANT_VERIFY
+enum {
+    HDERR_NONE,
+    HDERR_NO_INTERFACE,
+    HDERR_OUT_OF_MEMORY,
+    HDERR_INVALID_FILE,
+    HDERR_INVALID_PARAMETER,
+    HDERR_INVALID_DATA,
+    HDERR_FILE_NOT_FOUND,
+    HDERR_REQUIRES_PARENT,
+    HDERR_FILE_NOT_WRITEABLE,
+    HDERR_READ_ERROR,
+    HDERR_WRITE_ERROR,
+    HDERR_CODEC_ERROR,
+    HDERR_INVALID_PARENT,
+    HDERR_SECTOR_OUT_OF_RANGE,
+    HDERR_DECOMPRESSION_ERROR,
+    HDERR_COMPRESSION_ERROR,
+    HDERR_CANT_CREATE_FILE,
+    HDERR_CANT_VERIFY
 };
-
-
 
 /*************************************
  *
@@ -83,40 +79,36 @@ enum
  *
  *************************************/
 
-struct hard_disk_header
-{
-	UINT32	length;				/* length of header data */
-	UINT32	version;			/* drive format version */
-	UINT32	flags;				/* flags field */
-	UINT32	compression;		/* compression type */
-	UINT32	blocksize;			/* sectors per block */
-	UINT32	totalblocks;		/* total # of blocks represented */
-	UINT32	cylinders;			/* number of cylinders on hard disk */
-	UINT32	heads;				/* number of heads on hard disk */
-	UINT32	sectors;			/* number of sectors per track on hard disk */
-	UINT32	seclen;				/* sector lenght in bytes on hard disk */
-	UINT8	md5[16];			/* MD5 checksum for this drive */
-	UINT8	parentmd5[16];		/* MD5 checksum for parent drive */
+struct hard_disk_header {
+    UINT32 length;       /* length of header data */
+    UINT32 version;      /* drive format version */
+    UINT32 flags;        /* flags field */
+    UINT32 compression;  /* compression type */
+    UINT32 blocksize;    /* sectors per block */
+    UINT32 totalblocks;  /* total # of blocks represented */
+    UINT32 cylinders;    /* number of cylinders on hard disk */
+    UINT32 heads;        /* number of heads on hard disk */
+    UINT32 sectors;      /* number of sectors per track on hard disk */
+    UINT32 seclen;       /* sector lenght in bytes on hard disk */
+    UINT8 md5[16];       /* MD5 checksum for this drive */
+    UINT8 parentmd5[16]; /* MD5 checksum for parent drive */
 };
+
 /* DUPE BLOCK */
 /* this struct is only used in the unique blocks array */
-struct hard_disk_block
-{
-	int ptr; /* pointer to the block this hash represents */
-	UINT8 hash[16]; /* hash for this particular block */
+struct hard_disk_block {
+    int ptr;        /* pointer to the block this hash represents */
+    UINT8 hash[16]; /* hash for this particular block */
 };
+
 /* END DUPE BLOCK */
 
-
-struct hard_disk_interface
-{
-	void *(*open)(const char *filename, const char *mode);
-	void (*close)(void *file);
-	UINT32 (*read)(void *file, UINT64 offset, UINT32 count, void *buffer);
-	UINT32 (*write)(void *file, UINT64 offset, UINT32 count, const void *buffer);
+struct hard_disk_interface {
+    void* (*open)(const char* filename, const char* mode);
+    void (*close)(void* file);
+    UINT32 (*read)(void* file, UINT64 offset, UINT32 count, void* buffer);
+    UINT32 (*write)(void* file, UINT64 offset, UINT32 count, const void* buffer);
 };
-
-
 
 /*************************************
  *
@@ -124,26 +116,27 @@ struct hard_disk_interface
  *
  *************************************/
 
-void hard_disk_set_interface(struct hard_disk_interface *interface);
-void hard_disk_save_interface(struct hard_disk_interface *interface_save);
+void hard_disk_set_interface(struct hard_disk_interface* interface);
+void hard_disk_save_interface(struct hard_disk_interface* interface_save);
 
-int hard_disk_create(const char *filename, const struct hard_disk_header *header);
-void *hard_disk_open(const char *filename, int writeable, void *parent);
-void hard_disk_close(void *disk);
+int hard_disk_create(const char* filename, const struct hard_disk_header* header);
+void* hard_disk_open(const char* filename, int writeable, void* parent);
+void hard_disk_close(void* disk);
 void hard_disk_close_all(void);
 
-UINT32 hard_disk_read(void *disk, UINT32 lbasector, UINT32 numsectors, void *buffer);
-UINT32 hard_disk_write(void *disk, UINT32 lbasector, UINT32 numsectors, const void *buffer);
+UINT32 hard_disk_read(void* disk, UINT32 lbasector, UINT32 numsectors, void* buffer);
+UINT32 hard_disk_write(void* disk, UINT32 lbasector, UINT32 numsectors, const void* buffer);
 
 int hard_disk_get_last_error(void);
-const struct hard_disk_header *hard_disk_get_header(void *disk);
-int hard_disk_set_header(const char *filename, const struct hard_disk_header *header);
+const struct hard_disk_header* hard_disk_get_header(void* disk);
+int hard_disk_set_header(const char* filename, const struct hard_disk_header* header);
 
-int hard_disk_compress(const char *rawfile, UINT32 offset, const char *newfile, const struct hard_disk_header *header, const char *difffile, void (*progress)(const char *, ...));
-int hard_disk_verify(const char *hdfile, void (*progress)(const char *, ...), UINT8 headermd5[16], UINT8 actualmd5[16]);
+int hard_disk_compress(const char* rawfile, UINT32 offset, const char* newfile, const struct hard_disk_header* header,
+                       const char* difffile, void (*progress)(const char*, ...));
+int hard_disk_verify(const char* hdfile, void (*progress)(const char*, ...), UINT8 headermd5[16], UINT8 actualmd5[16]);
 
 /* DUPE BLOCK */
 /* these two methods are helper methods for duplicate block compression */
-int hard_disk_binary_search(struct hard_disk_block *blocks, UINT8 hash[16], int low, int high);
+int hard_disk_binary_search(struct hard_disk_block* blocks, UINT8 hash[16], int low, int high);
 int hard_disk_compare_hash(const UINT8 one[16], const UINT8 two[16]);
 /* END DUPE BLOCK */

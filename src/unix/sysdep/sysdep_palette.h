@@ -41,24 +41,22 @@
    any other palette to be emulated is unsupported, and may result
    in undefined behaviour.
 */
-struct sysdep_palette_info
-{
-   int writable_colors; /* 0 for truecolor, the number of writable colors
+struct sysdep_palette_info {
+    int writable_colors; /* 0 for truecolor, the number of writable colors
                            for psuedo color */
-   int depth;           /* pixel size (not colordepth!) in bpp (8,16,24,32) */
-   int red_shift;       /* shifts and masks to calculate true_color palette */
-   int green_shift;     /* entries */
-   int blue_shift;
-   int red_mask;
-   int green_mask;
-   int blue_mask;
+    int depth;           /* pixel size (not colordepth!) in bpp (8,16,24,32) */
+    int red_shift;       /* shifts and masks to calculate true_color palette */
+    int green_shift;     /* entries */
+    int blue_shift;
+    int red_mask;
+    int green_mask;
+    int blue_mask;
 };
 
-struct sysdep_palette_struct
-{
-   struct sysdep_palette_info emulated;
-   int dirty;             /* Used by the Xv patch for updating YUV lookup */
-   int *lookup;           /* lookup table to be used for blitters to convert
+struct sysdep_palette_struct {
+    struct sysdep_palette_info emulated;
+    int dirty;   /* Used by the Xv patch for updating YUV lookup */
+    int* lookup; /* lookup table to be used for blitters to convert
                              the emulated palette to the physical palette */
 };
 
@@ -76,28 +74,27 @@ struct sysdep_palette_struct
    A pointer to the sysdep palette object, or NULL on failure.
    Upon failure an error message wil be printed to stderr.
 */
-struct sysdep_palette_struct *sysdep_palette_create(int depth,
-   int writable_colors);
-   
-/* destructor */
-void sysdep_palette_destroy(struct sysdep_palette_struct *palette);
+struct sysdep_palette_struct* sysdep_palette_create(int depth, int writable_colors);
 
-/* for pseudo color modes */   
-int sysdep_palette_set_pen(struct sysdep_palette_struct *palette, int pen,
-   unsigned char red, unsigned char green, unsigned char blue);
-   
-/* for true color modes */   
-int sysdep_palette_make_pen(struct sysdep_palette_struct *palette,
-   unsigned char red, unsigned char green, unsigned char blue);
+/* destructor */
+void sysdep_palette_destroy(struct sysdep_palette_struct* palette);
+
+/* for pseudo color modes */
+int sysdep_palette_set_pen(struct sysdep_palette_struct* palette, int pen, unsigned char red, unsigned char green,
+                           unsigned char blue);
+
+/* for true color modes */
+int sysdep_palette_make_pen(struct sysdep_palette_struct* palette, unsigned char red, unsigned char green,
+                            unsigned char blue);
 
 /* This function has to be called if the display is changed, it recreates
    the palette object with the settings from the new display */
-int sysdep_palette_change_display(struct sysdep_palette_struct **palette);
+int sysdep_palette_change_display(struct sysdep_palette_struct** palette);
 
 /* Added by AMR for Xv patch - used for updating YUV palette */
-void sysdep_palette_mark_dirty(struct sysdep_palette_struct *palette);
+void sysdep_palette_mark_dirty(struct sysdep_palette_struct* palette);
 
-void sysdep_palette_clear_dirty(struct sysdep_palette_struct *palette);
+void sysdep_palette_clear_dirty(struct sysdep_palette_struct* palette);
 
 #include "end_code.h"
 #endif /* ifndef __SYSDEP_PALETTE_H */

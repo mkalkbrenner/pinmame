@@ -69,7 +69,8 @@
 
 #ifndef MB87078_H
 #define MB87078_H
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
@@ -77,16 +78,14 @@
 
 /* The interface structure */
 struct MB87078interface {
-	void (*gain_changed_cb)(int channel, int percent /*, float decibels*/);
+    void (*gain_changed_cb)(int channel, int percent /*, float decibels*/);
 };
 
-
 void MB87078_stop(void);
-void MB87078_start(int which, const struct MB87078interface *intf);
+void MB87078_start(int which, const struct MB87078interface* intf);
 
 void MB87078_data_w(int which, int data, int dsel);
 void MB87078_reset_comp_w(int which, int level);
-
 
 /* MB87078_gain_decibel_r will return 'channel' gain on chip 'which'.
    Returned value represnts channel gain expressed in decibels,
@@ -94,13 +93,12 @@ void MB87078_reset_comp_w(int which, int level);
 */
 float MB87078_gain_decibel_r(int which, int channel);
 
-
 /* MB87078_gain_percent_r will return 'channel' gain on chip 'which'.
    Returned value represents channel gain expressed in percents of maximum volume.
    Range from 100 to 0. (100 = 0dB; 50 = -6dB; 0 = -infinity)
 
    This function is designed for use with MAME mixer_xxx() functions.
 */
-int   MB87078_gain_percent_r(int which, int channel);
+int MB87078_gain_percent_r(int which, int channel);
 
 #endif

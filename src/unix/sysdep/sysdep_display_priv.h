@@ -20,28 +20,28 @@
 #ifndef __SYSDEP_DISPLAY_PRIV_H
 #define __SYSDEP_DISPLAY_PRIV_H
 
+#include "begin_code.h"
 #include "sysdep_display.h"
 #include "sysdep_palette.h"
-#include "begin_code.h"
 
 struct sysdep_display_struct {
-   struct sysdep_display_mode emu_mode;
-   struct sysdep_display_mode hw_mode;
-   struct sysdep_display_mode *modes;
-   struct sysdep_palette_info palette_info;
-   float aspect_ratio;
-   int is_16bpp_capable;
-   int widthscale;
-   int heightscale;
-   int scanlines;
-   int mode;
-   int opened;
-   int mapped;
-   int startx;
-   int starty;
-   int framebuffer_pitch;
-   unsigned char *framebuffer;
-   void *_priv;
+    struct sysdep_display_mode emu_mode;
+    struct sysdep_display_mode hw_mode;
+    struct sysdep_display_mode* modes;
+    struct sysdep_palette_info palette_info;
+    float aspect_ratio;
+    int is_16bpp_capable;
+    int widthscale;
+    int heightscale;
+    int scanlines;
+    int mode;
+    int opened;
+    int mapped;
+    int startx;
+    int starty;
+    int framebuffer_pitch;
+    unsigned char* framebuffer;
+    void* _priv;
 };
 
 #include "end_code.h"

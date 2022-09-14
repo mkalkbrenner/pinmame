@@ -4,12 +4,13 @@ BasedOnStyle: LLVM
 AccessModifierOffset: -2
 AlignAfterOpenBracket: Align
 AlignArrayOfStructures: None
-AlignConsecutiveMacros: AcrossEmptyLines
+AlignConsecutiveMacros: AcrossEmptyLinesAndComments
 AlignConsecutiveAssignments: None
-AlignConsecutiveBitFields: AcrossEmptyLines
+AlignConsecutiveBitFields: AcrossEmptyLinesAndComments
 AlignConsecutiveDeclarations: None
 AlignEscapedNewlines: Right
 AlignOperands: Align
+#InsertBraces: true                                      # Control statements must have curly brackets, requires clang-format 15
 AlignTrailingComments: true
 AllowAllArgumentsOnNextLine: true
 AllowAllParametersOfDeclarationOnNextLine: true
@@ -102,6 +103,7 @@ IndentCaseBlocks: false
 IndentGotoLabels: true
 IndentPPDirectives: None
 IndentExternBlock: AfterExternBlock
+# IndentRequires:  true
 IndentWidth:     4
 IndentWrappedFunctionNames: false
 InsertTrailingCommas: None

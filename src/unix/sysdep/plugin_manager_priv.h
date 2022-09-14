@@ -23,28 +23,27 @@
 #include "begin_code.h"
 
 struct plugin_manager_data {
-   const struct plugin_struct *plugin; 
-                                 /* the plugin_plugin struct describing
+    const struct plugin_struct* plugin;
+    /* the plugin_plugin struct describing
                                     the plugin, or NULL for a removed plugin */
-   void *plugin_handle;          /* void * for the dynamic linker handles,
+    void* plugin_handle; /* void * for the dynamic linker handles,
                                     or NULL for static / unloaded plugins */
-   int initialised;              /* is the plugin checked? (plugins
+    int initialised;     /* is the plugin checked? (plugins
                                     which fail there check are removed from
                                     the list */
 };
 
-struct plugin_manager_struct
-{
-   const char *type;             /* type of the plugins which are
+struct plugin_manager_struct {
+    const char* type;     /* type of the plugins which are
                                     managed by this instance of the plugin
                                     manager */
-   struct rc_struct *rc;         /* rc object where the options for
+    struct rc_struct* rc; /* rc object where the options for
                                     added plugins should be registered */
-   struct plugin_manager_data *data;
-                                 /* array of data for the loaded plugins */
-   int data_size;                /* size of this array, to know when it
+    struct plugin_manager_data* data;
+    /* array of data for the loaded plugins */
+    int data_size;        /* size of this array, to know when it
                                     should be reallocated */
-   int highest_priority;         /* keeps count of the highest priority plugin
+    int highest_priority; /* keeps count of the highest priority plugin
                                     added */
 };
 

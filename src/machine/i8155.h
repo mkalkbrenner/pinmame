@@ -31,42 +31,42 @@
 
 #ifndef __I8155__
 #define __I8155__
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
 #define MAX_8155 4
 
-typedef struct
-{
-	int num;				/* number of chips to emulate */
+typedef struct {
+    int num; /* number of chips to emulate */
 
-	mem_read_handler		in_pa_func[MAX_8155];
-	mem_read_handler		in_pb_func[MAX_8155];
-	mem_read_handler		in_pc_func[MAX_8155];
+    mem_read_handler in_pa_func[MAX_8155];
+    mem_read_handler in_pb_func[MAX_8155];
+    mem_read_handler in_pc_func[MAX_8155];
 
-	mem_write_handler		out_pa_func[MAX_8155];
-	mem_write_handler		out_pb_func[MAX_8155];
-	mem_write_handler		out_pc_func[MAX_8155];
+    mem_write_handler out_pa_func[MAX_8155];
+    mem_write_handler out_pb_func[MAX_8155];
+    mem_write_handler out_pc_func[MAX_8155];
 
-	/* this gets called for each change of the TIMER OUT pin (pin 6) */
-	mem_write_handler		out_to_func[MAX_8155];
+    /* this gets called for each change of the TIMER OUT pin (pin 6) */
+    mem_write_handler out_to_func[MAX_8155];
 } i8155_interface;
 
-void i8155_init( i8155_interface *intfce);
-void i8155_reset( int which );
+void i8155_init(i8155_interface* intfce);
+void i8155_reset(int which);
 
-int i8155_r ( int which, int offset );
-void i8155_w( int which, int offset, UINT8 data );
+int i8155_r(int which, int offset);
+void i8155_w(int which, int offset, UINT8 data);
 
-READ_HANDLER( i8155_0_r );
-READ_HANDLER( i8155_1_r );
-READ_HANDLER( i8155_2_r );
-READ_HANDLER( i8155_3_r );
+READ_HANDLER(i8155_0_r);
+READ_HANDLER(i8155_1_r);
+READ_HANDLER(i8155_2_r);
+READ_HANDLER(i8155_3_r);
 
-WRITE_HANDLER( i8155_0_w );
-WRITE_HANDLER( i8155_1_w );
-WRITE_HANDLER( i8155_2_w );
-WRITE_HANDLER( i8155_3_w );
+WRITE_HANDLER(i8155_0_w);
+WRITE_HANDLER(i8155_1_w);
+WRITE_HANDLER(i8155_2_w);
+WRITE_HANDLER(i8155_3_w);
 
 #endif

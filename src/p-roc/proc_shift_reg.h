@@ -9,13 +9,13 @@
 */
 
 typedef struct proc_shift_reg_t {
-  UINT64 queue;        // queue of bits, insert at (1<<bit), remove from bit 0
-  int bit;             // position to insert next bit into queue
-  int procClockCoil;   // procDriveCoil() coil # for shift register's clock pin
-  int procDataCoil;    // procDriveCoil() coil # for shift register's data pin
-  int procDataValue;   // last value driven on procCoilData
-  int setClock;        // 1 if proc_shr_check_queue() should set clock on next pass
-  int timerEnabled;    // 1 if periodic timer enabled for this object
+    UINT64 queue;      // queue of bits, insert at (1<<bit), remove from bit 0
+    int bit;           // position to insert next bit into queue
+    int procClockCoil; // procDriveCoil() coil # for shift register's clock pin
+    int procDataCoil;  // procDriveCoil() coil # for shift register's data pin
+    int procDataValue; // last value driven on procCoilData
+    int setClock;      // 1 if proc_shr_check_queue() should set clock on next pass
+    int timerEnabled;  // 1 if periodic timer enabled for this object
 } proc_shift_reg_t;
 
 void proc_shiftRegInit(int procClockCoil, int procDataCoil);

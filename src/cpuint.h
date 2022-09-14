@@ -8,18 +8,18 @@
 
 #ifndef CPUINT_H
 #define CPUINT_H
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
-#include "osd_cpu.h"
 #include "memory.h"
+#include "osd_cpu.h"
 #include "timer.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 /*************************************
  *
@@ -27,13 +27,10 @@ extern "C" {
  *
  *************************************/
 
-enum
-{
-	/* generic "none" vector */
-	INTERRUPT_NONE = 126
+enum {
+    /* generic "none" vector */
+    INTERRUPT_NONE = 126
 };
-
-
 
 /*************************************
  *
@@ -46,8 +43,6 @@ int cpuint_init(void);
 void cpuint_reset_cpu(int cpunum);
 
 extern int (*cpu_irq_callbacks[])(int);
-
-
 
 /*************************************
  *
@@ -71,50 +66,46 @@ void cpu_set_irq_line_and_vector(int cpunum, int irqline, int state, int vector)
 /* macro for handling NMI lines */
 #define cpu_set_nmi_line(cpunum, state) cpu_set_irq_line(cpunum, IRQ_LINE_NMI, state)
 
-
-
 /*************************************
  *
  *	Preferred interrupt callbacks
  *
  *************************************/
 
-INTERRUPT_GEN( nmi_line_pulse );
-INTERRUPT_GEN( nmi_line_assert );
+INTERRUPT_GEN(nmi_line_pulse);
+INTERRUPT_GEN(nmi_line_assert);
 
-INTERRUPT_GEN( irq0_line_hold );
-INTERRUPT_GEN( irq0_line_pulse );
-INTERRUPT_GEN( irq0_line_assert );
+INTERRUPT_GEN(irq0_line_hold);
+INTERRUPT_GEN(irq0_line_pulse);
+INTERRUPT_GEN(irq0_line_assert);
 
-INTERRUPT_GEN( irq1_line_hold );
-INTERRUPT_GEN( irq1_line_pulse );
-INTERRUPT_GEN( irq1_line_assert );
+INTERRUPT_GEN(irq1_line_hold);
+INTERRUPT_GEN(irq1_line_pulse);
+INTERRUPT_GEN(irq1_line_assert);
 
-INTERRUPT_GEN( irq2_line_hold );
-INTERRUPT_GEN( irq2_line_pulse );
-INTERRUPT_GEN( irq2_line_assert );
+INTERRUPT_GEN(irq2_line_hold);
+INTERRUPT_GEN(irq2_line_pulse);
+INTERRUPT_GEN(irq2_line_assert);
 
-INTERRUPT_GEN( irq3_line_hold );
-INTERRUPT_GEN( irq3_line_pulse );
-INTERRUPT_GEN( irq3_line_assert );
+INTERRUPT_GEN(irq3_line_hold);
+INTERRUPT_GEN(irq3_line_pulse);
+INTERRUPT_GEN(irq3_line_assert);
 
-INTERRUPT_GEN( irq4_line_hold );
-INTERRUPT_GEN( irq4_line_pulse );
-INTERRUPT_GEN( irq4_line_assert );
+INTERRUPT_GEN(irq4_line_hold);
+INTERRUPT_GEN(irq4_line_pulse);
+INTERRUPT_GEN(irq4_line_assert);
 
-INTERRUPT_GEN( irq5_line_hold );
-INTERRUPT_GEN( irq5_line_pulse );
-INTERRUPT_GEN( irq5_line_assert );
+INTERRUPT_GEN(irq5_line_hold);
+INTERRUPT_GEN(irq5_line_pulse);
+INTERRUPT_GEN(irq5_line_assert);
 
-INTERRUPT_GEN( irq6_line_hold );
-INTERRUPT_GEN( irq6_line_pulse );
-INTERRUPT_GEN( irq6_line_assert );
+INTERRUPT_GEN(irq6_line_hold);
+INTERRUPT_GEN(irq6_line_pulse);
+INTERRUPT_GEN(irq6_line_assert);
 
-INTERRUPT_GEN( irq7_line_hold );
-INTERRUPT_GEN( irq7_line_pulse );
-INTERRUPT_GEN( irq7_line_assert );
-
-
+INTERRUPT_GEN(irq7_line_hold);
+INTERRUPT_GEN(irq7_line_pulse);
+INTERRUPT_GEN(irq7_line_assert);
 
 /*************************************
  *
@@ -129,19 +120,17 @@ INTERRUPT_GEN( irq7_line_assert );
 /* Obsolete functions: avoid using them in new drivers, as many of them will
    go away in the future! */
 
-void cpu_interrupt_enable(int cpu,int enabled);
-WRITE_HANDLER( interrupt_enable_w );
-WRITE_HANDLER( interrupt_vector_w );
-READ_HANDLER( interrupt_enable_r );
+void cpu_interrupt_enable(int cpu, int enabled);
+WRITE_HANDLER(interrupt_enable_w);
+WRITE_HANDLER(interrupt_vector_w);
+READ_HANDLER(interrupt_enable_r);
 
 /* OBSOLETE OBSOLETE OBSOLETE OBSOLETE OBSOLETE OBSOLETE OBSOLETE OBSOLETE */
 /* OBSOLETE OBSOLETE OBSOLETE OBSOLETE OBSOLETE OBSOLETE OBSOLETE OBSOLETE */
 /* OBSOLETE OBSOLETE OBSOLETE OBSOLETE OBSOLETE OBSOLETE OBSOLETE OBSOLETE */
-
-
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif	/* CPUEXEC_H */
+#endif /* CPUEXEC_H */

@@ -1,6 +1,5 @@
 // VPinMAME.cpp : Implementation of DLL Exports.
 
-
 // Note: Proxy/Stub Information
 //      To merge the proxy/stub code into the object DLL, add the file
 //      dlldatax.c to the project.  Make sure precompiled headers
@@ -21,14 +20,14 @@
 //          dlldata.c
 //      To build a separate proxy/stub DLL,
 //      run nmake -f PinMAMEps.mk in the project directory.
+#include "VPinMAME.h"
 #include "StdAfx.h"
+#include "dlldatax.h"
 #include "resource.h"
 #include <initguid.h>
-#include "VPinMAME.h"
-#include "dlldatax.h"
 
-#include "VPinMAME_i.c"
 #include "Controller.h"
+#include "VPinMAME_i.c"
 #include "WSHDlg.h"
 
 #ifdef _MERGE_PROXYSTUB
@@ -42,86 +41,83 @@ OBJECT_ENTRY(CLSID_Controller, CController)
 OBJECT_ENTRY(CLSID_WSHDlg, CWSHDlg)
 END_OBJECT_MAP()
 
-BOOL IsSingleThreadedApartment()
-{
-	HRESULT hr;
+BOOL
+IsSingleThreadedApartment() {
+    HRESULT hr;
 
-	CLSID ClsID;
-	hr = CLSIDFromProgID(OLESTR("VPinMAME.Controller"), &ClsID);
-	if ( FAILED(hr) )
-		return FALSE;
+    CLSID ClsID;
+    hr = CLSIDFromProgID(OLESTR("VPinMAME.Controller"), &ClsID);
+    if (FAILED(hr))
+        return FALSE;
 
-	OLECHAR sClsID[256];
-	StringFromGUID2(ClsID, (LPOLESTR) sClsID, 256);
+    OLECHAR sClsID[256];
+    StringFromGUID2(ClsID, (LPOLESTR)sClsID, 256);
 
-	char szClsID[256];
-	WideCharToMultiByte(CP_ACP, 0, (LPOLESTR) sClsID, -1, szClsID, sizeof szClsID, NULL, NULL);
+    char szClsID[256];
+    WideCharToMultiByte(CP_ACP, 0, (LPOLESTR)sClsID, -1, szClsID, sizeof szClsID, NULL, NULL);
 
-	char szRegKey[256];
-	lstrcpy(szRegKey, "CLSID\\");
-	lstrcat(szRegKey, szClsID);
-	lstrcat(szRegKey, "\\InprocServer32");
+    char szRegKey[256];
+    lstrcpy(szRegKey, "CLSID\\");
+    lstrcat(szRegKey, szClsID);
+    lstrcat(szRegKey, "\\InprocServer32");
 
-	HKEY hKey;
-	if ( RegOpenKey(HKEY_CLASSES_ROOT, szRegKey, &hKey)!=ERROR_SUCCESS )
-		return FALSE;
+    HKEY hKey;
+    if (RegOpenKey(HKEY_CLASSES_ROOT, szRegKey, &hKey) != ERROR_SUCCESS)
+        return FALSE;
 
-	char szThreadingModel[MAX_PATH];
-	ULONG uSize = sizeof szThreadingModel;
-	DWORD dwType = REG_SZ;
-	if ( RegQueryValueEx(hKey, "ThreadingModel", NULL, &dwType, (LPBYTE) &szThreadingModel, &uSize)!=ERROR_SUCCESS ) {
-		RegCloseKey(hKey);
+    char szThreadingModel[MAX_PATH];
+    ULONG uSize = sizeof szThreadingModel;
+    DWORD dwType = REG_SZ;
+    if (RegQueryValueEx(hKey, "ThreadingModel", NULL, &dwType, (LPBYTE)&szThreadingModel, &uSize) != ERROR_SUCCESS) {
+        RegCloseKey(hKey);
 
-		// if we don't have that entry, return TRUE (old style, but single threaded)
-		return TRUE;
-	}
-	RegCloseKey(hKey);
+        // if we don't have that entry, return TRUE (old style, but single threaded)
+        return TRUE;
+    }
+    RegCloseKey(hKey);
 
-	// if we don't have that entry, return TRUE (old style, but single threaded)
-	if ( !szThreadingModel[0] )
-		return TRUE;
+    // if we don't have that entry, return TRUE (old style, but single threaded)
+    if (!szThreadingModel[0])
+        return TRUE;
 
-	return _stricmp(szThreadingModel, "Apartment")?FALSE:TRUE;
+    return _stricmp(szThreadingModel, "Apartment") ? FALSE : TRUE;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // DLL Entry Point
 
-extern "C"
-BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
-{
+extern "C" BOOL WINAPI
+DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved) {
 #ifdef _MERGE_PROXYSTUB
     if (!PrxDllMain(hInstance, dwReason, lpReserved))
         return FALSE;
 #endif
-    if (dwReason == DLL_PROCESS_ATTACH)
-    {
+    if (dwReason == DLL_PROCESS_ATTACH) {
         _Module.Init(ObjectMap, hInstance, &LIBID_VPinMAMELib);
         DisableThreadLibraryCalls(hInstance);
-    }
-    else if (dwReason == DLL_PROCESS_DETACH)
+    } else if (dwReason == DLL_PROCESS_DETACH)
         _Module.Term();
-    return TRUE;    // ok
+    return TRUE; // ok
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // Used to determine whether the DLL can be unloaded by OLE
 
-STDAPI DllCanUnloadNow(void)
-{
+STDAPI
+DllCanUnloadNow(void) {
 #ifdef _MERGE_PROXYSTUB
     if (PrxDllCanUnloadNow() != S_OK)
         return S_FALSE;
 #endif
-    return (_Module.GetLockCount()==0) ? S_OK : S_FALSE;
+    return (_Module.GetLockCount() == 0) ? S_OK : S_FALSE;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // Returns a class factory to create an object of the requested type
 
-STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv)
-{
-/*
+STDAPI
+DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv) {
+    /*
 	if ( !IsSingleThreadedApartment() ) {
 		MessageBox(0, "Wrong threading model, please reinstall VPinMAME!", "Unable to run", MB_ICONINFORMATION|MB_OK);
 		return CLASS_E_CLASSNOTAVAILABLE;
@@ -138,8 +134,8 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv)
 /////////////////////////////////////////////////////////////////////////////
 // DllRegisterServer - Adds entries to the system registry
 
-STDAPI DllRegisterServer(void)
-{
+STDAPI
+DllRegisterServer(void) {
 #ifdef _MERGE_PROXYSTUB
     HRESULT hRes = PrxDllRegisterServer();
     if (FAILED(hRes))
@@ -152,11 +148,10 @@ STDAPI DllRegisterServer(void)
 /////////////////////////////////////////////////////////////////////////////
 // DllUnregisterServer - Removes entries from the system registry
 
-STDAPI DllUnregisterServer(void)
-{
+STDAPI
+DllUnregisterServer(void) {
 #ifdef _MERGE_PROXYSTUB
     PrxDllUnregisterServer();
 #endif
     return _Module.UnregisterServer(TRUE);
 }
-

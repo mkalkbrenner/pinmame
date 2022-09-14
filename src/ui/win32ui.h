@@ -12,55 +12,47 @@
 
 #ifndef WIN32UI_H
 #define WIN32UI_H
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
 #include <driver.h>
 
-enum
-{
-	TAB_PICKER = 0,
-	TAB_DISPLAY,
-	TAB_MISC,
-	NUM_TABS
-};
+enum { TAB_PICKER = 0, TAB_DISPLAY, TAB_MISC, NUM_TABS };
 
-typedef struct
-{
-	INT resource;
-	const char *icon_name;
+typedef struct {
+    INT resource;
+    const char* icon_name;
 } ICONDATA;
 
 HWND GetMainWindow(void);
 HWND GetTreeView(void);
 int GetNumGames(void);
 void GetRealColumnOrder(int order[]);
-HICON LoadIconFromFile(const char *iconname);
+HICON LoadIconFromFile(const char* iconname);
 void UpdateScreenShot(void);
 void ResizePickerControls(HWND hWnd);
 
 // Move The in "The Title (notes)" to "Title, The (notes)"
-char * ModifyThe(const char *str);
+char* ModifyThe(const char* str);
 
 // Convert Ampersand so it can display in a static control
-char * ConvertAmpersandString(const char *s);
+char* ConvertAmpersandString(const char* s);
 
 // globalized for painting tree control
 HBITMAP GetBackgroundBitmap(void);
 HPALETTE GetBackgroundPalette(void);
-MYBITMAPINFO * GetBackgroundInfo(void);
+MYBITMAPINFO* GetBackgroundInfo(void);
 
 int GetMinimumScreenShotWindowWidth(void);
 
 // we maintain an array of drivers sorted by name, useful all around
-int GetDriverIndex(const struct GameDriver *driver);
-int GetGameNameIndex(const char *name);
+int GetDriverIndex(const struct GameDriver* driver);
+int GetGameNameIndex(const char* name);
 int GetIndexFromSortedIndex(int sorted_index);
 
-int Mame32Main(HINSTANCE    hInstance,
-                   LPSTR        lpCmdLine,
-                   int          nCmdShow);
+int Mame32Main(HINSTANCE hInstance, LPSTR lpCmdLine, int nCmdShow);
 
 BOOL MouseHasBeenMoved(void);
 

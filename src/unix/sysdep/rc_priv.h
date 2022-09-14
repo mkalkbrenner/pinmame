@@ -20,16 +20,15 @@
 #ifndef __RC_PRIV_H
 #define __RC_PRIV_H
 
-#include "rc.h"
 #include "begin_code.h"
+#include "rc.h"
 
-struct rc_struct
-{
-   struct rc_option *option;
-   int option_size;
-   char **arg;
-   int arg_size;
-   int args_registered;
+struct rc_struct {
+    struct rc_option* option;
+    int option_size;
+    char** arg;
+    int arg_size;
+    int args_registered;
 };
 
 #include "end_code.h"

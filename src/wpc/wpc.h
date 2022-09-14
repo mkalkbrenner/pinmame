@@ -2,57 +2,39 @@
 
 #ifndef INC_WPC
 #define INC_WPC
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
 /*-- Common Inports for WPCGames --*/
-#define WPC_COMPORTS \
-  PORT_START /* 0 */ \
-    /* These go into column 0 */ \
-    COREPORT_BITDEF(  0x0001, IPT_COIN1,        IP_KEY_DEFAULT) \
-    COREPORT_BITDEF(  0x0002, IPT_COIN2,        IP_KEY_DEFAULT) \
-    COREPORT_BITDEF(  0x0004, IPT_COIN3,        KEYCODE_3) \
-    COREPORT_BITDEF(  0x0008, IPT_COIN4,        KEYCODE_4) \
-    COREPORT_BIT(     0x0010, "Enter",          KEYCODE_7) \
-    COREPORT_BIT(     0x0020, "Up",             KEYCODE_8) \
-    COREPORT_BIT(     0x0040, "Down",           KEYCODE_9) \
-    COREPORT_BIT(     0x0080, "Escape",         KEYCODE_0) \
-    /* Common switches */ \
-    COREPORT_BITTOG(  0x0100, "Coin Door",      KEYCODE_END)  \
-    COREPORT_BITDEF(  0x0200, IPT_START1,       IP_KEY_DEFAULT)  \
-    COREPORT_BITDEF(  0x0400, IPT_TILT,         KEYCODE_INSERT)  \
-    COREPORT_BIT(     0x0800, "Slam Tilt",      KEYCODE_HOME)  \
-  PORT_START /* 1 */ \
-    COREPORT_DIPNAME( 0x0001, 0x0001, "SW1") \
-      COREPORT_DIPSET(0x0000, "0" ) \
-      COREPORT_DIPSET(0x0001, "1" ) \
-    COREPORT_DIPNAME( 0x0002, 0x0002, "SW2") \
-      COREPORT_DIPSET(0x0000, "0" ) \
-      COREPORT_DIPSET(0x0002, "1" ) \
-    COREPORT_DIPNAME( 0x0004, 0x0000, "W20") \
-      COREPORT_DIPSET(0x0000, "0" ) \
-      COREPORT_DIPSET(0x0004, "1" ) \
-    COREPORT_DIPNAME( 0x0008, 0x0000, "W19") \
-      COREPORT_DIPSET(0x0000, "0" ) \
-      COREPORT_DIPSET(0x0008, "1" ) \
-    COREPORT_DIPNAME( 0x00f0, 0x0000, "Country") \
-      COREPORT_DIPSET(0x0000, "USA 1" ) \
-      COREPORT_DIPSET(0x0010, "France 1" ) \
-      COREPORT_DIPSET(0x0020, "Germany" ) \
-      COREPORT_DIPSET(0x0030, "France 2" ) \
-      COREPORT_DIPSET(0x0040, "Unknown 1" ) \
-      COREPORT_DIPSET(0x0050, "Unknown 2" ) \
-      COREPORT_DIPSET(0x0060, "Unknown 3" ) \
-      COREPORT_DIPSET(0x0070, "Unknown 4" ) \
-      COREPORT_DIPSET(0x0080, "Export 1" ) \
-      COREPORT_DIPSET(0x0090, "France 3" ) \
-      COREPORT_DIPSET(0x00a0, "Export 2" ) \
-      COREPORT_DIPSET(0x00b0, "France 4" ) \
-      COREPORT_DIPSET(0x00c0, "UK" ) \
-      COREPORT_DIPSET(0x00d0, "European" ) \
-      COREPORT_DIPSET(0x00e0, "Spain" ) \
-      COREPORT_DIPSET(0x00f0, "USA 2" )
+#define WPC_COMPORTS                                                                                                   \
+    PORT_START /* 0 */ /* These go into column 0 */                                                                    \
+        COREPORT_BITDEF(0x0001, IPT_COIN1, IP_KEY_DEFAULT) COREPORT_BITDEF(0x0002, IPT_COIN2, IP_KEY_DEFAULT)          \
+            COREPORT_BITDEF(0x0004, IPT_COIN3, KEYCODE_3) COREPORT_BITDEF(0x0008, IPT_COIN4, KEYCODE_4)                \
+                COREPORT_BIT(0x0010, "Enter", KEYCODE_7) COREPORT_BIT(0x0020, "Up", KEYCODE_8)                         \
+                    COREPORT_BIT(0x0040, "Down", KEYCODE_9)                                                            \
+                        COREPORT_BIT(0x0080, "Escape", KEYCODE_0) /* Common switches */                                \
+        COREPORT_BITTOG(0x0100, "Coin Door", KEYCODE_END) COREPORT_BITDEF(0x0200, IPT_START1, IP_KEY_DEFAULT)          \
+            COREPORT_BITDEF(0x0400, IPT_TILT, KEYCODE_INSERT) COREPORT_BIT(0x0800, "Slam Tilt",                        \
+                                                                           KEYCODE_HOME) PORT_START /* 1 */            \
+                COREPORT_DIPNAME(0x0001, 0x0001, "SW1") COREPORT_DIPSET(0x0000, "0") COREPORT_DIPSET(0x0001, "1")      \
+                    COREPORT_DIPNAME(0x0002, 0x0002, "SW2") COREPORT_DIPSET(0x0000, "0") COREPORT_DIPSET(0x0002, "1")  \
+                        COREPORT_DIPNAME(0x0004, 0x0000, "W20") COREPORT_DIPSET(0x0000, "0") COREPORT_DIPSET(          \
+                            0x0004, "1") COREPORT_DIPNAME(0x0008, 0x0000, "W19") COREPORT_DIPSET(0x0000, "0")          \
+                            COREPORT_DIPSET(0x0008, "1") COREPORT_DIPNAME(0x00f0, 0x0000, "Country")                   \
+                                COREPORT_DIPSET(0x0000, "USA 1") COREPORT_DIPSET(0x0010, "France 1")                   \
+                                    COREPORT_DIPSET(0x0020, "Germany") COREPORT_DIPSET(0x0030, "France 2")             \
+                                        COREPORT_DIPSET(0x0040, "Unknown 1") COREPORT_DIPSET(0x0050, "Unknown 2")      \
+                                            COREPORT_DIPSET(0x0060, "Unknown 3") COREPORT_DIPSET(0x0070, "Unknown 4")  \
+                                                COREPORT_DIPSET(0x0080, "Export 1")                                    \
+                                                    COREPORT_DIPSET(0x0090, "France 3")                                \
+                                                        COREPORT_DIPSET(0x00a0, "Export 2")                            \
+                                                            COREPORT_DIPSET(0x00b0, "France 4")                        \
+                                                                COREPORT_DIPSET(0x00c0, "UK")                          \
+                                                                    COREPORT_DIPSET(0x00d0, "European")                \
+                                                                        COREPORT_DIPSET(0x00e0, "Spain")               \
+                                                                            COREPORT_DIPSET(0x00f0, "USA 2")
 
 /*-- Common keys inport --*/
 #define WPC_COMINPORT      CORE_COREINPORT
@@ -62,36 +44,36 @@
 #define WPC_COMSTILTKEY    0x0800
 
 /*-- Standard input ports --*/
-#define WPC_INPUT_PORTS_START(name,balls) \
-  INPUT_PORTS_START(name) \
-    CORE_PORTS \
-    SIM_PORTS(balls) \
+#define WPC_INPUT_PORTS_START(name, balls)                                                                             \
+    INPUT_PORTS_START(name)                                                                                            \
+    CORE_PORTS                                                                                                         \
+    SIM_PORTS(balls)                                                                                                   \
     WPC_COMPORTS
 
 #define WPC_INPUT_PORTS_END INPUT_PORTS_END
 
-#define WPC_swF1   (CORE_FLIPPERSWCOL*10+1)
-#define WPC_swF2   (CORE_FLIPPERSWCOL*10+2)
-#define WPC_swF3   (CORE_FLIPPERSWCOL*10+3)
-#define WPC_swF4   (CORE_FLIPPERSWCOL*10+4)
-#define WPC_swF5   (CORE_FLIPPERSWCOL*10+5)
-#define WPC_swF6   (CORE_FLIPPERSWCOL*10+6)
-#define WPC_swF7   (CORE_FLIPPERSWCOL*10+7)
-#define WPC_swF8   (CORE_FLIPPERSWCOL*10+8)
+#define WPC_swF1            (CORE_FLIPPERSWCOL * 10 + 1)
+#define WPC_swF2            (CORE_FLIPPERSWCOL * 10 + 2)
+#define WPC_swF3            (CORE_FLIPPERSWCOL * 10 + 3)
+#define WPC_swF4            (CORE_FLIPPERSWCOL * 10 + 4)
+#define WPC_swF5            (CORE_FLIPPERSWCOL * 10 + 5)
+#define WPC_swF6            (CORE_FLIPPERSWCOL * 10 + 6)
+#define WPC_swF7            (CORE_FLIPPERSWCOL * 10 + 7)
+#define WPC_swF8            (CORE_FLIPPERSWCOL * 10 + 8)
 
-#define WPC_swLRFlipEOS swF1
-#define WPC_swLRFlip    swF2
-#define WPC_swLLFlipEOS swF3
-#define WPC_swLLFlip    swF4
-#define WPC_swURFlipEOS swF5
-#define WPC_swURFlip    swF6
-#define WPC_swULFlipEOS swF7
-#define WPC_swULFlip    swF8
+#define WPC_swLRFlipEOS     swF1
+#define WPC_swLRFlip        swF2
+#define WPC_swLLFlipEOS     swF3
+#define WPC_swLLFlip        swF4
+#define WPC_swURFlipEOS     swF5
+#define WPC_swURFlip        swF6
+#define WPC_swULFlipEOS     swF7
+#define WPC_swULFlip        swF8
 
 /*-------------------------
 / Machine driver constants
 /--------------------------*/
-#define WPC_CPUNO   0
+#define WPC_CPUNO           0
 
 /*-- Memory regions --*/
 #define WPC_CPUREGION       REGION_CPU1
@@ -103,25 +85,25 @@ extern const core_tLCDLayout wpc_dispAlpha[];
 extern const core_tLCDLayout wpc_dispDMD[];
 
 /*-- Main CPU regions and ROM --*/
-#define WPC_ROMSTART(name, ver, n1, size, chk1) \
-   ROM_START(name##_##ver) \
-     NORMALREGION(0x10000, WPC_CPUREGION) \
-     NORMALREGION(0x2000,  WPC_DMDREGION) \
-     NORMALREGION(size,    WPC_ROMREGION) \
-       ROM_LOAD(n1, 0x00000, size, chk1)
+#define WPC_ROMSTART(name, ver, n1, size, chk1)                                                                        \
+    ROM_START(name##_##ver)                                                                                            \
+    NORMALREGION(0x10000, WPC_CPUREGION)                                                                               \
+    NORMALREGION(0x2000, WPC_DMDREGION)                                                                                \
+    NORMALREGION(size, WPC_ROMREGION)                                                                                  \
+    ROM_LOAD(n1, 0x00000, size, chk1)
 #define WPC_ROMEND ROM_END
 
-#define WPC_ROMSTARTNV(name, n1, size, chk1) \
-   ROM_START(name) \
-     NORMALREGION(0x10000, WPC_CPUREGION) \
-     NORMALREGION(0x2000,  WPC_DMDREGION) \
-     NORMALREGION(size,    WPC_ROMREGION) \
-       ROM_LOAD(n1, 0x00000, size, chk1)
+#define WPC_ROMSTARTNV(name, n1, size, chk1)                                                                           \
+    ROM_START(name)                                                                                                    \
+    NORMALREGION(0x10000, WPC_CPUREGION)                                                                               \
+    NORMALREGION(0x2000, WPC_DMDREGION)                                                                                \
+    NORMALREGION(size, WPC_ROMREGION)                                                                                  \
+    ROM_LOAD(n1, 0x00000, size, chk1)
 
 /*----------------------------------
 /  Start address for the WPC chip
 /-----------------------------------*/
-#define WPC_BASE        0x3fb0
+#define WPC_BASE          0x3fb0
 
 /*----------------------------------
 / The WPC registers I know about
@@ -210,8 +192,8 @@ extern const core_tLCDLayout wpc_dispDMD[];
 #define WPC_WATCHDOG      (0x3fff - WPC_BASE) /* xxxxxx W: Watchdog */
 
 /*-- the internal state of the WPC chip. Should only be used in memory handlers --*/
-extern UINT8 *wpc_data;
-extern UINT8 *wpc_ram;
+extern UINT8* wpc_data;
+extern UINT8* wpc_ram;
 
 /*---------------------
 /  Exported functions
@@ -226,38 +208,38 @@ extern READ_HANDLER(wpc_r);
 extern WRITE_HANDLER(wpc_w);
 
 /*-- use this function to send FIRQ to main CPU --*/
-#define WPC_FIRQ_DMD    0x01
-#define WPC_FIRQ_SOUND  0x02
+#define WPC_FIRQ_DMD   0x01
+#define WPC_FIRQ_SOUND 0x02
 static void wpc_firq(int set, int src);
 
 extern MACHINE_DRIVER_EXTERN(wpc_alpha);
 extern MACHINE_DRIVER_EXTERN(wpc_dmd);
-#define wpc_mAlpha       wpc_alpha
-#define wpc_mDMD         wpc_dmd
-#define wpc_mFliptron    wpc_dmd
-#define wpc_m95          wpc_dmd
+#define wpc_mAlpha    wpc_alpha
+#define wpc_mDMD      wpc_dmd
+#define wpc_mFliptron wpc_dmd
+#define wpc_m95       wpc_dmd
 extern MACHINE_DRIVER_EXTERN(wpc_alpha1S);
 extern MACHINE_DRIVER_EXTERN(wpc_alpha2S);
 extern MACHINE_DRIVER_EXTERN(wpc_dmdS);
 extern MACHINE_DRIVER_EXTERN(wpc_dcsS);
 extern MACHINE_DRIVER_EXTERN(wpc_95S);
-#define wpc_mAlpha1S     wpc_alpha1S
-#define wpc_mAlpha2S     wpc_alpha2S
-#define wpc_mFliptronS   wpc_dmdS
-#define wpc_mDMDS        wpc_dmdS
-#define wpc_mDCSS        wpc_dcsS
-#define wpc_mSecurityS   wpc_dcsS
-#define wpc_m95DCSS      wpc_dcsS
-#define wpc_m95S         wpc_95S
+#define wpc_mAlpha1S   wpc_alpha1S
+#define wpc_mAlpha2S   wpc_alpha2S
+#define wpc_mFliptronS wpc_dmdS
+#define wpc_mDMDS      wpc_dmdS
+#define wpc_mDCSS      wpc_dcsS
+#define wpc_mSecurityS wpc_dcsS
+#define wpc_m95DCSS    wpc_dcsS
+#define wpc_m95S       wpc_95S
 
 int wpc_m2sw(int col, int row);
 void wpc_set_modsol_aux_board(int board);
 void wpc_set_fastflip_addr(int addr);
 
 #ifdef PROC_SUPPORT
-  typedef void (*wpc_proc_solenoid_handler_t)(int solNum, int enabled, int smoothed);
-  void default_wpc_proc_solenoid_handler(int solNum, int enabled, int smoothed);
-  extern wpc_proc_solenoid_handler_t wpc_proc_solenoid_handler;
+typedef void (*wpc_proc_solenoid_handler_t)(int solNum, int enabled, int smoothed);
+void default_wpc_proc_solenoid_handler(int solNum, int enabled, int smoothed);
+extern wpc_proc_solenoid_handler_t wpc_proc_solenoid_handler;
 #endif
 
 #endif /* INC_WPC */

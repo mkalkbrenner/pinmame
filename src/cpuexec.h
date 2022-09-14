@@ -8,19 +8,18 @@
 
 #ifndef CPUEXEC_H
 #define CPUEXEC_H
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
-#include "osd_cpu.h"
 #include "memory.h"
+#include "osd_cpu.h"
 #include "timer.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-
 
 /*************************************
  *
@@ -31,32 +30,27 @@ extern "C" {
 extern double cycles_to_sec[];
 extern double sec_to_cycles[];
 
-
-
 /*************************************
  *
  *	CPU description for drivers
  *
  *************************************/
 
-struct MachineCPU
-{
-	int			cpu_type;					/* index for the CPU type */
-	int			cpu_flags;					/* flags; see #defines below */
-	double		cpu_clock;					/* in Hertz */
-	const void *memory_read;				/* struct Memory_ReadAddress */
-	const void *memory_write;				/* struct Memory_WriteAddress */
-	const void *port_read;
-	const void *port_write;
-	void		(*vblank_interrupt)(void);	/* for interrupts tied to VBLANK */
-	double		vblank_interrupts_per_frame;/* usually 1 */
-	void		(*timed_interrupt)(void);	/* for interrupts not tied to VBLANK */
-	double		timed_interrupts_per_second;
-	void *		reset_param;				/* parameter for cpu_reset */
-	const char *tag;
+struct MachineCPU {
+    int cpu_type;             /* index for the CPU type */
+    int cpu_flags;            /* flags; see #defines below */
+    double cpu_clock;         /* in Hertz */
+    const void* memory_read;  /* struct Memory_ReadAddress */
+    const void* memory_write; /* struct Memory_WriteAddress */
+    const void* port_read;
+    const void* port_write;
+    void (*vblank_interrupt)(void);     /* for interrupts tied to VBLANK */
+    double vblank_interrupts_per_frame; /* usually 1 */
+    void (*timed_interrupt)(void);      /* for interrupts not tied to VBLANK */
+    double timed_interrupts_per_second;
+    void* reset_param; /* parameter for cpu_reset */
+    const char* tag;
 };
-
-
 
 /*************************************
  *
@@ -64,18 +58,14 @@ struct MachineCPU
  *
  *************************************/
 
-enum
-{
-	/* set this if the CPU is used as a slave for audio. It will not be emulated if */
-	/* sound is disabled, therefore speeding up a lot the emulation. */
-	CPU_AUDIO_CPU = 0x0002,
+enum {
+    /* set this if the CPU is used as a slave for audio. It will not be emulated if */
+    /* sound is disabled, therefore speeding up a lot the emulation. */
+    CPU_AUDIO_CPU = 0x0002,
 
-	/* the Z80 can be wired to use 16 bit addressing for I/O ports */
-	CPU_16BIT_PORT = 0x0001
+    /* the Z80 can be wired to use 16 bit addressing for I/O ports */
+    CPU_16BIT_PORT = 0x0001
 };
-
-
-
 
 /*************************************
  *
@@ -95,8 +85,6 @@ void cpu_exit(void);
 /* Force a reset after the current timeslice */
 void machine_reset(void);
 
-
-
 /*************************************
  *
  *	Save/restore
@@ -104,17 +92,11 @@ void machine_reset(void);
  *************************************/
 
 /* Load or save the game state */
-enum
-{
-	LOADSAVE_NONE,
-	LOADSAVE_SAVE,
-	LOADSAVE_LOAD
-};
+enum { LOADSAVE_NONE, LOADSAVE_SAVE, LOADSAVE_LOAD };
+
 void cpu_loadsave_schedule(int type, char id);
-void cpu_loadsave_schedule_file(int type, const char *name);
+void cpu_loadsave_schedule_file(int type, const char* name);
 void cpu_loadsave_reset(void);
-
-
 
 /*************************************
  *
@@ -123,18 +105,16 @@ void cpu_loadsave_reset(void);
  *************************************/
 
 /* 8-bit watchdog read/write handlers */
-WRITE_HANDLER( watchdog_reset_w );
-READ_HANDLER( watchdog_reset_r );
+WRITE_HANDLER(watchdog_reset_w);
+READ_HANDLER(watchdog_reset_r);
 
 /* 16-bit watchdog read/write handlers */
-WRITE16_HANDLER( watchdog_reset16_w );
-READ16_HANDLER( watchdog_reset16_r );
+WRITE16_HANDLER(watchdog_reset16_w);
+READ16_HANDLER(watchdog_reset16_r);
 
 /* 32-bit watchdog read/write handlers */
-WRITE32_HANDLER( watchdog_reset32_w );
-READ32_HANDLER( watchdog_reset32_r );
-
-
+WRITE32_HANDLER(watchdog_reset32_w);
+READ32_HANDLER(watchdog_reset32_r);
 
 /*************************************
  *
@@ -149,10 +129,8 @@ void cpunum_set_reset_line(int cpunum, int state);
 void cpunum_set_halt_line(int cpunum, int state);
 
 /* Backwards compatibility */
-#define cpu_set_reset_line 		cpunum_set_reset_line
-#define cpu_set_halt_line 		cpunum_set_halt_line
-
-
+#define cpu_set_reset_line cpunum_set_reset_line
+#define cpu_set_halt_line  cpunum_set_halt_line
 
 /*************************************
  *
@@ -161,14 +139,13 @@ void cpunum_set_halt_line(int cpunum, int state);
  *************************************/
 
 /* Suspension reasons */
-enum
-{
-	SUSPEND_REASON_HALT 	= 0x0001,
-	SUSPEND_REASON_RESET 	= 0x0002,
-	SUSPEND_REASON_SPIN 	= 0x0004,
-	SUSPEND_REASON_TRIGGER 	= 0x0008,
-	SUSPEND_REASON_DISABLE 	= 0x0010,
-	SUSPEND_ANY_REASON 		= ~0
+enum {
+    SUSPEND_REASON_HALT = 0x0001,
+    SUSPEND_REASON_RESET = 0x0002,
+    SUSPEND_REASON_SPIN = 0x0004,
+    SUSPEND_REASON_TRIGGER = 0x0008,
+    SUSPEND_REASON_DISABLE = 0x0010,
+    SUSPEND_ANY_REASON = ~0
 };
 
 /* Suspend the given CPU for a specific reason */
@@ -196,13 +173,24 @@ void cpunum_set_clockscale(int cpunum, double clockscale);
 void cpu_boost_interleave(double timeslice_time, double boost_duration);
 
 /* Backwards compatibility */
-#define timer_suspendcpu(cpunum, suspend, reason)	do { if (suspend) cpunum_suspend(cpunum, reason, 1); else cpunum_resume(cpunum, reason); } while (0)
-#define timer_holdcpu(cpunum, suspend, reason)		do { if (suspend) cpunum_suspend(cpunum, reason, 0); else cpunum_resume(cpunum, reason); } while (0)
-#define cpu_getstatus(cpunum)						(!cpunum_is_suspended(cpunum, SUSPEND_REASON_HALT | SUSPEND_REASON_RESET | SUSPEND_REASON_DISABLE))
-#define timer_get_overclock(cpunum)					cpunum_get_clockscale(cpunum)
-#define timer_set_overclock(cpunum, overclock)		cpunum_set_clockscale(cpunum, overclock)
-
-
+#define timer_suspendcpu(cpunum, suspend, reason)                                                                      \
+    do {                                                                                                               \
+        if (suspend)                                                                                                   \
+            cpunum_suspend(cpunum, reason, 1);                                                                         \
+        else                                                                                                           \
+            cpunum_resume(cpunum, reason);                                                                             \
+    } while (0)
+#define timer_holdcpu(cpunum, suspend, reason)                                                                         \
+    do {                                                                                                               \
+        if (suspend)                                                                                                   \
+            cpunum_suspend(cpunum, reason, 0);                                                                         \
+        else                                                                                                           \
+            cpunum_resume(cpunum, reason);                                                                             \
+    } while (0)
+#define cpu_getstatus(cpunum)                                                                                          \
+    (!cpunum_is_suspended(cpunum, SUSPEND_REASON_HALT | SUSPEND_REASON_RESET | SUSPEND_REASON_DISABLE))
+#define timer_get_overclock(cpunum)            cpunum_get_clockscale(cpunum)
+#define timer_set_overclock(cpunum, overclock) cpunum_set_clockscale(cpunum, overclock)
 
 /*************************************
  *
@@ -230,9 +218,6 @@ int cpu_scalebyfcount(int value);
 
 /* Backwards compatibility */
 #define cpu_gettotalcycles64 cpunum_gettotalcycles64
-
-
-
 
 /*************************************
  *
@@ -266,8 +251,6 @@ int cpu_getvblank(void);
 
 /* Returns the number of the video frame we are currently playing */
 int cpu_getcurrentframe(void);
-
-
 
 /*************************************
  *
@@ -308,8 +291,6 @@ void cpu_spinuntil_time(double duration);
 /* yield our timeslice for a specific period of time */
 void cpu_yielduntil_time(double duration);
 
-
-
 /*************************************
  *
  *	Core timing
@@ -336,24 +317,22 @@ void run_one_timeslice(void);
 /* fix me - where should this stuff go? */
 
 /* daisy-chain link */
-typedef struct
-{
-	void (*reset)(int); 			/* reset callback	  */
-	int  (*interrupt_entry)(int);	/* entry callback	  */
-	void (*interrupt_reti)(int);	/* reti callback	  */
-	int irq_param;					/* callback paramater */
+typedef struct {
+    void (*reset)(int);          /* reset callback	  */
+    int (*interrupt_entry)(int); /* entry callback	  */
+    void (*interrupt_reti)(int); /* reti callback	  */
+    int irq_param;               /* callback paramater */
 } Z80_DaisyChain;
 
-#define Z80_MAXDAISY	4		/* maximum of daisy chan device */
+#define Z80_MAXDAISY              4 /* maximum of daisy chan device */
 
-#define Z80_INT_REQ 	0x01	/* interrupt request mask		*/
-#define Z80_INT_IEO 	0x02	/* interrupt disable mask(IEO)	*/
+#define Z80_INT_REQ               0x01 /* interrupt request mask		*/
+#define Z80_INT_IEO               0x02 /* interrupt disable mask(IEO)	*/
 
-#define Z80_VECTOR(device,state) (((device)<<8)|(state))
-
+#define Z80_VECTOR(device, state) (((device) << 8) | (state))
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif	/* CPUEXEC_H */
+#endif /* CPUEXEC_H */

@@ -16,15 +16,16 @@
  *
  *  returns NULL if one error.
  */
-DIR * opendir(const char *dirname) {
+DIR*
+opendir(const char* dirname) {
 
     static DIR dir;
 
     /* Stash the directory name */
-    strcpy(dir.pathName,dirname);
+    strcpy(dir.pathName, dirname);
 
     /* set the handle to invalid and set the firstTime flag */
-    dir.handle    = INVALID_HANDLE_VALUE;
+    dir.handle = INVALID_HANDLE_VALUE;
     dir.firstTime = TRUE;
 
     if (strcmp(dirname, ".") == 0) {
@@ -36,7 +37,8 @@ DIR * opendir(const char *dirname) {
 }
 
 /** Close the current directory - return 0 if success */
-int	closedir(DIR *dirp) {
+int
+closedir(DIR* dirp) {
     /* reset ourselves to the first file in the directory
      *
      * We just close the current handle and reset for the
@@ -44,8 +46,7 @@ int	closedir(DIR *dirp) {
      */
     int result = 1;
 
-    if (dirp->handle != INVALID_HANDLE_VALUE)
-    {
+    if (dirp->handle != INVALID_HANDLE_VALUE) {
         result = FindClose(dirp->handle);
         dirp->handle = INVALID_HANDLE_VALUE;
     }
@@ -54,40 +55,37 @@ int	closedir(DIR *dirp) {
 }
 
 /** get the next entry in the directory */
-struct dirent *	readdir(DIR *dirp) {
+struct dirent*
+readdir(DIR* dirp) {
     static struct dirent d;
 
-    if (TRUE == dirp->firstTime)
-    {
+    if (TRUE == dirp->firstTime) {
         /** Get the first entry in the directory */
         dirp->handle = FindFirstFile("*.*", &dirp->findFileData);
         dirp->firstTime = FALSE;
-        if (INVALID_HANDLE_VALUE == dirp->handle)
-        {
+        if (INVALID_HANDLE_VALUE == dirp->handle) {
             return NULL;
         }
-    }
-    else
-    {
+    } else {
         int result = FindNextFile(dirp->handle, &dirp->findFileData);
-        if (0 == result )
-        {
+        if (0 == result) {
             return NULL;
         }
     }
     /* we have a valid FIND_FILE_DATA, copy the filename */
-    memset(&d,'\0', sizeof(struct dirent));
+    memset(&d, '\0', sizeof(struct dirent));
 
-    strcpy(d.d_name,dirp->findFileData.cFileName);
+    strcpy(d.d_name, dirp->findFileData.cFileName);
     d.d_namlen = (unsigned int)strlen(d.d_name);
 
     return &d;
 }
 
 /** reopen the current directory */
-void rewinddir(DIR *dirp) {
-     closedir(dirp);
-     dirp->firstTime = TRUE;
+void
+rewinddir(DIR* dirp) {
+    closedir(dirp);
+    dirp->firstTime = TRUE;
 }
 
 #endif

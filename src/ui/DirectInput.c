@@ -19,10 +19,10 @@
  ***************************************************************************/
 
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <dinput.h>
 #include "DirectInput.h"
 #include "M32Util.h"
+#include <dinput.h>
+#include <windows.h>
 
 /***************************************************************************
 	function prototypes
@@ -59,46 +59,43 @@ static HANDLE hDLL = NULL;
  *
  ****************************************************************************/
 
-typedef HRESULT (WINAPI *dica_proc)(HINSTANCE hinst, DWORD dwVersion, LPDIRECTINPUTA *ppDI,
-									LPUNKNOWN punkOuter);
+typedef HRESULT(WINAPI* dica_proc)(HINSTANCE hinst, DWORD dwVersion, LPDIRECTINPUTA* ppDI, LPUNKNOWN punkOuter);
 
-BOOL DirectInputInitialize()
-{
-	HRESULT   hr;
-	UINT	  error_mode;
-	dica_proc dica;
+BOOL
+DirectInputInitialize() {
+    HRESULT hr;
+    UINT error_mode;
+    dica_proc dica;
 
-	if (hDLL != NULL)
-		return TRUE;
+    if (hDLL != NULL)
+        return TRUE;
 
-	hDLL = NULL;
+    hDLL = NULL;
 
-	/* Turn off error dialog for this call */
-	error_mode = SetErrorMode(0);
-	hDLL = LoadLibrary("dinput.dll");
-	SetErrorMode(error_mode);
+    /* Turn off error dialog for this call */
+    error_mode = SetErrorMode(0);
+    hDLL = LoadLibrary("dinput.dll");
+    SetErrorMode(error_mode);
 
-	if (hDLL == NULL)
-		return FALSE;
+    if (hDLL == NULL)
+        return FALSE;
 
-	dica = (dica_proc)GetProcAddress(hDLL, "DirectInputCreateA");
-	if (dica == NULL)
-		return FALSE;
+    dica = (dica_proc)GetProcAddress(hDLL, "DirectInputCreateA");
+    if (dica == NULL)
+        return FALSE;
 
-	hr = dica(GetModuleHandle(NULL), DIRECTINPUT_VERSION, &di, NULL);
+    hr = dica(GetModuleHandle(NULL), DIRECTINPUT_VERSION, &di, NULL);
 
-	if (FAILED(hr)) 
-	{
-		hr = dica(GetModuleHandle(NULL), 0x0300, &di, NULL);
+    if (FAILED(hr)) {
+        hr = dica(GetModuleHandle(NULL), 0x0300, &di, NULL);
 
-		if (FAILED(hr))
-		{
-			ErrorMsg("DirectInputCreate failed! error=%x\n", hr);
-			di = NULL;
-			return FALSE;
-		}
-	}
-	return TRUE;
+        if (FAILED(hr)) {
+            ErrorMsg("DirectInputCreate failed! error=%x\n", hr);
+            di = NULL;
+            return FALSE;
+        }
+    }
+    return TRUE;
 }
 
 /****************************************************************************
@@ -109,51 +106,49 @@ BOOL DirectInputInitialize()
  *
  ****************************************************************************/
 
-void DirectInputClose()
-{
-	/*
+void
+DirectInputClose() {
+    /*
 		Release any lingering IDirectInput object.
 	*/
-	if (di) 
-	{
-		IDirectInput_Release(di);
-		di = NULL;
-	}
+    if (di) {
+        IDirectInput_Release(di);
+        di = NULL;
+    }
 }
 
-BOOL CALLBACK inputEnumDeviceProc(LPCDIDEVICEINSTANCE pdidi, LPVOID pv)
-{
-	GUID *pguidDevice;
+BOOL CALLBACK
+inputEnumDeviceProc(LPCDIDEVICEINSTANCE pdidi, LPVOID pv) {
+    GUID* pguidDevice;
 
-	/* report back the instance guid of the device we enumerated */
-	if (pv)
-	{
-		pguidDevice  = (GUID *)pv;
-		*pguidDevice = pdidi->guidInstance;
-	}
+    /* report back the instance guid of the device we enumerated */
+    if (pv) {
+        pguidDevice = (GUID*)pv;
+        *pguidDevice = pdidi->guidInstance;
+    }
 
-	/* BUGBUG for now, stop after the first device has been found */
-	return DIENUM_STOP;
+    /* BUGBUG for now, stop after the first device has been found */
+    return DIENUM_STOP;
 }
 
-HRESULT SetDIDwordProperty(LPDIRECTINPUTDEVICE2 pdev, REFGUID guidProperty,
-						   DWORD dwObject, DWORD dwHow, DWORD dwValue)
-{
-	DIPROPDWORD dipdw;
+HRESULT
+SetDIDwordProperty(LPDIRECTINPUTDEVICE2 pdev, REFGUID guidProperty, DWORD dwObject, DWORD dwHow, DWORD dwValue) {
+    DIPROPDWORD dipdw;
 
-	dipdw.diph.dwSize		= sizeof(dipdw);
-	dipdw.diph.dwHeaderSize = sizeof(dipdw.diph);
-	dipdw.diph.dwObj		= dwObject;
-	dipdw.diph.dwHow		= dwHow;
-	dipdw.dwData			= dwValue;
+    dipdw.diph.dwSize = sizeof(dipdw);
+    dipdw.diph.dwHeaderSize = sizeof(dipdw.diph);
+    dipdw.diph.dwObj = dwObject;
+    dipdw.diph.dwHow = dwHow;
+    dipdw.dwData = dwValue;
 
-	return IDirectInputDevice2_SetProperty(pdev, guidProperty, &dipdw.diph);
+    return IDirectInputDevice2_SetProperty(pdev, guidProperty, &dipdw.diph);
 }
 
-LPDIRECTINPUT GetDirectInput(void)
-{
-	return di;
+LPDIRECTINPUT
+GetDirectInput(void) {
+    return di;
 }
+
 /***************************************************************************
 	Internal functions
  ***************************************************************************/

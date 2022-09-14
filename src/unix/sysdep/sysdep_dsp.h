@@ -20,36 +20,36 @@
 #ifndef __SYSDEP_DSP_H
 #define __SYSDEP_DSP_H
 
-#include "rc.h"
 #include "begin_code.h"
+#include "rc.h"
 
-#define SYSDEP_DSP_BYTES_PER_SAMPLE { 1, 2, 2, 4 }
+#define SYSDEP_DSP_BYTES_PER_SAMPLE                                                                                    \
+    { 1, 2, 2, 4 }
 
 /* valid flags for type */
-#define SYSDEP_DSP_8BIT   0x00
-#define SYSDEP_DSP_16BIT  0x01
-#define SYSDEP_DSP_MONO   0x00
-#define SYSDEP_DSP_STEREO 0x02
+#define SYSDEP_DSP_8BIT         0x00
+#define SYSDEP_DSP_16BIT        0x01
+#define SYSDEP_DSP_MONO         0x00
+#define SYSDEP_DSP_STEREO       0x02
 
 /* valid flags for sysdep_dsp_create */
 #define SYSDEP_DSP_EMULATE_TYPE 0x01
 /* TODO: implement SYSDEP_DSP_EMULATE_SAMPLERATE */
 /* #define SYSDEP_DSP_EMULATE_SAMPLERATE 0x02 */
-#define SYSDEP_DSP_O_NONBLOCK 0x04
+#define SYSDEP_DSP_O_NONBLOCK   0x04
 
 struct sysdep_dsp_struct;
 
-int sysdep_dsp_init(struct rc_struct *rc, const char *plugin_path);
+int sysdep_dsp_init(struct rc_struct* rc, const char* plugin_path);
 void sysdep_dsp_exit(void);
 
-struct sysdep_dsp_struct *sysdep_dsp_create(const char *plugin,
-   const char *device, int *samplerate, int *type, float bufsize, int flags);
-void sysdep_dsp_destroy(struct sysdep_dsp_struct *dsp);
+struct sysdep_dsp_struct* sysdep_dsp_create(const char* plugin, const char* device, int* samplerate, int* type,
+                                            float bufsize, int flags);
+void sysdep_dsp_destroy(struct sysdep_dsp_struct* dsp);
 
-int sysdep_dsp_get_freespace(struct sysdep_dsp_struct *dsp);
-int sysdep_dsp_write(struct sysdep_dsp_struct *dsp, unsigned char *data,
-   int count);
-int sysdep_dsp_get_max_freespace(struct sysdep_dsp_struct *dsp);
+int sysdep_dsp_get_freespace(struct sysdep_dsp_struct* dsp);
+int sysdep_dsp_write(struct sysdep_dsp_struct* dsp, unsigned char* data, int count);
+int sysdep_dsp_get_max_freespace(struct sysdep_dsp_struct* dsp);
 
 #include "end_code.h"
 #endif /* ifndef __SYSDEP_DSP_H */

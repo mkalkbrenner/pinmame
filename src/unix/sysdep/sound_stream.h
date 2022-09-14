@@ -20,19 +20,17 @@
 #ifndef __SOUND_STREAM_H
 #define __SOUND_STREAM_H
 
-#include "sysdep_dsp.h"
 #include "begin_code.h"
+#include "sysdep_dsp.h"
 
 struct sound_stream_struct;
 
-struct sound_stream_struct *sound_stream_create(struct sysdep_dsp_struct* dsp,
-   int type, int buf_size, int buf_count);
-void sound_stream_destroy(struct sound_stream_struct *stream);
+struct sound_stream_struct* sound_stream_create(struct sysdep_dsp_struct* dsp, int type, int buf_size, int buf_count);
+void sound_stream_destroy(struct sound_stream_struct* stream);
 
-void sound_stream_write(struct sound_stream_struct *stream,
-   unsigned char *data, int samples);
+void sound_stream_write(struct sound_stream_struct* stream, unsigned char* data, int samples);
 
-void sound_stream_update(struct sound_stream_struct *stream);
+void sound_stream_update(struct sound_stream_struct* stream);
 
 #include "end_code.h"
 #endif /* ifndef __SOUND_STREAM_H */

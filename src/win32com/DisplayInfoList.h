@@ -1,38 +1,37 @@
 #pragma once
 
-#include <vector>
 #include "DisplayInfo.h"
+#include <vector>
 
 using namespace std;
 
-class CDisplayInfoList
-{
-private:
-	/************************************************
+class CDisplayInfoList {
+  private:
+    /************************************************
 	 * Member Variables
 	 ***********************************************/
-	vector<CDisplayInfo> mDisplays;
+    vector<CDisplayInfo> mDisplays;
 
-public:
-	/************************************************
+  public:
+    /************************************************
 	 * Constructors
 	 ***********************************************/
-	CDisplayInfoList(void);
+    CDisplayInfoList(void);
 
-	/************************************************
+    /************************************************
 	 * Destructor
 	 ***********************************************/
-	~CDisplayInfoList(void);
+    ~CDisplayInfoList(void);
 
-	/************************************************
+    /************************************************
 	 * Methods
 	 ***********************************************/
-	void AddDisplay(GUID FAR *lpGuid, LPSTR lpDriverDesc, LPSTR lpDriverName);
-	BOOL Enumerate();
+    void AddDisplay(GUID FAR* lpGuid, LPSTR lpDriverDesc, LPSTR lpDriverName);
+    BOOL Enumerate();
 
-	/************************************************
+    /************************************************
 	 * Properties
 	 ***********************************************/
-	CDisplayInfo* Item(size_t index);
-	size_t Count(void) const;
+    CDisplayInfo* Item(size_t index);
+    size_t Count(void) const;
 };

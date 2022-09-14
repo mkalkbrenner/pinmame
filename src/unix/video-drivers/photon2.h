@@ -15,12 +15,13 @@
 #ifndef __MAME_PHOTON_H_
 #define __MAME_PHOTON_H_
 
+#include "effect.h"
 #include <Ph.h>
 #include <Pt.h>
-#include "effect.h"
 
 /* Commented... */
 enum { PH_WINDOW, PH_OVR };
+
 #define PH_MODE_COUNT 2
 
 #ifdef __PH_C__
@@ -29,19 +30,18 @@ enum { PH_WINDOW, PH_OVR };
 #define EXTERN extern
 #endif
 
-EXTERN int 		ph_video_mode;
-EXTERN int 		mode_available[PH_MODE_COUNT];
-EXTERN int 		ph_grab_mouse;
-EXTERN int 		depth;
-EXTERN int		show_cursor;
-EXTERN unsigned char    *scaled_buffer_ptr;
-EXTERN PtWidget_t	*P_mainWindow;
-EXTERN struct _Ph_ctrl  *ph_ctx;
+EXTERN int ph_video_mode;
+EXTERN int mode_available[PH_MODE_COUNT];
+EXTERN int ph_grab_mouse;
+EXTERN int depth;
+EXTERN int show_cursor;
+EXTERN unsigned char* scaled_buffer_ptr;
+EXTERN PtWidget_t* P_mainWindow;
+EXTERN struct _Ph_ctrl* ph_ctx;
 extern struct rc_option ph_window_opts[];
 extern struct rc_option ph_ovr_opts[];
 extern struct rc_option ph_input_opts[];
-EXTERN char		phkey[128];
-
+EXTERN char phkey[128];
 
 #if 0
 
@@ -85,24 +85,23 @@ EXTERN int devicebuttonmotion;
 void process_x11_joy_event(XEvent *event);
 #endif
 
-
 /* Normal photon window functions */
-int  ph_window_create_display(int depth);
+int ph_window_create_display(int depth);
 void ph_window_close_display(void);
-int  ph_window_modify_pen(int pen, unsigned char red,unsigned char green,unsigned char blue);
-void ph_window_update_display(struct mame_bitmap *bitmap);
-int  ph_window_alloc_palette(int writable_colors);
+int ph_window_modify_pen(int pen, unsigned char red, unsigned char green, unsigned char blue);
+void ph_window_update_display(struct mame_bitmap* bitmap);
+int ph_window_alloc_palette(int writable_colors);
 void ph_window_refresh_screen(void);
-int  ph_window_16bpp_capable(void);
+int ph_window_16bpp_capable(void);
 
 /* photon video overlay functions */
-int  ph_ovr_init(void);
-int  ph_ovr_create_display(int depth);
+int ph_ovr_init(void);
+int ph_ovr_create_display(int depth);
 void ph_ovr_close_display(void);
-int  ph_ovr_modify_pen(int pen, unsigned char red,unsigned char green,unsigned char blue);
-void ph_ovr_update_display(struct mame_bitmap *bitmap);
-int  ph_ovr_alloc_palette(int writable_colors);
-int  ph_ovr_16bpp_capable(void);
+int ph_ovr_modify_pen(int pen, unsigned char red, unsigned char green, unsigned char blue);
+void ph_ovr_update_display(struct mame_bitmap* bitmap);
+int ph_ovr_alloc_palette(int writable_colors);
+int ph_ovr_16bpp_capable(void);
 
 #if 0
 /* XIL functions */

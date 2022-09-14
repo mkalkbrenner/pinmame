@@ -9,58 +9,47 @@
  * Copyright (C) 2000-2001, The PhMAME Developement Team.
 */
 
+#include "devices.h"
+#include "phkeyboard.h"
+#include "photon2.h"
+#include "xmame.h"
 #include <Ph.h>
 #include <Pt.h>
-#include "xmame.h"
-#include "devices.h"
-#include "photon2.h"
-#include "phkeyboard.h"
 
-int current_mouse[MOUSE_AXIS] = {0,0,0,0,0,0,0,0};
-int update_mouse=FALSE;
+int current_mouse[MOUSE_AXIS] = {0, 0, 0, 0, 0, 0, 0, 0};
+int update_mouse = FALSE;
 
 static int ph_use_winkeys = 0;
 
-static int ph_mapkey(struct rc_option *option, const char *arg, int priority);
+static int ph_mapkey(struct rc_option* option, const char* arg, int priority);
 
 struct rc_option ph_input_opts[] = {
-   /* name, shortname, type, dest, deflt, min, max, func, help */
-   { "Photon-input related", NULL,		rc_seperator,	NULL,
-     NULL,		0,			0,		NULL,
-     NULL },
-   { "grabmouse",	"nograbmouse",		rc_bool,	&ph_grab_mouse,
-     "0",		0,			0,		NULL,
-     "Enable/disable mousegrabbing (also alt + pagedown)" },
-   { "winkeys",		"nowinkeys",		rc_bool,	&ph_use_winkeys,
-     "0",		0,			0,		NULL,
-     "Enable/disable mapping of windowskeys under Photon" },
-   { "mapkey",		NULL,			rc_use_function, NULL,
-     NULL,		0,			0,		ph_mapkey,
-     "Set a specific key mapping, see phmamerc.dist" },
-   { NULL,		NULL,			rc_end,		NULL,
-     NULL,		0,			0,		NULL,
-     NULL }
-};
+    /* name, shortname, type, dest, deflt, min, max, func, help */
+    {"Photon-input related", NULL, rc_seperator, NULL, NULL, 0, 0, NULL, NULL},
+    {"grabmouse", "nograbmouse", rc_bool, &ph_grab_mouse, "0", 0, 0, NULL,
+     "Enable/disable mousegrabbing (also alt + pagedown)"},
+    {"winkeys", "nowinkeys", rc_bool, &ph_use_winkeys, "0", 0, 0, NULL,
+     "Enable/disable mapping of windowskeys under Photon"},
+    {"mapkey", NULL, rc_use_function, NULL, NULL, 0, 0, ph_mapkey, "Set a specific key mapping, see phmamerc.dist"},
+    {NULL, NULL, rc_end, NULL, NULL, 0, 0, NULL, NULL}};
 
 /*
  * Parse keyboard events
  */
 
-#define EVENT_SIZE      sizeof(PhEvent_t) + 1000
+#define EVENT_SIZE sizeof(PhEvent_t) + 1000
 unsigned char cevent[EVENT_SIZE];
 
-void sysdep_update_keyboard (void)
-{
-	PhEvent_t *event=&cevent;
+void
+sysdep_update_keyboard(void) {
+    PhEvent_t* event = &cevent;
 
-	while ( PhEventPeek (event,EVENT_SIZE) == Ph_EVENT_MSG)
-	{
-		PtEventHandler(event);
-	}
-	
+    while (PhEventPeek(event, EVENT_SIZE) == Ph_EVENT_MSG) {
+        PtEventHandler(event);
+    }
 
-// This is where the photon event handling code goes
-	  
+    // This is where the photon event handling code goes
+
 #if 0
   XEvent 		E;
   int	 		keycode,code;
@@ -155,7 +144,7 @@ void sysdep_update_keyboard (void)
 	break;	
       case LeaveNotify:
 	if (use_private_cmap) XInstallColormap(display,DefaultColormapOfScreen(screen));
-	break;	
+	break;
 #ifdef USE_XIL
       case ConfigureNotify:
 	update_xil_window_size( E.xconfigure.width, E.xconfigure.height );
@@ -211,70 +200,62 @@ void sysdep_update_keyboard (void)
  *  invoiced in startup code
  *  returns 0-> success 1-> invalid from or to
  */
-static int ph_mapkey(struct rc_option *option, const char *arg, int priority)
-{
-   int from,to;
-   /* ultrix sscanf() requires explicit leading of 0x for hex numbers */
-   if ( sscanf(arg,"0x%x,0x%x",&from,&to) == 2)
-   {
-      /* perform tests */
-      /* fprintf(stderr_file,"trying to map %x to%x\n",from,to); */
-      if ( (to>=0) || (to<=127) )
-      {
-         if ( (from>=0) && (from<=0x00ff) ) 
-         {
-            code_table[from]=to; return OSD_OK;
-         }
-         if ( (from>=0xfe00) && (from<=0xffff) ) 
-         {
-            extended_code_table[from&0x01ff]=to; return OSD_OK;
-         }
-      }
-      /* stderr_file isn't defined yet when we're called. */
-      fprintf(stderr,"Invalid keymapping %s. Ignoring...\n", arg);
-   }
-   return OSD_NOT_OK;
+static int
+ph_mapkey(struct rc_option* option, const char* arg, int priority) {
+    int from, to;
+    /* ultrix sscanf() requires explicit leading of 0x for hex numbers */
+    if (sscanf(arg, "0x%x,0x%x", &from, &to) == 2) {
+        /* perform tests */
+        /* fprintf(stderr_file,"trying to map %x to%x\n",from,to); */
+        if ((to >= 0) || (to <= 127)) {
+            if ((from >= 0) && (from <= 0x00ff)) {
+                code_table[from] = to;
+                return OSD_OK;
+            }
+            if ((from >= 0xfe00) && (from <= 0xffff)) {
+                extended_code_table[from & 0x01ff] = to;
+                return OSD_OK;
+            }
+        }
+        /* stderr_file isn't defined yet when we're called. */
+        fprintf(stderr, "Invalid keymapping %s. Ignoring...\n", arg);
+    }
+    return OSD_NOT_OK;
 }
 
-void sysdep_mouse_poll (void)
-{
+void
+sysdep_mouse_poll(void) {
 #if 1
-	int i;
-	PhCursorInfo_t buf;
-	PhPoint_t	windowpos;
-	int ig;
+    int i;
+    PhCursorInfo_t buf;
+    PhPoint_t windowpos;
+    int ig;
 
-	ig=PhInputGroup(NULL);
-	
-	if (PhQueryCursor(ig,&buf) != 0 )
-	{
-		fprintf(stderr,"error: mouse Error\n");
-		mouse_data[0].deltas[0] = 0;
-		mouse_data[0].deltas[1] = 0;
-		return;
-	}
+    ig = PhInputGroup(NULL);
 
-	if ( ph_grab_mouse )
-	{
-//		fprintf(stderr,"grabbing mouse\n");
-		PtGetAbsPosition(P_mainWindow,&windowpos.x, &windowpos.y);
-		PhMoveCursorAbs(ig, windowpos.x+(visual_width/2), windowpos.y+(visual_height/2));
-		mouse_data[0].deltas[0] = buf.pos.x - (windowpos.x+(visual_width/2));
-		mouse_data[0].deltas[1] = buf.pos.y - (windowpos.y+(visual_height/2));
+    if (PhQueryCursor(ig, &buf) != 0) {
+        fprintf(stderr, "error: mouse Error\n");
+        mouse_data[0].deltas[0] = 0;
+        mouse_data[0].deltas[1] = 0;
+        return;
+    }
 
-	}
-	else
-	{
-		if (update_mouse==FALSE)
-		{
-			mouse_data[0].deltas[0]=0;
-			mouse_data[0].deltas[0]=0;
-		}
-		update_mouse=FALSE;
-	}
+    if (ph_grab_mouse) {
+        //		fprintf(stderr,"grabbing mouse\n");
+        PtGetAbsPosition(P_mainWindow, &windowpos.x, &windowpos.y);
+        PhMoveCursorAbs(ig, windowpos.x + (visual_width / 2), windowpos.y + (visual_height / 2));
+        mouse_data[0].deltas[0] = buf.pos.x - (windowpos.x + (visual_width / 2));
+        mouse_data[0].deltas[1] = buf.pos.y - (windowpos.y + (visual_height / 2));
+
+    } else {
+        if (update_mouse == FALSE) {
+            mouse_data[0].deltas[0] = 0;
+            mouse_data[0].deltas[0] = 0;
+        }
+        update_mouse = FALSE;
+    }
 #endif
 }
 
-void sysdep_set_leds(int leds)
-{
-}
+void
+sysdep_set_leds(int leds) {}

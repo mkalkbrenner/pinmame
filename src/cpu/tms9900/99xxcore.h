@@ -64,172 +64,170 @@ Tons of thanks to the guy who posted these, whoever he is...
 #define SILLY_INTERRUPT_HACK 0
 
 #if SILLY_INTERRUPT_HACK
-	#define IRQ_MAGIC_LEVEL -2
+#define IRQ_MAGIC_LEVEL -2
 #endif
 
 #define VERBOSE 0
 
 #if VERBOSE
-#define LOG(x)	logerror x
+#define LOG(x) logerror x
 #else
 #define LOG(x)
 #endif
 
+#include "mamedbg.h"
 #include "memory.h"
 #include "timer.h"
-#include "mamedbg.h"
 #include "tms9900.h"
 #include <math.h>
 
-
 #if (TMS99XX_MODEL == TMS9900_ID)
 
-	#define TMS99XX_ICOUNT tms9900_ICount
-	#define TMS99XX_INIT tms9900_init
-	#define TMS99XX_RESET tms9900_reset
-	#define TMS99XX_EXIT tms9900_exit
-	#define TMS99XX_EXECUTE tms9900_execute
-	#define TMS99XX_GET_CONTEXT tms9900_get_context
-	#define TMS99XX_SET_CONTEXT tms9900_set_context
-	#define TMS99XX_GET_REG tms9900_get_reg
-	#define TMS99XX_SET_REG tms9900_set_reg
-	#define TMS99XX_SET_IRQ_CALLBACK tms9900_set_irq_callback
-	#define TMS99XX_INFO tms9900_info
-	#define TMS99XX_DASM tms9900_dasm
+#define TMS99XX_ICOUNT           tms9900_ICount
+#define TMS99XX_INIT             tms9900_init
+#define TMS99XX_RESET            tms9900_reset
+#define TMS99XX_EXIT             tms9900_exit
+#define TMS99XX_EXECUTE          tms9900_execute
+#define TMS99XX_GET_CONTEXT      tms9900_get_context
+#define TMS99XX_SET_CONTEXT      tms9900_set_context
+#define TMS99XX_GET_REG          tms9900_get_reg
+#define TMS99XX_SET_REG          tms9900_set_reg
+#define TMS99XX_SET_IRQ_CALLBACK tms9900_set_irq_callback
+#define TMS99XX_INFO             tms9900_info
+#define TMS99XX_DASM             tms9900_dasm
 
-	#define TMS99XX_CPU_NAME "TMS9900"
+#define TMS99XX_CPU_NAME         "TMS9900"
 
 #elif (TMS99XX_MODEL == TMS9940_ID)
 
-	#define TMS99XX_ICOUNT tms9940_ICount
-	#define TMS99XX_INIT tms9940_init
-	#define TMS99XX_RESET tms9940_reset
-	#define TMS99XX_EXIT tms9940_exit
-	#define TMS99XX_EXECUTE tms9940_execute
-	#define TMS99XX_GET_CONTEXT tms9940_get_context
-	#define TMS99XX_SET_CONTEXT tms9940_set_context
-	#define TMS99XX_GET_REG tms9940_get_reg
-	#define TMS99XX_SET_REG tms9940_set_reg
-	#define TMS99XX_SET_IRQ_CALLBACK tms9940_set_irq_callback
-	#define TMS99XX_INFO tms9940_info
-	#define TMS99XX_DASM tms9940_dasm
+#define TMS99XX_ICOUNT           tms9940_ICount
+#define TMS99XX_INIT             tms9940_init
+#define TMS99XX_RESET            tms9940_reset
+#define TMS99XX_EXIT             tms9940_exit
+#define TMS99XX_EXECUTE          tms9940_execute
+#define TMS99XX_GET_CONTEXT      tms9940_get_context
+#define TMS99XX_SET_CONTEXT      tms9940_set_context
+#define TMS99XX_GET_REG          tms9940_get_reg
+#define TMS99XX_SET_REG          tms9940_set_reg
+#define TMS99XX_SET_IRQ_CALLBACK tms9940_set_irq_callback
+#define TMS99XX_INFO             tms9940_info
+#define TMS99XX_DASM             tms9940_dasm
 
-	#define TMS99XX_CPU_NAME "TMS9940"
+#define TMS99XX_CPU_NAME         "TMS9940"
 
-	#error "tms9940 is not yet supported"
+#error "tms9940 is not yet supported"
 
 #elif (TMS99XX_MODEL == TMS9980_ID)
 
-	#define TMS99XX_ICOUNT tms9980a_ICount
-	#define TMS99XX_INIT tms9980a_init
-	#define TMS99XX_RESET tms9980a_reset
-	#define TMS99XX_EXIT tms9980a_exit
-	#define TMS99XX_EXECUTE tms9980a_execute
-	#define TMS99XX_GET_CONTEXT tms9980a_get_context
-	#define TMS99XX_SET_CONTEXT tms9980a_set_context
-	#define TMS99XX_GET_REG tms9980a_get_reg
-	#define TMS99XX_SET_REG tms9980a_set_reg
-	#define TMS99XX_SET_IRQ_CALLBACK tms9980a_set_irq_callback
-	#define TMS99XX_INFO tms9980a_info
-	#define TMS99XX_DASM tms9980a_dasm
+#define TMS99XX_ICOUNT           tms9980a_ICount
+#define TMS99XX_INIT             tms9980a_init
+#define TMS99XX_RESET            tms9980a_reset
+#define TMS99XX_EXIT             tms9980a_exit
+#define TMS99XX_EXECUTE          tms9980a_execute
+#define TMS99XX_GET_CONTEXT      tms9980a_get_context
+#define TMS99XX_SET_CONTEXT      tms9980a_set_context
+#define TMS99XX_GET_REG          tms9980a_get_reg
+#define TMS99XX_SET_REG          tms9980a_set_reg
+#define TMS99XX_SET_IRQ_CALLBACK tms9980a_set_irq_callback
+#define TMS99XX_INFO             tms9980a_info
+#define TMS99XX_DASM             tms9980a_dasm
 
-	#define TMS99XX_CPU_NAME "TMS9980A/TMS9981"
+#define TMS99XX_CPU_NAME         "TMS9980A/TMS9981"
 
 #elif (TMS99XX_MODEL == TMS9985_ID)
 
-	#define TMS99XX_ICOUNT tms9985_ICount
-	#define TMS99XX_INIT tms9985_init
-	#define TMS99XX_RESET tms9985_reset
-	#define TMS99XX_EXIT tms9985_exit
-	#define TMS99XX_EXECUTE tms9985_execute
-	#define TMS99XX_GET_CONTEXT tms9985_get_context
-	#define TMS99XX_SET_CONTEXT tms9985_set_context
-	#define TMS99XX_GET_REG tms9985_get_reg
-	#define TMS99XX_SET_REG tms9985_set_reg
-	#define TMS99XX_SET_IRQ_CALLBACK tms9985_set_irq_callback
-	#define TMS99XX_INFO tms9985_info
-	#define TMS99XX_DASM tms9985_dasm
+#define TMS99XX_ICOUNT           tms9985_ICount
+#define TMS99XX_INIT             tms9985_init
+#define TMS99XX_RESET            tms9985_reset
+#define TMS99XX_EXIT             tms9985_exit
+#define TMS99XX_EXECUTE          tms9985_execute
+#define TMS99XX_GET_CONTEXT      tms9985_get_context
+#define TMS99XX_SET_CONTEXT      tms9985_set_context
+#define TMS99XX_GET_REG          tms9985_get_reg
+#define TMS99XX_SET_REG          tms9985_set_reg
+#define TMS99XX_SET_IRQ_CALLBACK tms9985_set_irq_callback
+#define TMS99XX_INFO             tms9985_info
+#define TMS99XX_DASM             tms9985_dasm
 
-	#define TMS99XX_CPU_NAME "TMS9985"
+#define TMS99XX_CPU_NAME         "TMS9985"
 
-	#error "tms9985 is not yet supported"
+#error "tms9985 is not yet supported"
 
 #elif (TMS99XX_MODEL == TMS9989_ID)
 
-	#define TMS99XX_ICOUNT tms9989_ICount
-	#define TMS99XX_INIT tms9989_init
-	#define TMS99XX_RESET tms9989_reset
-	#define TMS99XX_EXIT tms9989_exit
-	#define TMS99XX_EXECUTE tms9989_execute
-	#define TMS99XX_GET_CONTEXT tms9989_get_context
-	#define TMS99XX_SET_CONTEXT tms9989_set_context
-	#define TMS99XX_GET_REG tms9989_get_reg
-	#define TMS99XX_SET_REG tms9989_set_reg
-	#define TMS99XX_SET_IRQ_CALLBACK tms9989_set_irq_callback
-	#define TMS99XX_INFO tms9989_info
-	#define TMS99XX_DASM tms9989_dasm
+#define TMS99XX_ICOUNT           tms9989_ICount
+#define TMS99XX_INIT             tms9989_init
+#define TMS99XX_RESET            tms9989_reset
+#define TMS99XX_EXIT             tms9989_exit
+#define TMS99XX_EXECUTE          tms9989_execute
+#define TMS99XX_GET_CONTEXT      tms9989_get_context
+#define TMS99XX_SET_CONTEXT      tms9989_set_context
+#define TMS99XX_GET_REG          tms9989_get_reg
+#define TMS99XX_SET_REG          tms9989_set_reg
+#define TMS99XX_SET_IRQ_CALLBACK tms9989_set_irq_callback
+#define TMS99XX_INFO             tms9989_info
+#define TMS99XX_DASM             tms9989_dasm
 
-	#define TMS99XX_CPU_NAME "TMS9989"
+#define TMS99XX_CPU_NAME         "TMS9989"
 
-	#error "tms9989 is not yet supported"
+#error "tms9989 is not yet supported"
 
 #elif (TMS99XX_MODEL == TMS9995_ID)
 
-	#define TMS99XX_ICOUNT tms9995_ICount
-	#define TMS99XX_INIT tms9995_init
-	#define TMS99XX_RESET tms9995_reset
-	#define TMS99XX_EXIT tms9995_exit
-	#define TMS99XX_EXECUTE tms9995_execute
-	#define TMS99XX_GET_CONTEXT tms9995_get_context
-	#define TMS99XX_SET_CONTEXT tms9995_set_context
-	#define TMS99XX_GET_REG tms9995_get_reg
-	#define TMS99XX_SET_REG tms9995_set_reg
-	#define TMS99XX_SET_IRQ_CALLBACK tms9995_set_irq_callback
-	#define TMS99XX_INFO tms9995_info
-	#define TMS99XX_DASM tms9995_dasm
+#define TMS99XX_ICOUNT           tms9995_ICount
+#define TMS99XX_INIT             tms9995_init
+#define TMS99XX_RESET            tms9995_reset
+#define TMS99XX_EXIT             tms9995_exit
+#define TMS99XX_EXECUTE          tms9995_execute
+#define TMS99XX_GET_CONTEXT      tms9995_get_context
+#define TMS99XX_SET_CONTEXT      tms9995_set_context
+#define TMS99XX_GET_REG          tms9995_get_reg
+#define TMS99XX_SET_REG          tms9995_set_reg
+#define TMS99XX_SET_IRQ_CALLBACK tms9995_set_irq_callback
+#define TMS99XX_INFO             tms9995_info
+#define TMS99XX_DASM             tms9995_dasm
 
-	#define TMS99XX_CPU_NAME "TMS9995"
+#define TMS99XX_CPU_NAME         "TMS9995"
 
 #elif (TMS99XX_MODEL == TMS99105A_ID)
 
-	#define TMS99XX_ICOUNT tms99105a_ICount
-	#define TMS99XX_INIT tms99105a_init
-	#define TMS99XX_RESET tms99105a_reset
-	#define TMS99XX_EXIT tms99105a_exit
-	#define TMS99XX_EXECUTE tms99105a_execute
-	#define TMS99XX_GET_CONTEXT tms99105a_get_context
-	#define TMS99XX_SET_CONTEXT tms99105a_set_context
-	#define TMS99XX_GET_REG tms99105a_get_reg
-	#define TMS99XX_SET_REG tms99105a_set_reg
-	#define TMS99XX_SET_IRQ_CALLBACK tms99105a_set_irq_callback
-	#define TMS99XX_INFO tms99105a_info
-	#define TMS99XX_DASM tms99105a_dasm
+#define TMS99XX_ICOUNT           tms99105a_ICount
+#define TMS99XX_INIT             tms99105a_init
+#define TMS99XX_RESET            tms99105a_reset
+#define TMS99XX_EXIT             tms99105a_exit
+#define TMS99XX_EXECUTE          tms99105a_execute
+#define TMS99XX_GET_CONTEXT      tms99105a_get_context
+#define TMS99XX_SET_CONTEXT      tms99105a_set_context
+#define TMS99XX_GET_REG          tms99105a_get_reg
+#define TMS99XX_SET_REG          tms99105a_set_reg
+#define TMS99XX_SET_IRQ_CALLBACK tms99105a_set_irq_callback
+#define TMS99XX_INFO             tms99105a_info
+#define TMS99XX_DASM             tms99105a_dasm
 
-	#define TMS99XX_CPU_NAME "TMS99105A"
+#define TMS99XX_CPU_NAME         "TMS99105A"
 
-	#error "tms99105a is not yet supported"
+#error "tms99105a is not yet supported"
 
 #elif (TMS99XX_MODEL == TMS99110A_ID)
 
-	#define TMS99XX_ICOUNT tms99110a_ICount
-	#define TMS99XX_INIT tms99110a_init
-	#define TMS99XX_RESET tms99110a_reset
-	#define TMS99XX_EXIT tms99110a_exit
-	#define TMS99XX_EXECUTE tms99110a_execute
-	#define TMS99XX_GET_CONTEXT tms99110a_get_context
-	#define TMS99XX_SET_CONTEXT tms99110a_set_context
-	#define TMS99XX_GET_REG tms99110a_get_reg
-	#define TMS99XX_SET_REG tms99110a_set_reg
-	#define TMS99XX_SET_IRQ_CALLBACK tms99110a_set_irq_callback
-	#define TMS99XX_INFO tms99110a_info
-	#define TMS99XX_DASM tms99110a_dasm
+#define TMS99XX_ICOUNT           tms99110a_ICount
+#define TMS99XX_INIT             tms99110a_init
+#define TMS99XX_RESET            tms99110a_reset
+#define TMS99XX_EXIT             tms99110a_exit
+#define TMS99XX_EXECUTE          tms99110a_execute
+#define TMS99XX_GET_CONTEXT      tms99110a_get_context
+#define TMS99XX_SET_CONTEXT      tms99110a_set_context
+#define TMS99XX_GET_REG          tms99110a_get_reg
+#define TMS99XX_SET_REG          tms99110a_set_reg
+#define TMS99XX_SET_IRQ_CALLBACK tms99110a_set_irq_callback
+#define TMS99XX_INFO             tms99110a_info
+#define TMS99XX_DASM             tms99110a_dasm
 
-	#define TMS99XX_CPU_NAME "TMS99110A"
+#define TMS99XX_CPU_NAME         "TMS99110A"
 
-	#error "tms99110a is not yet supported"
+#error "tms99110a is not yet supported"
 
 #endif
-
 
 INLINE void execute(UINT16 opcode);
 
@@ -245,29 +243,45 @@ static void field_interrupt(void);
 /* Mame Interface Routines */
 /***************************/
 
-
 static UINT8 tms9900_reg_layout[] = {
-	TMS9900_PC, TMS9900_WP, TMS9900_STATUS, TMS9900_IR
+    TMS9900_PC,
+    TMS9900_WP,
+    TMS9900_STATUS,
+    TMS9900_IR
 #ifdef MAME_DEBUG
-	, -1,
-	TMS9900_R0, TMS9900_R1, TMS9900_R2, TMS9900_R3,
-	TMS9900_R4, TMS9900_R5, TMS9900_R6, TMS9900_R7, -1,
-	TMS9900_R8, TMS9900_R9, TMS9900_R10, TMS9900_R11,
-	TMS9900_R12, TMS9900_R13, TMS9900_R14, TMS9900_R15, -1,
+    ,
+    -1,
+    TMS9900_R0,
+    TMS9900_R1,
+    TMS9900_R2,
+    TMS9900_R3,
+    TMS9900_R4,
+    TMS9900_R5,
+    TMS9900_R6,
+    TMS9900_R7,
+    -1,
+    TMS9900_R8,
+    TMS9900_R9,
+    TMS9900_R10,
+    TMS9900_R11,
+    TMS9900_R12,
+    TMS9900_R13,
+    TMS9900_R14,
+    TMS9900_R15,
+    -1,
 #endif
 };
 
 /* Layout of the debugger windows x,y,w,h */
 static UINT8 tms9900_win_layout[] = {
-	 0, 0,80, 4,	/* register window (top rows) */
-	 0, 5,31,17,	/* disassembler window (left colums) */
-	32, 5,48, 8,	/* memory #1 window (right, upper middle) */
-	32,14,48, 8,	/* memory #2 window (right, lower middle) */
-	 0,23,80, 1,	/* command line window (bottom rows) */
+    0,  0,  80, 4,  /* register window (top rows) */
+    0,  5,  31, 17, /* disassembler window (left colums) */
+    32, 5,  48, 8,  /* memory #1 window (right, upper middle) */
+    32, 14, 48, 8,  /* memory #2 window (right, lower middle) */
+    0,  23, 80, 1,  /* command line window (bottom rows) */
 };
 
 int TMS99XX_ICOUNT = 0;
-
 
 /* tms9900 ST register bits. */
 
@@ -288,14 +302,14 @@ int TMS99XX_ICOUNT = 0;
 #if (TMS99XX_MODEL != TMS9940_ID)
 
 /* This bit is set by the XOP instruction. */
-#define ST_X   0x0200 /* Xop */
+#define ST_X 0x0200 /* Xop */
 
 #endif
 
 #if (TMS99XX_MODEL == TMS9940_ID)
 
 /* This bit is set by arithmetic operations to support BCD */
-#define ST_DC  0x0100 /* Digit Carry */
+#define ST_DC 0x0100 /* Digit Carry */
 
 #endif
 
@@ -326,13 +340,12 @@ a ST_MASK */
 
 #endif
 
-
 /* Offsets for registers. */
-#define R0   0
-#define R1   2
-#define R2   4
-#define R3   6
-#define R4   8
+#define R0  0
+#define R1  2
+#define R2  4
+#define R3  6
+#define R4  8
 #define R5  10
 #define R6  12
 #define R7  14
@@ -345,78 +358,76 @@ a ST_MASK */
 #define R14 28
 #define R15 30
 
-typedef struct
-{
-/* "actual" tms9900 registers : */
-	UINT16 WP;  /* Workspace pointer */
-	UINT16 PC;  /* Program counter */
-	UINT16 STATUS;  /* STatus register */
+typedef struct {
+    /* "actual" tms9900 registers : */
+    UINT16 WP;     /* Workspace pointer */
+    UINT16 PC;     /* Program counter */
+    UINT16 STATUS; /* STatus register */
 
-/* Now, data used for emulation */
-	UINT16 IR;  /* Instruction register, with the currently parsed opcode */
+    /* Now, data used for emulation */
+    UINT16 IR; /* Instruction register, with the currently parsed opcode */
 
-	int interrupt_pending;  /* true if an interrupt must be honored... */
+    int interrupt_pending; /* true if an interrupt must be honored... */
 
-	int load_state; /* nonzero if the LOAD* line is active (low) */
+    int load_state; /* nonzero if the LOAD* line is active (low) */
 
 #if ((TMS99XX_MODEL == TMS9900_ID) || (TMS99XX_MODEL == TMS9980_ID))
-	/* On tms9900, we cache the state of INTREQ* and IC0-IC3 here */
-	/* On tms9980/9981, we translate the state of IC0-IC2 to the equivalent state for a tms9900,
+    /* On tms9900, we cache the state of INTREQ* and IC0-IC3 here */
+    /* On tms9980/9981, we translate the state of IC0-IC2 to the equivalent state for a tms9900,
 	and store the result here */
-	int irq_level;	/* when INTREQ* is active, interrupt level on IC0-IC3 ; else always 16 */
-	int irq_state;	/* nonzero if the INTREQ* line is active (low) */
+    int irq_level; /* when INTREQ* is active, interrupt level on IC0-IC3 ; else always 16 */
+    int irq_state; /* nonzero if the INTREQ* line is active (low) */
 #elif (TMS99XX_MODEL == TMS9995_ID)
-	/* tms9995 is quite different : it latches the interrupt inputs */
-	int irq_level;    /* We store the level of the request with the highest level here */
-	int int_state;    /* interrupt lines state */
-	int int_latch;	  /* interrupt latches state */
+    /* tms9995 is quite different : it latches the interrupt inputs */
+    int irq_level; /* We store the level of the request with the highest level here */
+    int int_state; /* interrupt lines state */
+    int int_latch; /* interrupt latches state */
 #endif
 
-	/* interrupt callback */
-	/* note that this callback is used by tms9900_set_irq_line() and tms9980a_set_irq_line() to
+    /* interrupt callback */
+    /* note that this callback is used by tms9900_set_irq_line() and tms9980a_set_irq_line() to
 	retreive the value on IC0-IC3 (non-standard behaviour) */
-	int (*irq_callback)(int irq_line);
+    int (*irq_callback)(int irq_line);
 
-	int IDLE;       /* nonzero if processor is IDLE - i.e waiting for interrupt while writing
+    int IDLE; /* nonzero if processor is IDLE - i.e waiting for interrupt while writing
 	                    special data on CRU bus */
 
 #ifdef MAME_DEBUG
-	UINT16 FR[16];  /* contains a copy of the workspace for the needs of the debugger */
+    UINT16 FR[16]; /* contains a copy of the workspace for the needs of the debugger */
 #endif
 
 #if (TMS99XX_MODEL == TMS9985_ID) || (TMS99XX_MODEL == TMS9995_ID)
-	unsigned char RAM[256]; /* on-chip RAM (yes, sir !) */
+    unsigned char RAM[256]; /* on-chip RAM (yes, sir !) */
 #endif
 
 #if (TMS99XX_MODEL == TMS9995_ID)
-	/* on-chip event counter/timer*/
-	int decrementer_enabled;
-	UINT16 decrementer_interval;
-	UINT16 decrementer_count;	/* used in event counter mode*/
-	mame_timer *timer;  /* used in timer mode */
+    /* on-chip event counter/timer*/
+    int decrementer_enabled;
+    UINT16 decrementer_interval;
+    UINT16 decrementer_count; /* used in event counter mode*/
+    mame_timer* timer;        /* used in timer mode */
 #endif
 
 #if (TMS99XX_MODEL == TMS9995_ID)
-	/* additionnal registers */
-	UINT16 flag; 	  /* flag register */
-	int MID_flag;   /* MID flag register */
+    /* additionnal registers */
+    UINT16 flag;  /* flag register */
+    int MID_flag; /* MID flag register */
 #endif
 
 #if (TMS99XX_MODEL == TMS9995_ID)
-	/* chip config, which can be set on reset */
-	int memory_wait_states_byte;
-	int memory_wait_states_word;
+    /* chip config, which can be set on reset */
+    int memory_wait_states_byte;
+    int memory_wait_states_word;
 #endif
-}	tms99xx_Regs;
+} tms99xx_Regs;
 
-static tms99xx_Regs I =
-{
-	0,0,0,0,  /* don't care */
-	0,        /* no pending interrupt */
-	0,        /* LOAD* inactive */
-  16, 0,    /* INTREQ* inactive */
+static tms99xx_Regs I = {
+    0,  0, 0, 0, /* don't care */
+    0,           /* no pending interrupt */
+    0,           /* LOAD* inactive */
+    16, 0,       /* INTREQ* inactive */
 };
-static UINT8 lastparity;  /* rather than handling ST_OP directly, we copy the last value which
+static UINT8 lastparity; /* rather than handling ST_OP directly, we copy the last value which
                                   would set it here */
 /* Some instructions (i.e. XOP, BLWP, and MID) disable interrupt recognition until another
 instruction is executed : so they set this flag */
@@ -427,228 +438,196 @@ static void reset_decrementer(void);
 #endif
 
 #if (TMS99XX_MODEL == TMS9900_ID)
-	/*16-bit data bus, 16-bit address bus*/
-	/*Note that tms9900 actually never accesses a single byte : when performing byte operations,
+/*16-bit data bus, 16-bit address bus*/
+/*Note that tms9900 actually never accesses a single byte : when performing byte operations,
 	it reads a 16-bit word, changes the revelant byte, then write a complete word.  You should
 	remember this when writing memory handlers.*/
-	/*This does not apply to tms9995 and tms99xxx, but does apply to tms9980 (see below).*/
+/*This does not apply to tms9995 and tms99xxx, but does apply to tms9980 (see below).*/
 
-	#define readword(addr)        cpu_readmem16bew_word(addr)
-	#define writeword(addr,data)  cpu_writemem16bew_word((addr), (data))
+#define readword(addr)        cpu_readmem16bew_word(addr)
+#define writeword(addr, data) cpu_writemem16bew_word((addr), (data))
 
-	#define readbyte(addr)        cpu_readmem16bew(addr)
-	#define writebyte(addr,data)  cpu_writemem16bew((addr),(data))
+#define readbyte(addr)        cpu_readmem16bew(addr)
+#define writebyte(addr, data) cpu_writemem16bew((addr), (data))
 
 #elif (TMS99XX_MODEL == TMS9980_ID)
-	/*8-bit data bus, 14-bit address*/
-	/*Note that tms9980 never accesses a single byte (however crazy it may seem).  Although this
+                   /*8-bit data bus, 14-bit address*/
+                   /*Note that tms9980 never accesses a single byte (however crazy it may seem).  Although this
 	makes memory access slower, I have emulated this feature, because if I did otherwise,
 	there would be some implementation problems in some driver sooner or later.*/
 
-	/*Macros instead of true 14-bit handlers.  You may want to change this*/
-	#define cpu_readmem14(addr) cpu_readmem16((addr) & 0x3fff)
-	#define cpu_writemem14(addr, data) cpu_writemem16((addr) & 0x3fff, data)
+/*Macros instead of true 14-bit handlers.  You may want to change this*/
+#define cpu_readmem14(addr)        cpu_readmem16((addr)&0x3fff)
+#define cpu_writemem14(addr, data) cpu_writemem16((addr)&0x3fff, data)
 
-	#define readword(addr)        ( TMS99XX_ICOUNT -= 2, (cpu_readmem14(addr) << 8) + cpu_readmem14((addr)+1) )
-	#define writeword(addr,data)  { TMS99XX_ICOUNT -= 2; cpu_writemem14((addr), (data) >> 8); cpu_writemem14((addr) + 1, (data) & 0xff); }
+#define readword(addr)             (TMS99XX_ICOUNT -= 2, (cpu_readmem14(addr) << 8) + cpu_readmem14((addr) + 1))
+#define writeword(addr, data)                                                                                          \
+    {                                                                                                                  \
+        TMS99XX_ICOUNT -= 2;                                                                                           \
+        cpu_writemem14((addr), (data) >> 8);                                                                           \
+        cpu_writemem14((addr) + 1, (data)&0xff);                                                                       \
+    }
 
 #if 0
-	#define readbyte(addr)        (TMS99XX_ICOUNT -= 2, cpu_readmem14(addr))
-	#define writebyte(addr,data)  { TMS99XX_ICOUNT -= 2; cpu_writemem14((addr),(data)); }
+#define readbyte(addr) (TMS99XX_ICOUNT -= 2, cpu_readmem14(addr))
+#define writebyte(addr, data)                                                                                          \
+    {                                                                                                                  \
+        TMS99XX_ICOUNT -= 2;                                                                                           \
+        cpu_writemem14((addr), (data));                                                                                \
+    }
 #else
-	/*This is how it really works*/
-	/*Note that every writebyte must match a readbyte (which is the case on a real-world tms9980)*/
-	static int extra_byte;
+/*This is how it really works*/
+/*Note that every writebyte must match a readbyte (which is the case on a real-world tms9980)*/
+static int extra_byte;
 
-	static int readbyte(int addr)
-	{
-		TMS99XX_ICOUNT -= 2;
-		if (addr & 1)
-		{
-			extra_byte = cpu_readmem14(addr-1);
-			return cpu_readmem14(addr);
-		}
-		else
-		{
-			int val = cpu_readmem14(addr);
-			extra_byte = cpu_readmem14(addr+1);
-			return val;
-		}
-	}
-	static void writebyte (int addr, int data)
-	{
-		TMS99XX_ICOUNT -= 2;
-		if (addr & 1)
-		{
-			extra_byte = cpu_readmem14(addr-1);
+static int
+readbyte(int addr) {
+    TMS99XX_ICOUNT -= 2;
+    if (addr & 1) {
+        extra_byte = cpu_readmem14(addr - 1);
+        return cpu_readmem14(addr);
+    } else {
+        int val = cpu_readmem14(addr);
+        extra_byte = cpu_readmem14(addr + 1);
+        return val;
+    }
+}
 
-			cpu_writemem14(addr-1, extra_byte);
-			cpu_writemem14(addr, data);
-		}
-		else
-		{
-			extra_byte = cpu_readmem14(addr+1);
+static void
+writebyte(int addr, int data) {
+    TMS99XX_ICOUNT -= 2;
+    if (addr & 1) {
+        extra_byte = cpu_readmem14(addr - 1);
 
-			cpu_writemem14(addr, data);
-			cpu_writemem14(addr+1, extra_byte);
-		}
-	}
+        cpu_writemem14(addr - 1, extra_byte);
+        cpu_writemem14(addr, data);
+    } else {
+        extra_byte = cpu_readmem14(addr + 1);
+
+        cpu_writemem14(addr, data);
+        cpu_writemem14(addr + 1, extra_byte);
+    }
+}
 #endif
 
 #elif (TMS99XX_MODEL == TMS9995_ID)
-	/*8-bit external data bus, with on-chip 16-bit RAM, and 16-bit address bus*/
-	/*The code is complex, so we use functions rather than macros*/
+/*8-bit external data bus, with on-chip 16-bit RAM, and 16-bit address bus*/
+/*The code is complex, so we use functions rather than macros*/
 
-	static int readword(int addr)
-	{
-		if (addr < 0xf000)
-		{
-			TMS99XX_ICOUNT -= I.memory_wait_states_word;
-			return (cpu_readmem16(addr) << 8) + cpu_readmem16(addr + 1);
-		}
-		else if (addr < 0xf0fc)
-		{
-			return *(UINT16 *)(& I.RAM[addr - 0xf000]);
-		}
-		else if (addr < 0xfffa)
-		{
-			TMS99XX_ICOUNT -= I.memory_wait_states_word;
-			return (cpu_readmem16(addr) << 8) + cpu_readmem16(addr + 1);
-		}
-		else if (addr < 0xfffc)
-		{
-			/* read decrementer */
-			if (I.flag & 1)
-				/* event counter mode */
-				return I.decrementer_count;
-			else if (I.decrementer_enabled && !(I.flag & 1))
-				/* timer mode, timer enabled */
-				return (int)ceil(TIME_TO_CYCLES(cpu_getactivecpu(), timer_timeleft(I.timer)) / 16);
-			else
-				/* timer mode, timer disabled */
-				return 0;
-		}
-		else
-		{
-			return *(UINT16 *)(& I.RAM[addr - 0xff00]);
-		}
-	}
+static int
+readword(int addr) {
+    if (addr < 0xf000) {
+        TMS99XX_ICOUNT -= I.memory_wait_states_word;
+        return (cpu_readmem16(addr) << 8) + cpu_readmem16(addr + 1);
+    } else if (addr < 0xf0fc) {
+        return *(UINT16*)(&I.RAM[addr - 0xf000]);
+    } else if (addr < 0xfffa) {
+        TMS99XX_ICOUNT -= I.memory_wait_states_word;
+        return (cpu_readmem16(addr) << 8) + cpu_readmem16(addr + 1);
+    } else if (addr < 0xfffc) {
+        /* read decrementer */
+        if (I.flag & 1)
+            /* event counter mode */
+            return I.decrementer_count;
+        else if (I.decrementer_enabled && !(I.flag & 1))
+            /* timer mode, timer enabled */
+            return (int)ceil(TIME_TO_CYCLES(cpu_getactivecpu(), timer_timeleft(I.timer)) / 16);
+        else
+            /* timer mode, timer disabled */
+            return 0;
+    } else {
+        return *(UINT16*)(&I.RAM[addr - 0xff00]);
+    }
+}
 
-	static void writeword (int addr, int data)
-	{
-		if (addr < 0xf000)
-		{
-			TMS99XX_ICOUNT -= I.memory_wait_states_word;
-			cpu_writemem16(addr, data >> 8);
-			cpu_writemem16(addr + 1, data & 0xff);
-		}
-		else if (addr < 0xf0fc)
-		{
-			*(UINT16 *)(& I.RAM[addr - 0xf000]) = data;
-		}
-		else if (addr < 0xfffa)
-		{
-			TMS99XX_ICOUNT -= I.memory_wait_states_word;
-			cpu_writemem16(addr, data >> 8);
-			cpu_writemem16(addr + 1, data & 0xff);
-		}
-		else if (addr < 0xfffc)
-		{
-			/* write decrementer */
-			I.decrementer_interval = data;
-			reset_decrementer();
-		}
-		else
-		{
-			*(UINT16 *)(& I.RAM[addr - 0xff00]) = data;
-		}
-	}
+static void
+writeword(int addr, int data) {
+    if (addr < 0xf000) {
+        TMS99XX_ICOUNT -= I.memory_wait_states_word;
+        cpu_writemem16(addr, data >> 8);
+        cpu_writemem16(addr + 1, data & 0xff);
+    } else if (addr < 0xf0fc) {
+        *(UINT16*)(&I.RAM[addr - 0xf000]) = data;
+    } else if (addr < 0xfffa) {
+        TMS99XX_ICOUNT -= I.memory_wait_states_word;
+        cpu_writemem16(addr, data >> 8);
+        cpu_writemem16(addr + 1, data & 0xff);
+    } else if (addr < 0xfffc) {
+        /* write decrementer */
+        I.decrementer_interval = data;
+        reset_decrementer();
+    } else {
+        *(UINT16*)(&I.RAM[addr - 0xff00]) = data;
+    }
+}
 
-	static int readbyte(int addr)
-	{
-		if (addr < 0xf000)
-		{
-			TMS99XX_ICOUNT -= I.memory_wait_states_byte;
-			return cpu_readmem16(addr);
-		}
-		else if (addr < 0xf0fc)
-		{
-			return I.RAM[BYTE_XOR_BE(addr - 0xf000)];
-		}
-		else if (addr < 0xfffa)
-		{
-			TMS99XX_ICOUNT -= I.memory_wait_states_byte;
-			return cpu_readmem16(addr);
-		}
-		else if (addr < 0xfffc)
-		{
-			/* read decrementer */
-			int value;
+static int
+readbyte(int addr) {
+    if (addr < 0xf000) {
+        TMS99XX_ICOUNT -= I.memory_wait_states_byte;
+        return cpu_readmem16(addr);
+    } else if (addr < 0xf0fc) {
+        return I.RAM[BYTE_XOR_BE(addr - 0xf000)];
+    } else if (addr < 0xfffa) {
+        TMS99XX_ICOUNT -= I.memory_wait_states_byte;
+        return cpu_readmem16(addr);
+    } else if (addr < 0xfffc) {
+        /* read decrementer */
+        int value;
 
-			if (I.flag & 1)
-				/* event counter mode */
-				value = I.decrementer_count;
-			else if (I.decrementer_enabled && !(I.flag & 1))
-				/* timer mode, timer enabled */
-				value = (int)ceil(TIME_TO_CYCLES(cpu_getactivecpu(), timer_timeleft(I.timer)) / 16);
-			else
-				/* timer mode, timer disabled */
-				value = 0;
+        if (I.flag & 1)
+            /* event counter mode */
+            value = I.decrementer_count;
+        else if (I.decrementer_enabled && !(I.flag & 1))
+            /* timer mode, timer enabled */
+            value = (int)ceil(TIME_TO_CYCLES(cpu_getactivecpu(), timer_timeleft(I.timer)) / 16);
+        else
+            /* timer mode, timer disabled */
+            value = 0;
 
-			if (addr & 1)
-				return (value & 0xFF);
-			else
-				return (value >> 8);
-		}
-		else
-		{
-			return I.RAM[BYTE_XOR_BE(addr - 0xff00)];
-		}
-	}
+        if (addr & 1)
+            return (value & 0xFF);
+        else
+            return (value >> 8);
+    } else {
+        return I.RAM[BYTE_XOR_BE(addr - 0xff00)];
+    }
+}
 
-	static void writebyte (int addr, int data)
-	{
-		if (addr < 0xf000)
-		{
-			TMS99XX_ICOUNT -= I.memory_wait_states_byte;
-			cpu_writemem16(addr, data);
-		}
-		else if (addr < 0xf0fc)
-		{
-			I.RAM[BYTE_XOR_BE(addr - 0xf000)] = data;
-		}
-		else if (addr < 0xfffa)
-		{
-			TMS99XX_ICOUNT -= I.memory_wait_states_byte;
-			cpu_writemem16(addr, data);
-		}
-		else if (addr < 0xfffc)
-		{
-			/* write decrementer */
-			/* Note that a byte write to tms9995 timer messes everything up. */
-			I.decrementer_interval = (data << 8) | data;
-			reset_decrementer();
-		}
-		else
-		{
-			I.RAM[BYTE_XOR_BE(addr - 0xff00)] = data;
-		}
-	}
+static void
+writebyte(int addr, int data) {
+    if (addr < 0xf000) {
+        TMS99XX_ICOUNT -= I.memory_wait_states_byte;
+        cpu_writemem16(addr, data);
+    } else if (addr < 0xf0fc) {
+        I.RAM[BYTE_XOR_BE(addr - 0xf000)] = data;
+    } else if (addr < 0xfffa) {
+        TMS99XX_ICOUNT -= I.memory_wait_states_byte;
+        cpu_writemem16(addr, data);
+    } else if (addr < 0xfffc) {
+        /* write decrementer */
+        /* Note that a byte write to tms9995 timer messes everything up. */
+        I.decrementer_interval = (data << 8) | data;
+        reset_decrementer();
+    } else {
+        I.RAM[BYTE_XOR_BE(addr - 0xff00)] = data;
+    }
+}
 
 #else
 
-	#error "memory access not implemented"
+#error "memory access not implemented"
 
 #endif
 
-#define READREG(reg)          readword(I.WP+reg)
-#define WRITEREG(reg,data)    writeword(I.WP+reg,data)
+#define READREG(reg)        readword(I.WP + reg)
+#define WRITEREG(reg, data) writeword(I.WP + reg, data)
 
 /* Interrupt mask */
 #if (TMS99XX_MODEL != TMS9940_ID)
-	#define IMASK       (I.STATUS & 0x0F)
+#define IMASK (I.STATUS & 0x0F)
 #else
-	#define IMASK       (I.STATUS & 0x03)
+#define IMASK (I.STATUS & 0x03)
 #endif
 
 /*
@@ -657,11 +636,11 @@ static void reset_decrementer(void);
 	BTW, I have no idea what the timings are for tms9989 and tms99xxx...
 */
 #if TMS99XX_MODEL <= TMS9989_ID
-	/* Use TMS9900/TMS9980 timings*/
-	#define CYCLES(a,b) TMS99XX_ICOUNT -= a
+/* Use TMS9900/TMS9980 timings*/
+#define CYCLES(a, b) TMS99XX_ICOUNT -= a
 #else
-	/* Use TMS9995 timings*/
-	#define CYCLES(a,b) TMS99XX_ICOUNT -= b*4
+/* Use TMS9995 timings*/
+#define CYCLES(a, b) TMS99XX_ICOUNT -= b * 4
 #endif
 
 #if (TMS99XX_MODEL == TMS9995_ID)
@@ -681,123 +660,115 @@ static void set_flag1(int val);
 /*
 	TMS9900 hard reset
 */
-void TMS99XX_INIT(void)
-{
+void
+TMS99XX_INIT(void) {
 #if (TMS99XX_MODEL == TMS9995_ID)
-	void decrementer_callback(int ignored);
-	I.timer = timer_alloc(decrementer_callback);
+    void decrementer_callback(int ignored);
+    I.timer = timer_alloc(decrementer_callback);
 #endif
 }
 
-void TMS99XX_RESET(void *param)
-{
-	contextswitch(0x0000);
+void
+TMS99XX_RESET(void* param) {
+    contextswitch(0x0000);
 
-	I.STATUS = 0; /* TMS9980 and TMS9995 Data Book say so */
-	setstat();
+    I.STATUS = 0; /* TMS9980 and TMS9995 Data Book say so */
+    setstat();
 
-	I.IDLE = 0;   /* clear IDLE condition */
+    I.IDLE = 0; /* clear IDLE condition */
 
 #if (TMS99XX_MODEL == TMS9995_ID)
-	/* we can ask at reset time that the CPU always generates one wait state automatically */
-	if (param == NULL)
-	{	/* if no param, the default is currently "wait state added" */
-		I.memory_wait_states_byte = 4;
-		I.memory_wait_states_word = 12;
-	}
-	else
-	{
-		I.memory_wait_states_byte = (((tms9995reset_param *) param)->auto_wait_state) ? 4 : 0;
-		I.memory_wait_states_word = (((tms9995reset_param *) param)->auto_wait_state) ? 12 : 4;
-	}
+    /* we can ask at reset time that the CPU always generates one wait state automatically */
+    if (param == NULL) { /* if no param, the default is currently "wait state added" */
+        I.memory_wait_states_byte = 4;
+        I.memory_wait_states_word = 12;
+    } else {
+        I.memory_wait_states_byte = (((tms9995reset_param*)param)->auto_wait_state) ? 4 : 0;
+        I.memory_wait_states_word = (((tms9995reset_param*)param)->auto_wait_state) ? 12 : 4;
+    }
 
-	I.MID_flag = 0;
+    I.MID_flag = 0;
 
-	/* Clear flag bits 0 & 1 */
-	set_flag0(0);
-	set_flag1(0);
+    /* Clear flag bits 0 & 1 */
+    set_flag0(0);
+    set_flag1(0);
 
-	/* Clear internal interupt latches */
-	I.int_latch = 0;
-	I.flag &= 0xFFE3;
+    /* Clear internal interupt latches */
+    I.int_latch = 0;
+    I.flag &= 0xFFE3;
 #endif
 
-	/* The ST register and interrupt latches changed, didn't it ? */
-	field_interrupt();
+    /* The ST register and interrupt latches changed, didn't it ? */
+    field_interrupt();
 
-	CYCLES(26, 14);
+    CYCLES(26, 14);
 }
 
-void TMS99XX_EXIT(void)
-{
-	/* nothing to do ? */
+void
+TMS99XX_EXIT(void) {
+    /* nothing to do ? */
 }
 
-int TMS99XX_EXECUTE(int cycles)
-{
-	TMS99XX_ICOUNT = cycles;
+int
+TMS99XX_EXECUTE(int cycles) {
+    TMS99XX_ICOUNT = cycles;
 
-	do
-	{
+    do {
 
-		#ifdef MAME_DEBUG
-		{
-			if (mame_debug)
-			{
-				setstat();
+#ifdef MAME_DEBUG
+        {
+            if (mame_debug) {
+                setstat();
 
-				I.FR[ 0] = READREG(R0);
-				I.FR[ 1] = READREG(R1);
-				I.FR[ 2] = READREG(R2);
-				I.FR[ 3] = READREG(R3);
-				I.FR[ 4] = READREG(R4);
-				I.FR[ 5] = READREG(R5);
-				I.FR[ 6] = READREG(R6);
-				I.FR[ 7] = READREG(R7);
-				I.FR[ 8] = READREG(R8);
-				I.FR[ 9] = READREG(R9);
-				I.FR[10] = READREG(R10);
-				I.FR[11] = READREG(R11);
-				I.FR[12] = READREG(R12);
-				I.FR[13] = READREG(R13);
-				I.FR[14] = READREG(R14);
-				I.FR[15] = READREG(R15);
+                I.FR[0] = READREG(R0);
+                I.FR[1] = READREG(R1);
+                I.FR[2] = READREG(R2);
+                I.FR[3] = READREG(R3);
+                I.FR[4] = READREG(R4);
+                I.FR[5] = READREG(R5);
+                I.FR[6] = READREG(R6);
+                I.FR[7] = READREG(R7);
+                I.FR[8] = READREG(R8);
+                I.FR[9] = READREG(R9);
+                I.FR[10] = READREG(R10);
+                I.FR[11] = READREG(R11);
+                I.FR[12] = READREG(R12);
+                I.FR[13] = READREG(R13);
+                I.FR[14] = READREG(R14);
+                I.FR[15] = READREG(R15);
 
-				#if 0		/* Trace */
+#if 0 /* Trace */
 				logerror("> PC %4.4x :%4.4x %4.4x : R=%4.4x %4.4x %4.4x %4.4x %4.4x %4.4x %4.4x %4.4x %4.4x %4.4x%4.4x %4.4x %4.4x %4.4x %4.4x %4.4x :T=%d\n",I.PC,I.STATUS,I.WP,I.FR[0],I.FR[1],I.FR[2],I.FR[3],I.FR[4],I.FR[5],I.FR[6],I.FR[7],I.FR[8],I.FR[9],I.FR[10],I.FR[11],I.FR[12],I.FR[13],I.FR[14],I.FR[15],TMS99XX_ICOUNT);
-					#if 0	/* useful with TI99/4a driver */
+#if 0 /* useful with TI99/4a driver */
 					{
 						extern int gpl_addr;
 						logerror("> GPL pointer %4.4x\n", gpl_addr);
 					}
-					#endif
-				#endif
+#endif
+#endif
 
-				MAME_Debug();
-			}
-		}
-		#endif
+                MAME_Debug();
+            }
+        }
+#endif
 
-		if (I.IDLE)
-		{	/* IDLE instruction has halted execution */
-			external_instruction_notify(2);
-			CYCLES(2, 2); /* 2 cycles per CRU write */
-		}
-		else
-		{	/* we execute an instruction */
-			disable_interrupt_recognition = 0;  /* default value */
-			I.IR = fetch();
-			execute(I.IR);
+        if (I.IDLE) { /* IDLE instruction has halted execution */
+            external_instruction_notify(2);
+            CYCLES(2, 2);                      /* 2 cycles per CRU write */
+        } else {                               /* we execute an instruction */
+            disable_interrupt_recognition = 0; /* default value */
+            I.IR = fetch();
+            execute(I.IR);
 
 #if (TMS99XX_MODEL >= TMS9995_ID)
-			/* Note that TI had some problem implementing this...  I don't know if this feature works on
+            /* Note that TI had some problem implementing this...  I don't know if this feature works on
 			a real-world TMS9995. */
-			if ((I.STATUS & ST_OV_EN) && (I.STATUS & ST_OV) && (I.irq_level > 2))
-				I.irq_level = 2;  /* interrupt request */
+            if ((I.STATUS & ST_OV_EN) && (I.STATUS & ST_OV) && (I.irq_level > 2))
+                I.irq_level = 2; /* interrupt request */
 #endif
-		}
+        }
 
-		/*
+        /*
 		  We handle interrupts here because :
 		  a) LOAD and level-0 (reset) interrupts are non-maskable, so, AFAIK, if the LOAD* line or
 		     INTREQ* line (with IC0-3 == 0) remain active, we will execute repeatedly the first
@@ -806,192 +777,239 @@ int TMS99XX_EXECUTE(int cycles)
 		     once in too short a while (i.e. before tms9900 executes another instruction).  Yes, this
 		     is rather pedantic, the probability is really small.
 		*/
-		if (I.interrupt_pending)
-		{
-			int level;
+        if (I.interrupt_pending) {
+            int level;
 
 #if SILLY_INTERRUPT_HACK
-			if (I.irq_level == IRQ_MAGIC_LEVEL)
-			{
-				level = (* I.irq_callback)(0);
-				if (I.irq_state)
-				{ /* if callback didn't clear the line */
-					I.irq_level = level;
-					if (level > IMASK)
-						I.interrupt_pending = 0;
-				}
-			}
-			else
+            if (I.irq_level == IRQ_MAGIC_LEVEL) {
+                level = (*I.irq_callback)(0);
+                if (I.irq_state) { /* if callback didn't clear the line */
+                    I.irq_level = level;
+                    if (level > IMASK)
+                        I.interrupt_pending = 0;
+                }
+            } else
 #endif
-			level = I.irq_level;
+                level = I.irq_level;
 
-			if (I.load_state)
-			{	/* LOAD has the highest priority */
+            if (I.load_state) { /* LOAD has the highest priority */
 
-				contextswitch(0xFFFC);  /* load vector, save PC, WP and ST */
+                contextswitch(0xFFFC); /* load vector, save PC, WP and ST */
 
-				I.STATUS &= 0xFFF0;     /* clear mask */
+                I.STATUS &= 0xFFF0; /* clear mask */
 
-				/* clear IDLE status if necessary */
-				I.IDLE = 0;
+                /* clear IDLE status if necessary */
+                I.IDLE = 0;
 
-				CYCLES(22, 14);
-			}
-			/* all TMS9900 chips I know do not honor interrupts after XOP, BLWP or MID (after any
+                CYCLES(22, 14);
+            }
+            /* all TMS9900 chips I know do not honor interrupts after XOP, BLWP or MID (after any
 			  interrupt-like instruction, actually) */
-			else if (! disable_interrupt_recognition)
-			{
-				if (level <= IMASK)
-				{	/* a maskable interrupt is honored only if its level isn't greater than IMASK */
+            else if (!disable_interrupt_recognition) {
+                if (level <= IMASK) { /* a maskable interrupt is honored only if its level isn't greater than IMASK */
 
-					contextswitch(level*4); /* load vector, save PC, WP and ST */
+                    contextswitch(level * 4); /* load vector, save PC, WP and ST */
 
-					/* change interrupt mask */
-					if (level)
-					{
-						I.STATUS = (I.STATUS & 0xFFF0) | (level -1);  /* decrement mask */
-						I.interrupt_pending = 0;  /* as a consequence, the interrupt request will be subsequently ignored */
-					}
-					else
-						I.STATUS &= 0xFFF0; /* clear mask (is this correct ???) */
+                    /* change interrupt mask */
+                    if (level) {
+                        I.STATUS = (I.STATUS & 0xFFF0) | (level - 1); /* decrement mask */
+                        I.interrupt_pending =
+                            0; /* as a consequence, the interrupt request will be subsequently ignored */
+                    } else
+                        I.STATUS &= 0xFFF0; /* clear mask (is this correct ???) */
 
 #if (TMS99XX_MODEL == TMS9995_ID)
-					I.STATUS &= 0xFE00;
+                    I.STATUS &= 0xFE00;
 #endif
 
-					/* clear IDLE status if necessary */
-					I.IDLE = 0;
+                    /* clear IDLE status if necessary */
+                    I.IDLE = 0;
 
 #if (TMS99XX_MODEL == TMS9995_ID)
-					/* Clear bit in latch */
-					/* I think tms9989 does this, too */
-					if (level != 2)
-					{	/* Only do this on level 1, 3, 4 interrupts */
-						int mask = 1 << level;
-						int flag_mask = (level == 1) ? 4 : mask;
+                    /* Clear bit in latch */
+                    /* I think tms9989 does this, too */
+                    if (level != 2) { /* Only do this on level 1, 3, 4 interrupts */
+                        int mask = 1 << level;
+                        int flag_mask = (level == 1) ? 4 : mask;
 
-						I.int_latch &= ~ mask;
-						I.flag &= ~ flag_mask;
+                        I.int_latch &= ~mask;
+                        I.flag &= ~flag_mask;
 
-						/* unlike tms9900, we can call the callback */
-						if (level == 1)
-							(* I.irq_callback)(0);
-						else if (level == 4)
-							(* I.irq_callback)(1);
-					}
+                        /* unlike tms9900, we can call the callback */
+                        if (level == 1)
+                            (*I.irq_callback)(0);
+                        else if (level == 4)
+                            (*I.irq_callback)(1);
+                    }
 #endif
 
-					CYCLES(22, 14);
-				}
-				else
+                    CYCLES(22, 14);
+                } else
 #if SILLY_INTERRUPT_HACK
-				if (I.interrupt_pending)  /* we may have just cleared this */
+                    if (I.interrupt_pending) /* we may have just cleared this */
 #endif
-				{
-					LOG(("tms9900.c : the interrupt_pending flag was set incorrectly\n"));
-					I.interrupt_pending = 0;
-				}
-			}
-		}
+                {
+                    LOG(("tms9900.c : the interrupt_pending flag was set incorrectly\n"));
+                    I.interrupt_pending = 0;
+                }
+            }
+        }
 
-	} while (TMS99XX_ICOUNT > 0);
+    } while (TMS99XX_ICOUNT > 0);
 
-	return cycles - TMS99XX_ICOUNT;
+    return cycles - TMS99XX_ICOUNT;
 }
 
-unsigned TMS99XX_GET_CONTEXT(void *dst)
-{
-	setstat();
+unsigned
+TMS99XX_GET_CONTEXT(void* dst) {
+    setstat();
 
-	if( dst )
-		*(tms99xx_Regs*)dst = I;
+    if (dst)
+        *(tms99xx_Regs*)dst = I;
 
-	return sizeof(tms99xx_Regs);
+    return sizeof(tms99xx_Regs);
 }
 
-void TMS99XX_SET_CONTEXT(void *src)
-{
-	if( src )
-	{
-		I = *(tms99xx_Regs*)src;
-		/* We have to make additionnal checks this, because Mame debugger can foolishly initialize
+void
+TMS99XX_SET_CONTEXT(void* src) {
+    if (src) {
+        I = *(tms99xx_Regs*)src;
+        /* We have to make additionnal checks this, because Mame debugger can foolishly initialize
 		the context to all 0s */
 #if (TMS99XX_MODEL == TMS9900_ID)
-		if (! I.irq_state)
-			I.irq_level = 16;
+        if (!I.irq_state)
+            I.irq_level = 16;
 #elif ((TMS99XX_MODEL == TMS9980_ID) || (TMS99XX_MODEL == TMS9995_ID))
-		/* Our job is simpler, since there is no level-0 request... */
-		if (! I.irq_level)
-			I.irq_level = 16;
+        /* Our job is simpler, since there is no level-0 request... */
+        if (!I.irq_level)
+            I.irq_level = 16;
 #else
-		#warning "You may want to have a look at this problem"
+#warning "You may want to have a look at this problem"
 #endif
 
-		getstat();  /* set last_parity */
-	}
+        getstat(); /* set last_parity */
+    }
 }
 
-unsigned TMS99XX_GET_REG(int regnum)
-{
-	switch( regnum )
-	{
-		case REG_PC:
-		case TMS9900_PC: return I.PC;
-		case TMS9900_IR: return I.IR;
-		case REG_SP:
-		case TMS9900_WP: return I.WP;
-		case TMS9900_STATUS: return I.STATUS;
+unsigned
+TMS99XX_GET_REG(int regnum) {
+    switch (regnum) {
+        case REG_PC:
+        case TMS9900_PC:
+            return I.PC;
+        case TMS9900_IR:
+            return I.IR;
+        case REG_SP:
+        case TMS9900_WP:
+            return I.WP;
+        case TMS9900_STATUS:
+            return I.STATUS;
 #ifdef MAME_DEBUG
-		case TMS9900_R0: return I.FR[0];
-		case TMS9900_R1: return I.FR[1];
-		case TMS9900_R2: return I.FR[2];
-		case TMS9900_R3: return I.FR[3];
-		case TMS9900_R4: return I.FR[4];
-		case TMS9900_R5: return I.FR[5];
-		case TMS9900_R6: return I.FR[6];
-		case TMS9900_R7: return I.FR[7];
-		case TMS9900_R8: return I.FR[8];
-		case TMS9900_R9: return I.FR[9];
-		case TMS9900_R10: return I.FR[10];
-		case TMS9900_R11: return I.FR[11];
-		case TMS9900_R12: return I.FR[12];
-		case TMS9900_R13: return I.FR[13];
-		case TMS9900_R14: return I.FR[14];
-		case TMS9900_R15: return I.FR[15];
+        case TMS9900_R0:
+            return I.FR[0];
+        case TMS9900_R1:
+            return I.FR[1];
+        case TMS9900_R2:
+            return I.FR[2];
+        case TMS9900_R3:
+            return I.FR[3];
+        case TMS9900_R4:
+            return I.FR[4];
+        case TMS9900_R5:
+            return I.FR[5];
+        case TMS9900_R6:
+            return I.FR[6];
+        case TMS9900_R7:
+            return I.FR[7];
+        case TMS9900_R8:
+            return I.FR[8];
+        case TMS9900_R9:
+            return I.FR[9];
+        case TMS9900_R10:
+            return I.FR[10];
+        case TMS9900_R11:
+            return I.FR[11];
+        case TMS9900_R12:
+            return I.FR[12];
+        case TMS9900_R13:
+            return I.FR[13];
+        case TMS9900_R14:
+            return I.FR[14];
+        case TMS9900_R15:
+            return I.FR[15];
 #endif
-	}
-	return 0;
+    }
+    return 0;
 }
 
-void TMS99XX_SET_REG(int regnum, unsigned val)
-{
-	switch( regnum )
-	{
-		case REG_PC:
-		case TMS9900_PC: I.PC = val; break;
-		case TMS9900_IR: I.IR = val; break;
-		case REG_SP:
-		case TMS9900_WP: I.WP = val; break;
-		case TMS9900_STATUS: I.STATUS = val; break;
+void
+TMS99XX_SET_REG(int regnum, unsigned val) {
+    switch (regnum) {
+        case REG_PC:
+        case TMS9900_PC:
+            I.PC = val;
+            break;
+        case TMS9900_IR:
+            I.IR = val;
+            break;
+        case REG_SP:
+        case TMS9900_WP:
+            I.WP = val;
+            break;
+        case TMS9900_STATUS:
+            I.STATUS = val;
+            break;
 #ifdef MAME_DEBUG
-		case TMS9900_R0: I.FR[0]= val; break;
-		case TMS9900_R1: I.FR[1]= val; break;
-		case TMS9900_R2: I.FR[2]= val; break;
-		case TMS9900_R3: I.FR[3]= val; break;
-		case TMS9900_R4: I.FR[4]= val; break;
-		case TMS9900_R5: I.FR[5]= val; break;
-		case TMS9900_R6: I.FR[6]= val; break;
-		case TMS9900_R7: I.FR[7]= val; break;
-		case TMS9900_R8: I.FR[8]= val; break;
-		case TMS9900_R9: I.FR[9]= val; break;
-		case TMS9900_R10: I.FR[10]= val; break;
-		case TMS9900_R11: I.FR[11]= val; break;
-		case TMS9900_R12: I.FR[12]= val; break;
-		case TMS9900_R13: I.FR[13]= val; break;
-		case TMS9900_R14: I.FR[14]= val; break;
-		case TMS9900_R15: I.FR[15]= val; break;
+        case TMS9900_R0:
+            I.FR[0] = val;
+            break;
+        case TMS9900_R1:
+            I.FR[1] = val;
+            break;
+        case TMS9900_R2:
+            I.FR[2] = val;
+            break;
+        case TMS9900_R3:
+            I.FR[3] = val;
+            break;
+        case TMS9900_R4:
+            I.FR[4] = val;
+            break;
+        case TMS9900_R5:
+            I.FR[5] = val;
+            break;
+        case TMS9900_R6:
+            I.FR[6] = val;
+            break;
+        case TMS9900_R7:
+            I.FR[7] = val;
+            break;
+        case TMS9900_R8:
+            I.FR[8] = val;
+            break;
+        case TMS9900_R9:
+            I.FR[9] = val;
+            break;
+        case TMS9900_R10:
+            I.FR[10] = val;
+            break;
+        case TMS9900_R11:
+            I.FR[11] = val;
+            break;
+        case TMS9900_R12:
+            I.FR[12] = val;
+            break;
+        case TMS9900_R13:
+            I.FR[13] = val;
+            break;
+        case TMS9900_R14:
+            I.FR[14] = val;
+            break;
+        case TMS9900_R15:
+            I.FR[15] = val;
+            break;
 #endif
-	}
+    }
 }
 
 #if (TMS99XX_MODEL == TMS9900_ID)
@@ -1065,35 +1083,31 @@ void tms9900_set_irq_line(int irqline, int state) : sets the state of the interr
  *
  * Note that this does not apply to tms9995.
 */
-void tms9900_set_irq_line(int irqline, int state)
-{
-	if (irqline == IRQ_LINE_NMI)
-	{
-		I.load_state = state;   /* save new state */
+void
+tms9900_set_irq_line(int irqline, int state) {
+    if (irqline == IRQ_LINE_NMI) {
+        I.load_state = state; /* save new state */
 
-		field_interrupt();  /* interrupt status changed */
-	}
-	else
-	{
-		/*if (I.irq_state == state)
+        field_interrupt(); /* interrupt status changed */
+    } else {
+        /*if (I.irq_state == state)
 			return;*/
 
-		I.irq_state = state;
+        I.irq_state = state;
 
-		if (state == CLEAR_LINE)
-			I.irq_level = 16;
-			/* trick : 16 will always be bigger than the IM (0-15), so there will never be interrupts */
-		else
-		{
-	#if SILLY_INTERRUPT_HACK
-			I.irq_level = IRQ_MAGIC_LEVEL;
-	#else
-			I.irq_level = (* I.irq_callback)(0);
-	#endif
-		}
+        if (state == CLEAR_LINE)
+            I.irq_level = 16;
+        /* trick : 16 will always be bigger than the IM (0-15), so there will never be interrupts */
+        else {
+#if SILLY_INTERRUPT_HACK
+            I.irq_level = IRQ_MAGIC_LEVEL;
+#else
+            I.irq_level = (*I.irq_callback)(0);
+#endif
+        }
 
-		field_interrupt();  /* interrupt state is likely to have changed */
-	}
+        field_interrupt(); /* interrupt state is likely to have changed */
+    }
 }
 
 #elif (TMS99XX_MODEL == TMS9980_ID)
@@ -1101,92 +1115,86 @@ void tms9900_set_irq_line(int irqline, int state)
 	interrupt system similar to tms9900, but only 3 interrupt pins (IC0-IC2)
 */
 
-void tms9980a_set_irq_line(int irqline, int state)
-{
-	if (state == CLEAR_LINE)
-	{
-		I.load_state = 0;
-		I.irq_state = 0;
-		I.irq_level = 16;
-		/* trick : 16 will always be bigger than the IM (0-15), so there will never be interrupts */
-	}
-	else
-	{
+void
+tms9980a_set_irq_line(int irqline, int state) {
+    if (state == CLEAR_LINE) {
+        I.load_state = 0;
+        I.irq_state = 0;
+        I.irq_level = 16;
+        /* trick : 16 will always be bigger than the IM (0-15), so there will never be interrupts */
+    } else {
 #if SILLY_INTERRUPT_HACK
-		#error "OK, this does not work with tms9980a"
-		/*I.load_state = 0;
+#error "OK, this does not work with tms9980a"
+        /*I.load_state = 0;
 		I.irq_state = 1;
 		I.irq_level = IRQ_MAGIC_LEVEL;*/
 #else
-		int level;
+        int level;
 
-		level = (* I.irq_callback)(0);
+        level = (*I.irq_callback)(0);
 
-		switch (level)
-		{
-		case 0:
-		case 1:
-			I.load_state = 0;
-			I.irq_state = 0;
-			I.irq_level = 16;
-			tms9980a_reset(NULL);
-			break;
-		case 2:
-			I.load_state = 1;
-			I.irq_state = 0;
-			I.irq_level = 16;
-			break;
-		case 7:
-			I.load_state = 0;
-			I.irq_state = 0;
-			I.irq_level = 16;
-			break;
-		default:  /* external levels 1, 2, 3, 4 */
-			I.load_state = 0;
-			I.irq_state = 1;
-			I.irq_level = level - 2;
-			break;
-		}
+        switch (level) {
+            case 0:
+            case 1:
+                I.load_state = 0;
+                I.irq_state = 0;
+                I.irq_level = 16;
+                tms9980a_reset(NULL);
+                break;
+            case 2:
+                I.load_state = 1;
+                I.irq_state = 0;
+                I.irq_level = 16;
+                break;
+            case 7:
+                I.load_state = 0;
+                I.irq_state = 0;
+                I.irq_level = 16;
+                break;
+            default: /* external levels 1, 2, 3, 4 */
+                I.load_state = 0;
+                I.irq_state = 1;
+                I.irq_level = level - 2;
+                break;
+        }
 #endif
-	}
+    }
 
-	field_interrupt();  /* interrupt state is likely to have changed */
+    field_interrupt(); /* interrupt state is likely to have changed */
 }
 
 #elif (TMS99XX_MODEL == TMS9995_ID)
 /*
   this call-back is called by MESS timer system when the timer reaches 0.
 */
-void decrementer_callback(int ignored)
-{
-	/* request decrementer interrupt */
-	I.int_latch |= 0x8;
-	I.flag |= 0x8;
+void
+decrementer_callback(int ignored) {
+    /* request decrementer interrupt */
+    I.int_latch |= 0x8;
+    I.flag |= 0x8;
 
-	field_interrupt();
+    field_interrupt();
 }
-
 
 /*
 	reset and load the timer/decrementer
 
 	Note that I don't know whether toggling flag0/flag1 causes the decrementer to be reloaded or not
 */
-static void reset_decrementer(void)
-{
-	timer_adjust(I.timer, TIME_NEVER, 0, 0);
+static void
+reset_decrementer(void) {
+    timer_adjust(I.timer, TIME_NEVER, 0, 0);
 
-	/* reload count */
-	I.decrementer_count = I.decrementer_interval;
+    /* reload count */
+    I.decrementer_count = I.decrementer_interval;
 
-	/* decrementer / timer enabled ? */
-	I.decrementer_enabled = ((I.flag & 2) && (I.decrementer_interval));
+    /* decrementer / timer enabled ? */
+    I.decrementer_enabled = ((I.flag & 2) && (I.decrementer_interval));
 
-	if (I.decrementer_enabled && ! (I.flag & 1))
-	{	/* timer */
-		double period = TIME_IN_CYCLES(I.decrementer_interval * 16L, cpu_getactivecpu());
-		timer_adjust(I.timer, period, 0, period);
-	}
+    if (I.decrementer_enabled && !(I.flag & 1)) { /* timer */
+        double period = TIME_IN_CYCLES(I.decrementer_interval * 16L, cpu_getactivecpu());
+        timer_adjust(I.timer, period, 0, period);
+    }
 }
 
 /*
@@ -1197,50 +1205,38 @@ static void reset_decrementer(void)
 	(level-triggered interrupts).  Edge-triggered interrupts are way simpler, but if multiple devices
 	share the same line, they must use level-triggered interrupts.
 */
-void tms9995_set_irq_line(int irqline, int state)
-{
-	if (irqline == IRQ_LINE_NMI)
-	{
-		I.load_state = state;   /* save new state */
+void
+tms9995_set_irq_line(int irqline, int state) {
+    if (irqline == IRQ_LINE_NMI) {
+        I.load_state = state; /* save new state */
 
-		field_interrupt();  /* interrupt status changed */
-	}
-	else
-	{
-		int mask = (irqline == 0) ? 0x2 : 0x10;
-		int flag_mask = (irqline == 0) ? 0x4 : 0x10;
+        field_interrupt(); /* interrupt status changed */
+    } else {
+        int mask = (irqline == 0) ? 0x2 : 0x10;
+        int flag_mask = (irqline == 0) ? 0x4 : 0x10;
 
-		if (((I.int_state & mask) != 0) ^ (state != 0))
-		{	/* only if state changes */
-			if (state)
-			{
-				I.int_state |= mask;
+        if (((I.int_state & mask) != 0) ^ (state != 0)) { /* only if state changes */
+            if (state) {
+                I.int_state |= mask;
 
-				if ((irqline == 1) && (I.flag & 1))
-				{	/* event counter mode : INT4* triggers no interrupt... */
-					if (I.decrementer_enabled)
-					{	/* decrement, then interrupt if reach 0 */
-						if ((-- I.decrementer_count) == 0)
-						{
-							decrementer_callback(0);
-							I.decrementer_count = I.decrementer_interval;	/* reload */
-						}
-					}
-				}
-				else
-				{	/* plain interrupt mode */
-					I.int_latch |= mask;
-					I.flag |= flag_mask;
-				}
-			}
-			else
-			{
-				I.int_state &= ~ mask;
-			}
+                if ((irqline == 1) && (I.flag & 1)) { /* event counter mode : INT4* triggers no interrupt... */
+                    if (I.decrementer_enabled) {      /* decrement, then interrupt if reach 0 */
+                        if ((--I.decrementer_count) == 0) {
+                            decrementer_callback(0);
+                            I.decrementer_count = I.decrementer_interval; /* reload */
+                        }
+                    }
+                } else { /* plain interrupt mode */
+                    I.int_latch |= mask;
+                    I.flag |= flag_mask;
+                }
+            } else {
+                I.int_state &= ~mask;
+            }
 
-			field_interrupt();  /* interrupt status changed */
-		}
-	}
+            field_interrupt(); /* interrupt status changed */
+        }
+    }
 }
 
 #else
@@ -1249,9 +1245,9 @@ void tms9995_set_irq_line(int irqline, int state)
 
 #endif
 
-void TMS99XX_SET_IRQ_CALLBACK(int (*callback)(int irqline))
-{
-	I.irq_callback = callback;
+void
+TMS99XX_SET_IRQ_CALLBACK(int (*callback)(int irqline)) {
+    I.irq_callback = callback;
 }
 
 /*
@@ -1268,43 +1264,40 @@ void TMS99XX_SET_IRQ_CALLBACK(int (*callback)(int irqline))
  */
 #if (TMS99XX_MODEL == TMS9900_ID) || (TMS99XX_MODEL == TMS9980_ID)
 
-static void field_interrupt(void)
-{
-	I.interrupt_pending = ((I.irq_level <= IMASK) || (I.load_state));
+static void
+field_interrupt(void) {
+    I.interrupt_pending = ((I.irq_level <= IMASK) || (I.load_state));
 }
 
 #elif (TMS99XX_MODEL == TMS9995_ID)
 
-static void field_interrupt(void)
-{
-	if (I.load_state)
-	{
-		I.interrupt_pending = 1;
-	}
-	else
-	{
-		int current_int;
-		int level;
+static void
+field_interrupt(void) {
+    if (I.load_state) {
+        I.interrupt_pending = 1;
+    } else {
+        int current_int;
+        int level;
 
-		if (I.flag & 1)
-			/* event counter mode : ignore int4* line... */
-			current_int = (I.int_state & ~0x10) | I.int_latch;
-		else
-			/* normal behavior */
-			current_int = I.int_state | I.int_latch;
+        if (I.flag & 1)
+            /* event counter mode : ignore int4* line... */
+            current_int = (I.int_state & ~0x10) | I.int_latch;
+        else
+            /* normal behavior */
+            current_int = I.int_state | I.int_latch;
 
-		if (current_int)
-			/* find first bit to 1 */
-			/* possible values : 1, 3, 4 */
-			for (level=0; ! (current_int & 1); current_int >>= 1, level++)
-				;
-		else
-			level=16;
+        if (current_int)
+            /* find first bit to 1 */
+            /* possible values : 1, 3, 4 */
+            for (level = 0; !(current_int & 1); current_int >>= 1, level++)
+                ;
+        else
+            level = 16;
 
-		I.irq_level = level;
+        I.irq_level = level;
 
-		I.interrupt_pending = (level <= IMASK);
-	}
+        I.interrupt_pending = (level <= IMASK);
+    }
 }
 
 #else
@@ -1316,80 +1309,116 @@ static void field_interrupt(void)
 /****************************************************************************
  * Return a formatted string for a register
  ****************************************************************************/
-const char *TMS99XX_INFO(void *context, int regnum)
-{
-	static char buffer[32][47+1];
-	static int which = 0;
-	tms99xx_Regs *r = (tms99xx_Regs*)context;
+const char*
+TMS99XX_INFO(void* context, int regnum) {
+    static char buffer[32][47 + 1];
+    static int which = 0;
+    tms99xx_Regs* r = (tms99xx_Regs*)context;
 
-	which = (which+1) % 32;
-	buffer[which][0] = '\0';
+    which = (which + 1) % 32;
+    buffer[which][0] = '\0';
 
-	if( !context )
-		r = &I;
+    if (!context)
+        r = &I;
 
-	switch( regnum )
-	{
-		case CPU_INFO_REG+TMS9900_PC: sprintf(buffer[which], "PC :%04X",  r->PC); break;
-		case CPU_INFO_REG+TMS9900_IR: sprintf(buffer[which], "IR :%04X",  r->IR); break;
-		case CPU_INFO_REG+TMS9900_WP: sprintf(buffer[which], "WP :%04X",  r->WP); break;
-		case CPU_INFO_REG+TMS9900_STATUS: sprintf(buffer[which], "ST :%04X",  r->STATUS); break;
+    switch (regnum) {
+        case CPU_INFO_REG + TMS9900_PC:
+            sprintf(buffer[which], "PC :%04X", r->PC);
+            break;
+        case CPU_INFO_REG + TMS9900_IR:
+            sprintf(buffer[which], "IR :%04X", r->IR);
+            break;
+        case CPU_INFO_REG + TMS9900_WP:
+            sprintf(buffer[which], "WP :%04X", r->WP);
+            break;
+        case CPU_INFO_REG + TMS9900_STATUS:
+            sprintf(buffer[which], "ST :%04X", r->STATUS);
+            break;
 #ifdef MAME_DEBUG
-		case CPU_INFO_REG+TMS9900_R0: sprintf(buffer[which], "R0 :%04X",  r->FR[0]); break;
-		case CPU_INFO_REG+TMS9900_R1: sprintf(buffer[which], "R1 :%04X",  r->FR[1]); break;
-		case CPU_INFO_REG+TMS9900_R2: sprintf(buffer[which], "R2 :%04X",  r->FR[2]); break;
-		case CPU_INFO_REG+TMS9900_R3: sprintf(buffer[which], "R3 :%04X",  r->FR[3]); break;
-		case CPU_INFO_REG+TMS9900_R4: sprintf(buffer[which], "R4 :%04X",  r->FR[4]); break;
-		case CPU_INFO_REG+TMS9900_R5: sprintf(buffer[which], "R5 :%04X",  r->FR[5]); break;
-		case CPU_INFO_REG+TMS9900_R6: sprintf(buffer[which], "R6 :%04X",  r->FR[6]); break;
-		case CPU_INFO_REG+TMS9900_R7: sprintf(buffer[which], "R7 :%04X",  r->FR[7]); break;
-		case CPU_INFO_REG+TMS9900_R8: sprintf(buffer[which], "R8 :%04X",  r->FR[8]); break;
-		case CPU_INFO_REG+TMS9900_R9: sprintf(buffer[which], "R9 :%04X",  r->FR[9]); break;
-		case CPU_INFO_REG+TMS9900_R10: sprintf(buffer[which], "R10:%04X",  r->FR[10]); break;
-		case CPU_INFO_REG+TMS9900_R11: sprintf(buffer[which], "R11:%04X",  r->FR[11]); break;
-		case CPU_INFO_REG+TMS9900_R12: sprintf(buffer[which], "R12:%04X",  r->FR[12]); break;
-		case CPU_INFO_REG+TMS9900_R13: sprintf(buffer[which], "R13:%04X",  r->FR[13]); break;
-		case CPU_INFO_REG+TMS9900_R14: sprintf(buffer[which], "R14:%04X",  r->FR[14]); break;
-		case CPU_INFO_REG+TMS9900_R15: sprintf(buffer[which], "R15:%04X",  r->FR[15]); break;
+        case CPU_INFO_REG + TMS9900_R0:
+            sprintf(buffer[which], "R0 :%04X", r->FR[0]);
+            break;
+        case CPU_INFO_REG + TMS9900_R1:
+            sprintf(buffer[which], "R1 :%04X", r->FR[1]);
+            break;
+        case CPU_INFO_REG + TMS9900_R2:
+            sprintf(buffer[which], "R2 :%04X", r->FR[2]);
+            break;
+        case CPU_INFO_REG + TMS9900_R3:
+            sprintf(buffer[which], "R3 :%04X", r->FR[3]);
+            break;
+        case CPU_INFO_REG + TMS9900_R4:
+            sprintf(buffer[which], "R4 :%04X", r->FR[4]);
+            break;
+        case CPU_INFO_REG + TMS9900_R5:
+            sprintf(buffer[which], "R5 :%04X", r->FR[5]);
+            break;
+        case CPU_INFO_REG + TMS9900_R6:
+            sprintf(buffer[which], "R6 :%04X", r->FR[6]);
+            break;
+        case CPU_INFO_REG + TMS9900_R7:
+            sprintf(buffer[which], "R7 :%04X", r->FR[7]);
+            break;
+        case CPU_INFO_REG + TMS9900_R8:
+            sprintf(buffer[which], "R8 :%04X", r->FR[8]);
+            break;
+        case CPU_INFO_REG + TMS9900_R9:
+            sprintf(buffer[which], "R9 :%04X", r->FR[9]);
+            break;
+        case CPU_INFO_REG + TMS9900_R10:
+            sprintf(buffer[which], "R10:%04X", r->FR[10]);
+            break;
+        case CPU_INFO_REG + TMS9900_R11:
+            sprintf(buffer[which], "R11:%04X", r->FR[11]);
+            break;
+        case CPU_INFO_REG + TMS9900_R12:
+            sprintf(buffer[which], "R12:%04X", r->FR[12]);
+            break;
+        case CPU_INFO_REG + TMS9900_R13:
+            sprintf(buffer[which], "R13:%04X", r->FR[13]);
+            break;
+        case CPU_INFO_REG + TMS9900_R14:
+            sprintf(buffer[which], "R14:%04X", r->FR[14]);
+            break;
+        case CPU_INFO_REG + TMS9900_R15:
+            sprintf(buffer[which], "R15:%04X", r->FR[15]);
+            break;
 #endif
-		case CPU_INFO_FLAGS:
-			sprintf(buffer[which], "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",
-				(r->STATUS & 0x8000) ? 'L':'.',
-				(r->STATUS & 0x4000) ? 'A':'.',
-				(r->STATUS & 0x2000) ? 'E':'.',
-				(r->STATUS & 0x1000) ? 'C':'.',
-				(r->STATUS & 0x0800) ? 'V':'.',
-				(r->STATUS & 0x0400) ? 'P':'.',
-				(r->STATUS & 0x0200) ? 'X':'.',
-				(r->STATUS & 0x0100) ? '?':'.',
-				(r->STATUS & 0x0080) ? '?':'.',
-				(r->STATUS & 0x0040) ? '?':'.',
-				(r->STATUS & 0x0020) ? '?':'.',
-				(r->STATUS & 0x0010) ? '?':'.',
-				(r->STATUS & 0x0008) ? 'I':'.',
-				(r->STATUS & 0x0004) ? 'I':'.',
-				(r->STATUS & 0x0002) ? 'I':'.',
-				(r->STATUS & 0x0001) ? 'I':'.');
-			break;
-		case CPU_INFO_NAME: return TMS99XX_CPU_NAME;
-		case CPU_INFO_FAMILY: return "Texas Instruments 9900";
-		case CPU_INFO_VERSION: return "2.0";
-		case CPU_INFO_FILE: return __FILE__;
-		case CPU_INFO_CREDITS: return "C TMS9900 emulator by Edward Swartz, initially converted for Mame by M.Coates, updated by R. Nabet";
-		case CPU_INFO_REG_LAYOUT: return (const char*)tms9900_reg_layout;
-		case CPU_INFO_WIN_LAYOUT: return (const char*)tms9900_win_layout;
-	}
-	return buffer[which];
+        case CPU_INFO_FLAGS:
+            sprintf(
+                buffer[which], "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", (r->STATUS & 0x8000) ? 'L' : '.',
+                (r->STATUS & 0x4000) ? 'A' : '.', (r->STATUS & 0x2000) ? 'E' : '.', (r->STATUS & 0x1000) ? 'C' : '.',
+                (r->STATUS & 0x0800) ? 'V' : '.', (r->STATUS & 0x0400) ? 'P' : '.', (r->STATUS & 0x0200) ? 'X' : '.',
+                (r->STATUS & 0x0100) ? '?' : '.', (r->STATUS & 0x0080) ? '?' : '.', (r->STATUS & 0x0040) ? '?' : '.',
+                (r->STATUS & 0x0020) ? '?' : '.', (r->STATUS & 0x0010) ? '?' : '.', (r->STATUS & 0x0008) ? 'I' : '.',
+                (r->STATUS & 0x0004) ? 'I' : '.', (r->STATUS & 0x0002) ? 'I' : '.', (r->STATUS & 0x0001) ? 'I' : '.');
+            break;
+        case CPU_INFO_NAME:
+            return TMS99XX_CPU_NAME;
+        case CPU_INFO_FAMILY:
+            return "Texas Instruments 9900";
+        case CPU_INFO_VERSION:
+            return "2.0";
+        case CPU_INFO_FILE:
+            return __FILE__;
+        case CPU_INFO_CREDITS:
+            return "C TMS9900 emulator by Edward Swartz, initially converted for Mame by M.Coates, updated by R. Nabet";
+        case CPU_INFO_REG_LAYOUT:
+            return (const char*)tms9900_reg_layout;
+        case CPU_INFO_WIN_LAYOUT:
+            return (const char*)tms9900_win_layout;
+    }
+    return buffer[which];
 }
 
-unsigned TMS99XX_DASM(char *buffer, unsigned pc)
-{
+unsigned
+TMS99XX_DASM(char* buffer, unsigned pc) {
 
 #ifdef MAME_DEBUG
-	return Dasm9900(buffer,pc);
+    return Dasm9900(buffer, pc);
 #else
-	sprintf( buffer, "$%04X", readword(pc) );
-	return 2;
+    sprintf(buffer, "$%04X", readword(pc));
+    return 2;
 #endif
 }
 
@@ -1398,156 +1427,145 @@ unsigned TMS99XX_DASM(char *buffer, unsigned pc)
 #if (TMS99XX_MODEL == TMS9995_ID)
 
 /* set decrementer mode flag */
-static void set_flag0(int val)
-{
-	if (val)
-		I.flag |= 1;
-	else
-		I.flag &= ~ 1;
+static void
+set_flag0(int val) {
+    if (val)
+        I.flag |= 1;
+    else
+        I.flag &= ~1;
 
-	reset_decrementer();
+    reset_decrementer();
 }
 
 /* set decrementer enable flag */
-static void set_flag1(int val)
-{
-	if (val)
-		I.flag |= 2;
-	else
-		I.flag &= ~ 2;
+static void
+set_flag1(int val) {
+    if (val)
+        I.flag |= 2;
+    else
+        I.flag &= ~2;
 
-	reset_decrementer();
+    reset_decrementer();
 }
 
 #endif
 
 #if (TMS99XX_MODEL == TMS9900_ID)
-#define WRITEPORT(Port, data) cpu_writeport16bew_word((Port)<<1, (data))
+#define WRITEPORT(Port, data) cpu_writeport16bew_word((Port) << 1, (data))
 #else
 #define WRITEPORT(Port, data) cpu_writeport16(Port, data)
 #endif
 
 #if (TMS99XX_MODEL == TMS9940_ID) || (TMS99XX_MODEL == TMS9985_ID)
 /* on tms9940, we have to handle internal CRU ports */
-static void write_single_CRU(int port, int data)
-{
-	int mask;
+static void
+write_single_CRU(int port, int data) {
+    int mask;
 
-	if (! (port & 0x100))
-	{
-		/*if (cpustate->config & CB0)*/
-		/* External CRU */
-		WRITEPORT(port, (data & 0x01));
-	}
-	else
-	{
-		/* internal CRU */
-		switch ((port >> 4) & 0xf)
-		{
-		case 0x8:
-			if (port == 0x181)
-			{
-				/* clear decrementer interrupt */
-				I.irq_state &= ~2;
-			}
-			if (port >= 0x183) && (port <= 0x186)
-			{
-				/* write configuration register */
-				mask = 1 << (port - 0x183);
-				/* ... */
-			}
-			break;
+    if (!(port & 0x100)) {
+        /*if (cpustate->config & CB0)*/
+        /* External CRU */
+        WRITEPORT(port, (data & 0x01));
+    } else {
+        /* internal CRU */
+        switch ((port >> 4) & 0xf) {
+            case 0x8:
+                if (port == 0x181) {
+                    /* clear decrementer interrupt */
+                    I.irq_state &= ~2;
+                }
+                if (port >= 0x183)
+                    &&(port <= 0x186) {
+                        /* write configuration register */
+                        mask = 1 << (port - 0x183);
+                        /* ... */
+                    }
+                break;
 
-		case 0x9:
-			if (port <= 0x19D)
-			{
-				/* write decrementer latch */
-				mask = 1 << (port - 0x190);
-				/* ... */
-			}
-			else if (port == 0x19E)
-			{
-				/* set decrementer as timer (1) or event counter (0) */
-				/* ... */
-			}
-			break;
+            case 0x9:
+                if (port <= 0x19D) {
+                    /* write decrementer latch */
+                    mask = 1 << (port - 0x190);
+                    /* ... */
+                } else if (port == 0x19E) {
+                    /* set decrementer as timer (1) or event counter (0) */
+                    /* ... */
+                }
+                break;
 
-		case 0xA:
-			/* multiprocessor system interface */
-			mask = 1 << (port - 0x1A0);
-			/* ... */
-			break;
+            case 0xA:
+                /* multiprocessor system interface */
+                mask = 1 << (port - 0x1A0);
+                /* ... */
+                break;
 
-		case 0xB:
-			/* flags */
-			mask = 1 << (port - 0x1B0);
-			/* ... */
-			break;
+            case 0xB:
+                /* flags */
+                mask = 1 << (port - 0x1B0);
+                /* ... */
+                break;
 
-		case 0xC:
-		case 0xD:
-			/* direction for P0-P31 */
-			mask = 1 << (port - 0x1C0);
-			/* ... */
-			break;
+            case 0xC:
+            case 0xD:
+                /* direction for P0-P31 */
+                mask = 1 << (port - 0x1C0);
+                /* ... */
+                break;
 
-		case 0xE:
-		case 0xF:
-			/* data for P0-P31 */
-			mask = 1 << (port - 0x1E0);
-			/* ... */
-			break;
-		}
-	}
+            case 0xE:
+            case 0xF:
+                /* data for P0-P31 */
+                mask = 1 << (port - 0x1E0);
+                /* ... */
+                break;
+        }
+    }
 }
 #elif (TMS99XX_MODEL == TMS9995_ID)
 /* on tms9995, we have to handle internal CRU ports */
-static void write_single_CRU(int port, int data)
-{
-	/* Internal CRU */
-	switch (port)
-	{
-	case 0xF70:
-		set_flag0(data & 0x01);
-		break;
-	case 0xF71:
-		set_flag1(data & 0x01);
-		break;
-	case 0xF72:
-	case 0xF73:
-	case 0xF74:
-		break;     /* ignored */
-	case 0xF75:
-	case 0xF76:
-	case 0xF77:
-	case 0xF78:
-	case 0xF79:
-	case 0xF7A:
-	case 0xF7B:
-	case 0xF7C:
-	case 0xF7D:
-	case 0xF7E:
-	case 0xF7F:
-		{	/* user defined flags */
-			int mask = 1 << (port - 0xF70);
-			if (data & 0x01)
-				I.flag |= mask;
-			else
-				I.flag &= ~ mask;
-		}
-		break;
+static void
+write_single_CRU(int port, int data) {
+    /* Internal CRU */
+    switch (port) {
+        case 0xF70:
+            set_flag0(data & 0x01);
+            break;
+        case 0xF71:
+            set_flag1(data & 0x01);
+            break;
+        case 0xF72:
+        case 0xF73:
+        case 0xF74:
+            break; /* ignored */
+        case 0xF75:
+        case 0xF76:
+        case 0xF77:
+        case 0xF78:
+        case 0xF79:
+        case 0xF7A:
+        case 0xF7B:
+        case 0xF7C:
+        case 0xF7D:
+        case 0xF7E:
+        case 0xF7F: { /* user defined flags */
+            int mask = 1 << (port - 0xF70);
+            if (data & 0x01)
+                I.flag |= mask;
+            else
+                I.flag &= ~mask;
+        } break;
 
-	case 0x0FED:
-		/* MID flag */
-		I.MID_flag = data & 0x01;
-		break;
-	}
-	/* External CRU */
-	/* Even though all the registers above are implemented internally, accesses
+        case 0x0FED:
+            /* MID flag */
+            I.MID_flag = data & 0x01;
+            break;
+    }
+    /* External CRU */
+    /* Even though all the registers above are implemented internally, accesses
 	are passed to the external bus, too, and an external device might respond
 	to a write to these CRU address as well (particularly a write to the user
 	flag registers). */
-	WRITEPORT(port, (data & 0x01));
+    WRITEPORT(port, (data & 0x01));
 }
 #else
 #define write_single_CRU(port, data) WRITEPORT(port, data)
@@ -1556,36 +1574,35 @@ static void write_single_CRU(int port, int data)
 /*
 	performs a normal write to CRU bus (used by SBZ, SBO, LDCR : address range 0 -> 0xFFF)
 */
-static void writeCRU(int CRUAddr, int Number, UINT16 Value)
-{
+static void
+writeCRU(int CRUAddr, int Number, UINT16 Value) {
 #if (TMS99XX_MODEL == TMS9900_ID)
-	/* 3 MSBs are always 0 to support external instructions */
-	#define wCRUAddrMask 0xFFF;
+/* 3 MSBs are always 0 to support external instructions */
+#define wCRUAddrMask 0xFFF;
 #elif (TMS99XX_MODEL == TMS9980_ID)
-	/* 2 bits unused, and 2 MSBs are always 0 to support external instructions */
-	#define wCRUAddrMask 0x7FF;
+/* 2 bits unused, and 2 MSBs are always 0 to support external instructions */
+#define wCRUAddrMask 0x7FF;
 #elif (TMS99XX_MODEL == TMS9995_ID)
-	/* no such problem here : data bus lines D0-D2 provide the external instruction code */
-	#define wCRUAddrMask 0x7FFF;
+/* no such problem here : data bus lines D0-D2 provide the external instruction code */
+#define wCRUAddrMask 0x7FFF;
 #else
-	#warning "I don't know how your processor handle CRU."
-	#define wCRUAddrMask 0x7FFF;
+#warning "I don't know how your processor handle CRU."
+#define wCRUAddrMask 0x7FFF;
 #endif
 
-	int count;
+    int count;
 
-	CRUAddr &= wCRUAddrMask;
+    CRUAddr &= wCRUAddrMask;
 
-	LOG(("%04x: Write CRU %04x for %2d = %02x\n",I.PC,CRUAddr,Number,Value));
+    LOG(("%04x: Write CRU %04x for %2d = %02x\n", I.PC, CRUAddr, Number, Value));
 
-	/* Write Number bits from CRUAddr */
+    /* Write Number bits from CRUAddr */
 
-	for(count=0; count<Number; count++)
-	{
-		write_single_CRU(CRUAddr, (Value & 0x01));
-		Value >>= 1;
-		CRUAddr = (CRUAddr + 1) & wCRUAddrMask;
-	}
+    for (count = 0; count < Number; count++) {
+        write_single_CRU(CRUAddr, (Value & 0x01));
+        Value >>= 1;
+        CRUAddr = (CRUAddr + 1) & wCRUAddrMask;
+    }
 }
 
 /*
@@ -1598,47 +1615,46 @@ static void writeCRU(int CRUAddr, int Number, UINT16 Value)
 	How should we support this ? With callback functions ? Actually, as long as we do not support
 	hardware which makes use of this feature, it does not really matter :-) .
 */
-static void external_instruction_notify(int ext_op_ID)
-{
+static void
+external_instruction_notify(int ext_op_ID) {
 #if 1
-	/* I guess we can support this like normal CRU operations */
+    /* I guess we can support this like normal CRU operations */
 #if (TMS99XX_MODEL == TMS9900_ID)
-	WRITEPORT(ext_op_ID << 12, 0); /* or is it 1 ??? */
+    WRITEPORT(ext_op_ID << 12, 0); /* or is it 1 ??? */
 #elif (TMS99XX_MODEL == TMS9980_ID)
-	cpu_writeport16((ext_op_ID & 3) << 11, (ext_op_ID & 4) ? 1 : 0);
+    cpu_writeport16((ext_op_ID & 3) << 11, (ext_op_ID & 4) ? 1 : 0);
 #elif (TMS99XX_MODEL == TMS9995_ID)
-	cpu_writeport16(ext_op_ID << 15, 0); /* or is it 1 ??? */
+    cpu_writeport16(ext_op_ID << 15, 0); /* or is it 1 ??? */
 #else
-	#warning "I don't know how your processor handle external opcodes (maybe you don't need them, though)."
+#warning "I don't know how your processor handle external opcodes (maybe you don't need them, though)."
 #endif
 
 #else
-	switch (ext_op_ID)
-	{
-		case 2: /* IDLE */
+    switch (ext_op_ID) {
+        case 2: /* IDLE */
 
-			break;
-		case 3: /* RSET */
+            break;
+        case 3: /* RSET */
 
-			break;
-		case 5: /* CKON */
+            break;
+        case 5: /* CKON */
 
-			break;
-		case 6: /* CKOF */
+            break;
+        case 6: /* CKOF */
 
-			break;
-		case 7: /* LREX */
+            break;
+        case 7: /* LREX */
 
-			break;
-		case 0:
-			/* normal CRU write !!! */
-			LOG(("PC %4.4x : external_instruction_notify : wrong ext_op_ID",I.PC));
-			break;
-		default:
-			/* unknown address */
-			LOG(("PC %4.4x : external_instruction_notify : unknown ext_op_ID",I.PC));
-			break;
-	}
+            break;
+        case 0:
+            /* normal CRU write !!! */
+            LOG(("PC %4.4x : external_instruction_notify : wrong ext_op_ID", I.PC));
+            break;
+        default:
+            /* unknown address */
+            LOG(("PC %4.4x : external_instruction_notify : unknown ext_op_ID", I.PC));
+            break;
+    }
 #endif
 }
 
@@ -1650,200 +1666,190 @@ static void external_instruction_notify(int ext_op_ID)
 	This seems to be impossible to emulate efficiently.
 */
 #if (TMS99XX_MODEL == TMS9900_ID)
-#define READPORT(Port) cpu_readport16bew_word((Port)<<1)
+#define READPORT(Port) cpu_readport16bew_word((Port) << 1)
 #else
 #define READPORT(Port) cpu_readport16(Port)
 #endif
 
 #if (TMS99XX_MODEL == TMS9940_ID) || (TMS99XX_MODEL == TMS9985_ID)
 /* on tms9940, we have to handle internal CRU ports */
-static int read_single_CRU(int port)
-{
-	int reply;
-	int shift;
+static int
+read_single_CRU(int port) {
+    int reply;
+    int shift;
 
-	if (! (port & 0x20))
-	{
-		/*if (cpustate->config & CB0)*/
-		/* External CRU */
-		reply = READPORT(port, (data & 0x01));
-	}
-	else
-	{
-		/* internal CRU */
-		switch (port)
-		{
-		case 0x10:
-			/* read interrupt state */
-			reply = I.irq_state;
-			break;
+    if (!(port & 0x20)) {
+        /*if (cpustate->config & CB0)*/
+        /* External CRU */
+        reply = READPORT(port, (data & 0x01));
+    } else {
+        /* internal CRU */
+        switch (port) {
+            case 0x10:
+                /* read interrupt state */
+                reply = I.irq_state;
+                break;
 
-		case 0x12:
-			/* read decrementer LSB */
-			/* ... */
-			break;
-		case 0x13:
-			/* read decrementer MSB */
-			/* ... */
-			break;
+            case 0x12:
+                /* read decrementer LSB */
+                /* ... */
+                break;
+            case 0x13:
+                /* read decrementer MSB */
+                /* ... */
+                break;
 
-		case 0x14:
-			/* read multiprocessor system interface LSB */
-			/* ... */
-			break;
-		case 0x15:
-			/* read multiprocessor system interface MSB */
-			/* ... */
-			break;
+            case 0x14:
+                /* read multiprocessor system interface LSB */
+                /* ... */
+                break;
+            case 0x15:
+                /* read multiprocessor system interface MSB */
+                /* ... */
+                break;
 
-		case 0x16:
-			/* read flags LSB */
-			/* ... */
-			break;
-		case 0x17:
-			/* read flags MSB */
-			/* ... */
-			break;
+            case 0x16:
+                /* read flags LSB */
+                /* ... */
+                break;
+            case 0x17:
+                /* read flags MSB */
+                /* ... */
+                break;
 
-		case 0x18:
-		case 0x19:
-		case 0x1A:
-		case 0x1B:
-			/* direction for P0-P31 */
-			shift = (port - 0x18) << 3;
-			/* ... */
-			break;
+            case 0x18:
+            case 0x19:
+            case 0x1A:
+            case 0x1B:
+                /* direction for P0-P31 */
+                shift = (port - 0x18) << 3;
+                /* ... */
+                break;
 
-		case 0x1C:
-		case 0x1D:
-		case 0x1E:
-		case 0x1F:
-			/* data for P0-P31 */
-			shift = (port - 0x1C) << 3;
-			/* ... */
-			break;
+            case 0x1C:
+            case 0x1D:
+            case 0x1E:
+            case 0x1F:
+                /* data for P0-P31 */
+                shift = (port - 0x1C) << 3;
+                /* ... */
+                break;
 
-		default:
-			reply = 0;
-			break;
-		}
-	}
+            default:
+                reply = 0;
+                break;
+        }
+    }
 
-	return reply;
+    return reply;
 }
 #elif (TMS99XX_MODEL == TMS9995_ID)
 /* on tms9995, we have to handle internal CRU ports */
-static int read_single_CRU(int port)
-{
-	switch (port)
-	{
-	case 0x1EE:
-		/* flag, bits 0-7 */
-		return I.flag & 0xFF;
-	case 0x1EF:
-		/* flag, bits 8-15 */
-		return (I.flag >> 8) & 0xFF;
-	case 0x1FD:
-		/* MID flag, and external devices */
-		if (I.MID_flag)
-			return READPORT(port) | 0x10;
-		else
-			return READPORT(port) & ~ 0x10;
-	default:
-		/* external devices */
-		return READPORT(port);
-	}
+static int
+read_single_CRU(int port) {
+    switch (port) {
+        case 0x1EE:
+            /* flag, bits 0-7 */
+            return I.flag & 0xFF;
+        case 0x1EF:
+            /* flag, bits 8-15 */
+            return (I.flag >> 8) & 0xFF;
+        case 0x1FD:
+            /* MID flag, and external devices */
+            if (I.MID_flag)
+                return READPORT(port) | 0x10;
+            else
+                return READPORT(port) & ~0x10;
+        default:
+            /* external devices */
+            return READPORT(port);
+    }
 }
 #else
 #define read_single_CRU(port) READPORT(port)
 #endif
 
-static UINT16 readCRU(int CRUAddr, int Number)
-{
+static UINT16
+readCRU(int CRUAddr, int Number) {
 #if (TMS99XX_MODEL == TMS9900_ID)
-	/* 3 MSBs are always 0 to support external instructions */
-	#define rCRUAddrMask 0x1FF
+/* 3 MSBs are always 0 to support external instructions */
+#define rCRUAddrMask 0x1FF
 #elif (TMS99XX_MODEL == TMS9980_ID)
-	/* 2 bits unused, and 2 MSBs are always 0 to support external instructions */
-	#define rCRUAddrMask 0x0FF
+/* 2 bits unused, and 2 MSBs are always 0 to support external instructions */
+#define rCRUAddrMask 0x0FF
 #elif (TMS99XX_MODEL == TMS9995_ID)
-	/* no such problem here : data bus lines D0-D2 provide the external instruction code */
-	#define rCRUAddrMask 0xFFF
+/* no such problem here : data bus lines D0-D2 provide the external instruction code */
+#define rCRUAddrMask 0xFFF
 #else
-	#warning "I don't know how your processor handle CRU."
-	#define rCRUAddrMask 0xFFF
+#warning "I don't know how your processor handle CRU."
+#define rCRUAddrMask 0xFFF
 #endif
 
-	static const int BitMask[] =
-	{
-		0, /* filler - saves a subtract to find mask */
-		0x0001,0x0003,0x0007,0x000F,0x001F,0x003F,0x007F,0x00FF,
-		0x01FF,0x03FF,0x07FF,0x0FFF,0x1FFF,0x3FFF,0x7FFF,0xFFFF
-	};
+    static const int BitMask[] = {0, /* filler - saves a subtract to find mask */
+                                  0x0001, 0x0003, 0x0007, 0x000F, 0x001F, 0x003F, 0x007F, 0x00FF,
+                                  0x01FF, 0x03FF, 0x07FF, 0x0FFF, 0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF};
 
-	int Offset,Location,Value;
+    int Offset, Location, Value;
 
-	/*logerror("Read CRU %x for %x\n",CRUAddr,Number);*/
+    /*logerror("Read CRU %x for %x\n",CRUAddr,Number);*/
 
-	Location = (CRUAddr >> 3)  & rCRUAddrMask;
-	Offset   = CRUAddr & 07;
+    Location = (CRUAddr >> 3) & rCRUAddrMask;
+    Offset = CRUAddr & 07;
 
-	/* Read 8 bits */
-	Value = read_single_CRU(Location);
+    /* Read 8 bits */
+    Value = read_single_CRU(Location);
 
-	if ((Offset+Number) > 8)
-	{
-		/* Read next 8 bits */
-		Location = (Location + 1) & rCRUAddrMask;
-		Value |= read_single_CRU(Location) << 8;
+    if ((Offset + Number) > 8) {
+        /* Read next 8 bits */
+        Location = (Location + 1) & rCRUAddrMask;
+        Value |= read_single_CRU(Location) << 8;
 
-		if ((Offset+Number) > 16)
-		{
-			/* Read next 8 bits */
-			Location = (Location + 1) & rCRUAddrMask;
-			Value |= read_single_CRU(Location) << 16;
-		}
-	}
+        if ((Offset + Number) > 16) {
+            /* Read next 8 bits */
+            Location = (Location + 1) & rCRUAddrMask;
+            Value |= read_single_CRU(Location) << 16;
+        }
+    }
 
-	/* Allow for Offset */
-	Value >>= Offset;
+    /* Allow for Offset */
+    Value >>= Offset;
 
-	/* Mask out what we want */
-	Value &= BitMask[Number];
+    /* Mask out what we want */
+    Value &= BitMask[Number];
 
-	/* And update */
-	return Value;
+    /* And update */
+    return Value;
 }
 
 /**************************************************************************/
 
 /* fetch : read one word at * PC, and increment PC. */
 
-static UINT16 fetch(void)
-{
-	UINT16 value = readword(I.PC);
-	I.PC += 2;
-	return value;
+static UINT16
+fetch(void) {
+    UINT16 value = readword(I.PC);
+    I.PC += 2;
+    return value;
 }
 
 /* contextswitch : performs a BLWP, ie change PC, WP, and save PC, WP and ST... */
-static void contextswitch(UINT16 addr)
-{
-	UINT16 oldWP, oldpc;
+static void
+contextswitch(UINT16 addr) {
+    UINT16 oldWP, oldpc;
 
-	/* save old state */
-	oldWP = I.WP;
-	oldpc = I.PC;
+    /* save old state */
+    oldWP = I.WP;
+    oldpc = I.PC;
 
-	/* load vector */
-	I.WP = readword(addr) & ~1;
-	I.PC = readword(addr+2) & ~1;
+    /* load vector */
+    I.WP = readword(addr) & ~1;
+    I.PC = readword(addr + 2) & ~1;
 
-	/* write old state to regs */
-	WRITEREG(R13, oldWP);
-	WRITEREG(R14, oldpc);
-	setstat();
-	WRITEREG(R15, I.STATUS);
+    /* write old state to regs */
+    WRITEREG(R13, oldWP);
+    WRITEREG(R14, oldpc);
+    setstat();
+    WRITEREG(R15, I.STATUS);
 }
 
 /*
@@ -1852,114 +1858,99 @@ static void contextswitch(UINT16 addr)
  * NOTA : the LSB is always ignored in word adresses,
  * but we do not set to 0 because of XOP...
  */
-static UINT16 decipheraddr(UINT16 opcode)
-{
-	UINT16 ts = opcode & 0x30;
-	UINT16 reg = opcode & 0xF;
+static UINT16
+decipheraddr(UINT16 opcode) {
+    UINT16 ts = opcode & 0x30;
+    UINT16 reg = opcode & 0xF;
 
-	reg += reg;
+    reg += reg;
 
-	if (ts == 0)
-		/* Rx */
-		return(reg + I.WP);
-	else if (ts == 0x10)
-	{	/* *Rx */
-		CYCLES(4, 1);
-		return(readword(reg + I.WP));
-	}
-	else if (ts == 0x20)
-	{
-		UINT16 imm;
+    if (ts == 0)
+        /* Rx */
+        return (reg + I.WP);
+    else if (ts == 0x10) { /* *Rx */
+        CYCLES(4, 1);
+        return (readword(reg + I.WP));
+    } else if (ts == 0x20) {
+        UINT16 imm;
 
-		imm = fetch();
+        imm = fetch();
 
-		if (reg)
-		{	/* @>xxxx(Rx) */
-			CYCLES(8, 3);
-			return(readword(reg + I.WP) + imm);
-		}
-		else
-		{	/* @>xxxx */
-			CYCLES(8, 1);
-			return(imm);
-		}
-	}
-	else /*if (ts == 0x30)*/
-	{	/* *Rx+ */
-		UINT16 response;
+        if (reg) { /* @>xxxx(Rx) */
+            CYCLES(8, 3);
+            return (readword(reg + I.WP) + imm);
+        } else { /* @>xxxx */
+            CYCLES(8, 1);
+            return (imm);
+        }
+    } else /*if (ts == 0x30)*/
+    {      /* *Rx+ */
+        UINT16 response;
 
-		reg += I.WP;    /* reg now contains effective address */
+        reg += I.WP; /* reg now contains effective address */
 
-		CYCLES(8, 3);
+        CYCLES(8, 3);
 
-		response = readword(reg);
-		writeword(reg, response+2); /* we increment register content */
-		return(response);
-	}
+        response = readword(reg);
+        writeword(reg, response + 2); /* we increment register content */
+        return (response);
+    }
 }
 
 /* decipheraddrbyte : compute and return the effective adress in byte instructions. */
-static UINT16 decipheraddrbyte(UINT16 opcode)
-{
-	UINT16 ts = opcode & 0x30;
-	UINT16 reg = opcode & 0xF;
+static UINT16
+decipheraddrbyte(UINT16 opcode) {
+    UINT16 ts = opcode & 0x30;
+    UINT16 reg = opcode & 0xF;
 
-	reg += reg;
+    reg += reg;
 
-	if (ts == 0)
-		/* Rx */
-		return(reg + I.WP);
-	else if (ts == 0x10)
-	{	/* *Rx */
-		CYCLES(4, 1);
-		return(readword(reg + I.WP));
-	}
-	else if (ts == 0x20)
-	{
-		UINT16 imm;
+    if (ts == 0)
+        /* Rx */
+        return (reg + I.WP);
+    else if (ts == 0x10) { /* *Rx */
+        CYCLES(4, 1);
+        return (readword(reg + I.WP));
+    } else if (ts == 0x20) {
+        UINT16 imm;
 
-		imm = fetch();
+        imm = fetch();
 
-		if (reg)
-		{	/* @>xxxx(Rx) */
-			CYCLES(8, 3);
-			return(readword(reg + I.WP) + imm);
-		}
-		else
-		{	/* @>xxxx */
-			CYCLES(8, 1);
-			return(imm);
-		}
-	}
-	else /*if (ts == 0x30)*/
-	{	/* *Rx+ */
-		UINT16 response;
+        if (reg) { /* @>xxxx(Rx) */
+            CYCLES(8, 3);
+            return (readword(reg + I.WP) + imm);
+        } else { /* @>xxxx */
+            CYCLES(8, 1);
+            return (imm);
+        }
+    } else /*if (ts == 0x30)*/
+    {      /* *Rx+ */
+        UINT16 response;
 
-		reg += I.WP;    /* reg now contains effective address */
+        reg += I.WP; /* reg now contains effective address */
 
-		CYCLES(6, 3);
+        CYCLES(6, 3);
 
-		response = readword(reg);
-		writeword(reg, response+1); /* we increment register content */
-		return(response);
-	}
+        response = readword(reg);
+        writeword(reg, response + 1); /* we increment register content */
+        return (response);
+    }
 }
-
 
 /*************************************************************************/
 
 #if TMS99XX_MODEL <= TMS9989_ID
-	/* TMS9900/TMS9980 merely ignore the instruction */
-	#define HANDLE_ILLEGAL TMS99XX_ICOUNT -= 6
+/* TMS9900/TMS9980 merely ignore the instruction */
+#define HANDLE_ILLEGAL TMS99XX_ICOUNT -= 6
 #elif TMS99XX_MODEL == TMS9995_ID
-	/* TMS9995 generates a MID interrupt */
-	#define HANDLE_ILLEGAL \
-	{ \
-		I.MID_flag = 1; \
-		contextswitch(0x0008); \
-		I.STATUS = (I.STATUS & 0xFE00) | 0x1; \
-		disable_interrupt_recognition = 1; \
-	}
+/* TMS9995 generates a MID interrupt */
+#define HANDLE_ILLEGAL                                                                                                 \
+    {                                                                                                                  \
+        I.MID_flag = 1;                                                                                                \
+        contextswitch(0x0008);                                                                                         \
+        I.STATUS = (I.STATUS & 0xFE00) | 0x1;                                                                          \
+        disable_interrupt_recognition = 1;                                                                             \
+    }
 #else
 #define HANDLE_ILLEGAL
 #warning "don't know"
@@ -1970,11 +1961,10 @@ static UINT16 decipheraddrbyte(UINT16 opcode)
                                                                >0C00->0FFF (not for 99xxx)
 ============================================================================*/
 
-static void illegal(UINT16 opcode)
-{
-	HANDLE_ILLEGAL;
+static void
+illegal(UINT16 opcode) {
+    HANDLE_ILLEGAL;
 }
-
 
 #if (TMS99XX_MODEL >= TMS99105A_ID)
 /*==========================================================================
@@ -1990,8 +1980,8 @@ static void illegal(UINT16 opcode)
 
 tms99xxx : SRAM, SLAM, AM, SM
 ============================================================================*/
-static void h0000(UINT16 opcode)
-{
+static void
+h0000(UINT16 opcode) {
 #if 0
 	if (opcode & 0x30)
 	{	/* STPC STore Program Counter */
@@ -2000,29 +1990,28 @@ static void h0000(UINT16 opcode)
 	else
 #endif
 
-	switch (opcode /*& 0x3F*/)
-	{
-	case 0x1C:  /* SRAM */
-		/* SRAM -- Shift Right Arithmetic Multiple */
-		/* right shift on a 32-bit operand */
-		/* ... */
-		break;
-	case 0x1D:  /* SLAM */
-		/* SLAM -- Shift Left Arithmetic Multiple */
-		/* left shift on a 32-bit operand */
-		/* ... */
-		break;
+    switch (opcode /*& 0x3F*/) {
+        case 0x1C: /* SRAM */
+            /* SRAM -- Shift Right Arithmetic Multiple */
+            /* right shift on a 32-bit operand */
+            /* ... */
+            break;
+        case 0x1D: /* SLAM */
+            /* SLAM -- Shift Left Arithmetic Multiple */
+            /* left shift on a 32-bit operand */
+            /* ... */
+            break;
 
-	case 0x29:  /* AM (or SM ?) */
-		/* AM ---- Add Multiple */
-		/* add with 32-bit operands */
-		/* ... */
-		break;
-	case 0x2A:  /* SM (or AM ?) */
-		/* SM ---- Subtract Multiple */
-		/* substract with 32-bit operands */
-		/* ... */
-		break;
+        case 0x29: /* AM (or SM ?) */
+            /* AM ---- Add Multiple */
+            /* add with 32-bit operands */
+            /* ... */
+            break;
+        case 0x2A: /* SM (or AM ?) */
+            /* SM ---- Subtract Multiple */
+            /* substract with 32-bit operands */
+            /* ... */
+            break;
 
 #if 0
 	case 0x1E:
@@ -2060,13 +2049,12 @@ static void h0000(UINT16 opcode)
 		break;
 #endif
 
-	default:
-		HANDLE_ILLEGAL;
-		break;
-	}
+        default:
+            HANDLE_ILLEGAL;
+            break;
+    }
 }
 #endif
-
 
 #if (TMS99XX_MODEL >= TMS9989_ID)
 /*==========================================================================
@@ -2081,32 +2069,31 @@ static void h0000(UINT16 opcode)
 tms9989 and later : LST, LWP
 tms99xxx : BLSK
 ============================================================================*/
-static void h0040(UINT16 opcode)
-{
-	UINT16 addr;
+static void
+h0040(UINT16 opcode) {
+    UINT16 addr;
 
-	addr = opcode & 0xF;
-	addr = ((addr + addr) + I.WP) & ~1;
+    addr = opcode & 0xF;
+    addr = ((addr + addr) + I.WP) & ~1;
 
-	switch ((opcode & 0xF0) >> 4)
-	{
-	case 8:   /* LST */
-		/* LST --- Load STatus register */
-		/* ST = *Reg */
-		I.STATUS = readword(addr);
-		getstat();  /* set last_parity */
-		break;
-	case 9:   /* LWP */
-		/* LWP --- Load Workspace Pointer register */
-		/* WP = *Reg */
-		I.WP = readword(addr) & ~1;
-		break;
+    switch ((opcode & 0xF0) >> 4) {
+        case 8: /* LST */
+            /* LST --- Load STatus register */
+            /* ST = *Reg */
+            I.STATUS = readword(addr);
+            getstat(); /* set last_parity */
+            break;
+        case 9: /* LWP */
+            /* LWP --- Load Workspace Pointer register */
+            /* WP = *Reg */
+            I.WP = readword(addr) & ~1;
+            break;
 
 #if (TMS99XX_MODEL >= TMS99105A_ID)
-	case 11:  /* BLSK */
-		/* BLSK -- Branch immediate & Link to StacK */
+        case 11: /* BLSK */
+            /* BLSK -- Branch immediate & Link to StacK */
 
-		break;
+            break;
 #endif
 
 #if 0
@@ -2134,12 +2121,11 @@ static void h0040(UINT16 opcode)
 		break;
 #endif
 
-	default:
-		HANDLE_ILLEGAL;
-		break;
-	}
+        default:
+            HANDLE_ILLEGAL;
+            break;
+    }
 }
-
 
 /*==========================================================================
    Additionnal single-operand instructions,                    >0100->01FF
@@ -2153,65 +2139,61 @@ static void h0040(UINT16 opcode)
 tms9989 and later : DIVS, MPYS
 tms99xxx : BIND
 ============================================================================*/
-static void h0100(UINT16 opcode)
-{
-	UINT16 src;
+static void
+h0100(UINT16 opcode) {
+    UINT16 src;
 
-	src = decipheraddr(opcode) & ~1;
+    src = decipheraddr(opcode) & ~1;
 
-  switch ((opcode & 0xC0) >> 6)
-  {
+    switch ((opcode & 0xC0) >> 6) {
 #if (TMS99XX_MODEL >= TMS99105A_ID)
-	case 1:
-		/* BIND -- Branch INDirect */
+        case 1:
+            /* BIND -- Branch INDirect */
 
-		break;
+            break;
 #endif
 
-  case 2:   /* DIVS */
-		/* DIVS -- DIVide Signed */
-		/* R0 = (R0:R1)/S   R1 = (R0:R1)%S */
-		{
-			INT16 d = readword(src);
-			long divq = (READREG(R0) << 16) | READREG(R1);
-			long q = divq/d;
+        case 2: /* DIVS */
+            /* DIVS -- DIVide Signed */
+            /* R0 = (R0:R1)/S   R1 = (R0:R1)%S */
+            {
+                INT16 d = readword(src);
+                long divq = (READREG(R0) << 16) | READREG(R1);
+                long q = divq / d;
 
-			if ((q < -32768L) || (q > 32767L))
-			{
-				I.STATUS |= ST_OV;
-				CYCLES(24 /*don't know*/, 10);
-			}
-			else
-			{
-				I.STATUS &= ~ST_OV;
-				setst_lae(q);
-				WRITEREG(R0, q);
-				WRITEREG(R1, divq%d);
-				/* tms9995 : 33 is the worst case */
-				CYCLES(102 /*don't know*/, 33);
-			}
-		}
-		break;
+                if ((q < -32768L) || (q > 32767L)) {
+                    I.STATUS |= ST_OV;
+                    CYCLES(24 /*don't know*/, 10);
+                } else {
+                    I.STATUS &= ~ST_OV;
+                    setst_lae(q);
+                    WRITEREG(R0, q);
+                    WRITEREG(R1, divq % d);
+                    /* tms9995 : 33 is the worst case */
+                    CYCLES(102 /*don't know*/, 33);
+                }
+            }
+            break;
 
-  case 3:   /* MPYS */
-		/* MPYS -- MultiPlY Signed */
-		/* Results:  R0:R1 = R0*S */
-		{
-			long prod = ((long) (INT16) READREG(R0)) * ((long) (INT16) readword(src));
+        case 3: /* MPYS */
+            /* MPYS -- MultiPlY Signed */
+            /* Results:  R0:R1 = R0*S */
+            {
+                long prod = ((long)(INT16)READREG(R0)) * ((long)(INT16)readword(src));
 
-			I.STATUS &= ~ (ST_LGT | ST_AGT | ST_EQ);
-			if (prod > 0)
-				I.STATUS |= (ST_LGT | ST_AGT);
-			else if (prod < 0)
-				I.STATUS |= ST_LGT;
-			else
-				I.STATUS |= ST_EQ;
+                I.STATUS &= ~(ST_LGT | ST_AGT | ST_EQ);
+                if (prod > 0)
+                    I.STATUS |= (ST_LGT | ST_AGT);
+                else if (prod < 0)
+                    I.STATUS |= ST_LGT;
+                else
+                    I.STATUS |= ST_EQ;
 
-			WRITEREG(R0, prod >> 16);
-			WRITEREG(R1, prod);
-		}
-		CYCLES(56 /*don't know*/, 25);
-		break;
+                WRITEREG(R0, prod >> 16);
+                WRITEREG(R1, prod);
+            }
+            CYCLES(56 /*don't know*/, 25);
+            break;
 
 #if 0
 	case 0:
@@ -2220,13 +2202,12 @@ static void h0100(UINT16 opcode)
 		break;
 #endif
 
-	default:
-		HANDLE_ILLEGAL;
-		break;
-  }
+        default:
+            HANDLE_ILLEGAL;
+            break;
+    }
 }
 #endif
-
 
 /*==========================================================================
    Immediate, Control instructions,                            >0200->03FF
@@ -2239,13 +2220,13 @@ static void h0100(UINT16 opcode)
 
   LI, AI, ANDI, ORI, CI, STWP, STST, LIMI, LWPI, IDLE, RSET, RTWP, CKON, CKOF, LREX
 ============================================================================*/
-static void h0200(UINT16 opcode)
-{
-	UINT16 addr;
-	UINT16 value;	/* used for anything */
+static void
+h0200(UINT16 opcode) {
+    UINT16 addr;
+    UINT16 value; /* used for anything */
 
-	addr = opcode & 0xF;
-	addr = ((addr + addr) + I.WP) & ~1;
+    addr = opcode & 0xF;
+    addr = ((addr + addr) + I.WP) & ~1;
 
 #if 0
 	if ((opcode >= 0x0320) && (opcode < 0x0340))
@@ -2261,9 +2242,8 @@ static void h0200(UINT16 opcode)
 #endif
 
 #if (TMS99XX_MODEL >= TMS9995_ID)
-	/* better instruction decoding on tms9995 */
-	if (((opcode < 0x2E0) && (opcode & 0x10)) || ((opcode >= 0x2E0) && (opcode & 0x1F)))
-	{
+    /* better instruction decoding on tms9995 */
+    if (((opcode < 0x2E0) && (opcode & 0x10)) || ((opcode >= 0x2E0) && (opcode & 0x1F))) {
 #if 0
 		if (opcode == 0x0301)
 		{	/* CR ---- Compare Reals */
@@ -2276,139 +2256,137 @@ static void h0200(UINT16 opcode)
 		}
 		else
 #endif
-		HANDLE_ILLEGAL;
-		return;
-	}
+        HANDLE_ILLEGAL;
+        return;
+    }
 #endif
 
-	switch ((opcode & 0x1e0) >> 5)
-	{
-	case 0:   /* LI */
-		/* LI ---- Load Immediate */
-		/* *Reg = *PC+ */
-		value = fetch();
-		writeword(addr, value);
-		setst_lae(value);
-		CYCLES(12, 3);
-		break;
-	case 1:   /* AI */
-		/* AI ---- Add Immediate */
-		/* *Reg += *PC+ */
-		value = fetch();
-		wadd(addr, value);
-		CYCLES(14, 4);
-		break;
-	case 2:   /* ANDI */
-		/* ANDI -- AND Immediate */
-		/* *Reg &= *PC+ */
-		value = fetch();
-		value = readword(addr) & value;
-		writeword(addr, value);
-		setst_lae(value);
-		CYCLES(14, 4);
-		break;
-	case 3:   /* ORI */
-		/* ORI --- OR Immediate */
-		/* *Reg |= *PC+ */
-		value = fetch();
-		value = readword(addr) | value;
-		writeword(addr, value);
-		setst_lae(value);
-		CYCLES(14, 4);
-		break;
-	case 4:   /* CI */
-		/* CI ---- Compare Immediate */
-		/* status = (*Reg-*PC+) */
-		value = fetch();
-		setst_c_lae(value, readword(addr));
-		CYCLES(14, 4);
-		break;
-	case 5:   /* STWP */
-		/* STWP -- STore Workspace Pointer */
-		/* *Reg = WP */
-		writeword(addr, I.WP);
-		CYCLES(8, 3);
-		break;
-	case 6:   /* STST */
-		/* STST -- STore STatus register */
-		/* *Reg = ST */
-		setstat();
-		writeword(addr, I.STATUS);
-		CYCLES(8, 3);
-		break;
-	case 7:   /* LWPI */
-		/* LWPI -- Load Workspace Pointer Immediate */
-		/* WP = *PC+ */
-		I.WP = fetch() & ~1;
-		CYCLES(10, 4);
-		break;
-	case 8:   /* LIMI */
-		/* LIMI -- Load Interrupt Mask Immediate */
-		/* ST&15 |= (*PC+)&15 */
-		value = fetch();
+    switch ((opcode & 0x1e0) >> 5) {
+        case 0: /* LI */
+            /* LI ---- Load Immediate */
+            /* *Reg = *PC+ */
+            value = fetch();
+            writeword(addr, value);
+            setst_lae(value);
+            CYCLES(12, 3);
+            break;
+        case 1: /* AI */
+            /* AI ---- Add Immediate */
+            /* *Reg += *PC+ */
+            value = fetch();
+            wadd(addr, value);
+            CYCLES(14, 4);
+            break;
+        case 2: /* ANDI */
+            /* ANDI -- AND Immediate */
+            /* *Reg &= *PC+ */
+            value = fetch();
+            value = readword(addr) & value;
+            writeword(addr, value);
+            setst_lae(value);
+            CYCLES(14, 4);
+            break;
+        case 3: /* ORI */
+            /* ORI --- OR Immediate */
+            /* *Reg |= *PC+ */
+            value = fetch();
+            value = readword(addr) | value;
+            writeword(addr, value);
+            setst_lae(value);
+            CYCLES(14, 4);
+            break;
+        case 4: /* CI */
+            /* CI ---- Compare Immediate */
+            /* status = (*Reg-*PC+) */
+            value = fetch();
+            setst_c_lae(value, readword(addr));
+            CYCLES(14, 4);
+            break;
+        case 5: /* STWP */
+            /* STWP -- STore Workspace Pointer */
+            /* *Reg = WP */
+            writeword(addr, I.WP);
+            CYCLES(8, 3);
+            break;
+        case 6: /* STST */
+            /* STST -- STore STatus register */
+            /* *Reg = ST */
+            setstat();
+            writeword(addr, I.STATUS);
+            CYCLES(8, 3);
+            break;
+        case 7: /* LWPI */
+            /* LWPI -- Load Workspace Pointer Immediate */
+            /* WP = *PC+ */
+            I.WP = fetch() & ~1;
+            CYCLES(10, 4);
+            break;
+        case 8: /* LIMI */
+            /* LIMI -- Load Interrupt Mask Immediate */
+            /* ST&15 |= (*PC+)&15 */
+            value = fetch();
 #if (TMS99XX_MODEL == TMS9940_ID)
-		/* Interrupt mask is only two-bit-long on tms9940 */
-		I.STATUS = (I.STATUS & ~ 0x3) | (value & 0x3);
+            /* Interrupt mask is only two-bit-long on tms9940 */
+            I.STATUS = (I.STATUS & ~0x3) | (value & 0x3);
 #else
-		I.STATUS = (I.STATUS & ~ 0xF) | (value & 0xF);
+            I.STATUS = (I.STATUS & ~0xF) | (value & 0xF);
 #endif
-		field_interrupt();  /*IM has been modified.*/
-		CYCLES(16, 5);
-		break;
-	case 9:   /* LMF is implemented elsewhere - when it is implemented */
-		HANDLE_ILLEGAL;
-		break;
-	case 10:  /* IDLE */
-		/* IDLE -- IDLE until a reset, interrupt, load */
-		/* The TMS99000 locks until an interrupt happen (like with 68k STOP instruction),
+            field_interrupt(); /*IM has been modified.*/
+            CYCLES(16, 5);
+            break;
+        case 9: /* LMF is implemented elsewhere - when it is implemented */
+            HANDLE_ILLEGAL;
+            break;
+        case 10: /* IDLE */
+            /* IDLE -- IDLE until a reset, interrupt, load */
+            /* The TMS99000 locks until an interrupt happen (like with 68k STOP instruction),
 		   and continuously performs a special CRU write (code 2). */
-		I.IDLE = 1;
-		external_instruction_notify(2);
-		CYCLES(12, 7);
-		/* we take care of further external_instruction_notify(2); in execute() */
-		break;
-	case 11:  /* RSET */
-		/* RSET -- ReSET */
-		/* Reset the Interrupt Mask, and perform a special CRU write (code 3). */
-		/* Does not actually cause a reset, but an external circuitery could trigger one. */
-		I.STATUS &= 0xFFF0; /*clear IM.*/
-		field_interrupt();  /*IM has been modified.*/
-		external_instruction_notify(3);
-		CYCLES(12, 7);
-		break;
-	case 12:  /* RTWP */
-		/* RTWP -- Return with Workspace Pointer */
-		/* WP = R13, PC = R14, ST = R15 */
-		addr = (I.WP + R13) & ~1;
-		I.WP = readword(addr) & ~1;
-		addr += 2;
-		I.PC = readword(addr) & ~1;
-		addr += 2;
-		I.STATUS = readword(addr);
-		getstat();  /* set last_parity */
+            I.IDLE = 1;
+            external_instruction_notify(2);
+            CYCLES(12, 7);
+            /* we take care of further external_instruction_notify(2); in execute() */
+            break;
+        case 11: /* RSET */
+            /* RSET -- ReSET */
+            /* Reset the Interrupt Mask, and perform a special CRU write (code 3). */
+            /* Does not actually cause a reset, but an external circuitery could trigger one. */
+            I.STATUS &= 0xFFF0; /*clear IM.*/
+            field_interrupt();  /*IM has been modified.*/
+            external_instruction_notify(3);
+            CYCLES(12, 7);
+            break;
+        case 12: /* RTWP */
+            /* RTWP -- Return with Workspace Pointer */
+            /* WP = R13, PC = R14, ST = R15 */
+            addr = (I.WP + R13) & ~1;
+            I.WP = readword(addr) & ~1;
+            addr += 2;
+            I.PC = readword(addr) & ~1;
+            addr += 2;
+            I.STATUS = readword(addr);
+            getstat(); /* set last_parity */
 
-		field_interrupt();  /*IM has been modified.*/
-		CYCLES(14, 6);
-		break;
-	case 13:  /* CKON */
-	case 14:  /* CKOF */
-	case 15:  /* LREX */
-		/* CKON -- ClocK ON */
-		/* Perform a special CRU write (code 5). */
-		/* An external circuitery could, for instance, enable a "decrement-and-interrupt" timer. */
-		/* CKOF -- ClocK OFf */
-		/* Perform a special CRU write (code 6). */
-		/* An external circuitery could, for instance, disable a "decrement-and-interrupt" timer. */
-		/* LREX -- Load or REstart eXecution */
-		/* Perform a special CRU write (code 7). */
-		/* An external circuitery could, for instance, activate the LOAD* line,
+            field_interrupt(); /*IM has been modified.*/
+            CYCLES(14, 6);
+            break;
+        case 13: /* CKON */
+        case 14: /* CKOF */
+        case 15: /* LREX */
+            /* CKON -- ClocK ON */
+            /* Perform a special CRU write (code 5). */
+            /* An external circuitery could, for instance, enable a "decrement-and-interrupt" timer. */
+            /* CKOF -- ClocK OFf */
+            /* Perform a special CRU write (code 6). */
+            /* An external circuitery could, for instance, disable a "decrement-and-interrupt" timer. */
+            /* LREX -- Load or REstart eXecution */
+            /* Perform a special CRU write (code 7). */
+            /* An external circuitery could, for instance, activate the LOAD* line,
 		   causing a non-maskable LOAD interrupt (vector -1). */
-		external_instruction_notify((opcode & 0x00e0) >> 5);
-		CYCLES(12, 7);
-		break;
-	}
+            external_instruction_notify((opcode & 0x00e0) >> 5);
+            CYCLES(12, 7);
+            break;
+    }
 }
-
 
 /*==========================================================================
    Single-operand instructions,                                >0400->07FF
@@ -2422,186 +2400,180 @@ static void h0200(UINT16 opcode)
   BLWP, B, X, CLR, NEG, INV, INC, INCT, DEC, DECT, BL, SWPB, SETO, ABS
 tms99xxx : LDD, LDS
 ============================================================================*/
-static void h0400(UINT16 opcode)
-{
-	UINT16 addr = decipheraddr(opcode) & ~1;
-	UINT16 value;  /* used for anything */
+static void
+h0400(UINT16 opcode) {
+    UINT16 addr = decipheraddr(opcode) & ~1;
+    UINT16 value; /* used for anything */
 
-	switch ((opcode & 0x3C0) >> 6)
-	{
-	case 0:   /* BLWP */
-		/* BLWP -- Branch and Link with Workspace Pointer */
-		/* Result: WP = *S+, PC = *S */
-		/*         New R13=old WP, New R14=Old PC, New R15=Old ST */
-		contextswitch(addr);
-		CYCLES(26, 11);
-		disable_interrupt_recognition = 1;
-		break;
-	case 1:   /* B */
-		/* B ----- Branch */
-		/* PC = S */
-		I.PC = addr;
-		CYCLES(8, 3);
-		break;
-	case 2:   /* X */
-		/* X ----- eXecute */
-		/* Executes instruction *S */
-		execute(readword(addr));
-		/* On tms9900, the X instruction actually takes 8 cycles, but we gain 4 cycles on the next
+    switch ((opcode & 0x3C0) >> 6) {
+        case 0: /* BLWP */
+            /* BLWP -- Branch and Link with Workspace Pointer */
+            /* Result: WP = *S+, PC = *S */
+            /*         New R13=old WP, New R14=Old PC, New R15=Old ST */
+            contextswitch(addr);
+            CYCLES(26, 11);
+            disable_interrupt_recognition = 1;
+            break;
+        case 1: /* B */
+            /* B ----- Branch */
+            /* PC = S */
+            I.PC = addr;
+            CYCLES(8, 3);
+            break;
+        case 2: /* X */
+            /* X ----- eXecute */
+            /* Executes instruction *S */
+            execute(readword(addr));
+            /* On tms9900, the X instruction actually takes 8 cycles, but we gain 4 cycles on the next
 		instruction, as we don't need to fetch it. */
-		CYCLES(4, 2);
-		break;
-	case 3:   /* CLR */
-		/* CLR --- CLeaR */
-		/* *S = 0 */
-		writeword(addr, 0);
-		CYCLES(10, 3);
-		break;
-	case 4:   /* NEG */
-		/* NEG --- NEGate */
-		/* *S = -*S */
-		value = - (INT16) readword(addr);
-		if (value)
-			I.STATUS &= ~ ST_C;
-		else
-			I.STATUS |= ST_C;
+            CYCLES(4, 2);
+            break;
+        case 3: /* CLR */
+            /* CLR --- CLeaR */
+            /* *S = 0 */
+            writeword(addr, 0);
+            CYCLES(10, 3);
+            break;
+        case 4: /* NEG */
+            /* NEG --- NEGate */
+            /* *S = -*S */
+            value = -(INT16)readword(addr);
+            if (value)
+                I.STATUS &= ~ST_C;
+            else
+                I.STATUS |= ST_C;
 #if (TMS99XX_MODEL == TMS9940_ID)
-		if (value & 0x0FFF)
-			I.STATUS &= ~ ST_DC;
-		else
-			I.STATUS |= ST_DC;
+            if (value & 0x0FFF)
+                I.STATUS &= ~ST_DC;
+            else
+                I.STATUS |= ST_DC;
 #endif
-		setst_laeo(value);
-		writeword(addr, value);
-		CYCLES(12, 3);
-		break;
-	case 5:   /* INV */
-		/* INV --- INVert */
-		/* *S = ~*S */
-		value = ~ readword(addr);
-		writeword(addr, value);
-		setst_lae(value);
-		CYCLES(10, 3);
-		break;
-	case 6:   /* INC */
-		/* INC --- INCrement */
-		/* (*S)++ */
-		wadd(addr, 1);
-		CYCLES(10, 3);
-		break;
-	case 7:   /* INCT */
-		/* INCT -- INCrement by Two */
-		/* (*S) +=2 */
-		wadd(addr, 2);
-		CYCLES(10, 3);
-		break;
-	case 8:   /* DEC */
-		/* DEC --- DECrement */
-		/* (*S)-- */
-		wsub(addr, 1);
-		CYCLES(10, 3);
-		break;
-	case 9:   /* DECT */
-		/* DECT -- DECrement by Two */
-		/* (*S) -= 2 */
-		wsub(addr, 2);
-		CYCLES(10, 3);
-		break;
-	case 10:  /* BL */
-		/* BL ---- Branch and Link */
-		/* IP=S, R11=old IP */
-		WRITEREG(R11, I.PC);
-		I.PC = addr;
-		CYCLES(12, 5);
-		break;
-	case 11:  /* SWPB */
-		/* SWPB -- SWaP Bytes */
-		/* *S = swab(*S) */
-		value = readword(addr);
-		value = logical_right_shift(value, 8) | (value << 8);
-		writeword(addr, value);
-		CYCLES(10, 13);
-		break;
-	case 12:  /* SETO */
-		/* SETO -- SET Ones */
-		/* *S = #$FFFF */
-		writeword(addr, 0xFFFF);
-		CYCLES(10, 3);
-		break;
-	case 13:  /* ABS */
-		/* ABS --- ABSolute value */
-		/* *S = |*S| */
-		/* clearing ST_C seems to be necessary, although ABS will never set it. */
+            setst_laeo(value);
+            writeword(addr, value);
+            CYCLES(12, 3);
+            break;
+        case 5: /* INV */
+            /* INV --- INVert */
+            /* *S = ~*S */
+            value = ~readword(addr);
+            writeword(addr, value);
+            setst_lae(value);
+            CYCLES(10, 3);
+            break;
+        case 6: /* INC */
+            /* INC --- INCrement */
+            /* (*S)++ */
+            wadd(addr, 1);
+            CYCLES(10, 3);
+            break;
+        case 7: /* INCT */
+            /* INCT -- INCrement by Two */
+            /* (*S) +=2 */
+            wadd(addr, 2);
+            CYCLES(10, 3);
+            break;
+        case 8: /* DEC */
+            /* DEC --- DECrement */
+            /* (*S)-- */
+            wsub(addr, 1);
+            CYCLES(10, 3);
+            break;
+        case 9: /* DECT */
+            /* DECT -- DECrement by Two */
+            /* (*S) -= 2 */
+            wsub(addr, 2);
+            CYCLES(10, 3);
+            break;
+        case 10: /* BL */
+            /* BL ---- Branch and Link */
+            /* IP=S, R11=old IP */
+            WRITEREG(R11, I.PC);
+            I.PC = addr;
+            CYCLES(12, 5);
+            break;
+        case 11: /* SWPB */
+            /* SWPB -- SWaP Bytes */
+            /* *S = swab(*S) */
+            value = readword(addr);
+            value = logical_right_shift(value, 8) | (value << 8);
+            writeword(addr, value);
+            CYCLES(10, 13);
+            break;
+        case 12: /* SETO */
+            /* SETO -- SET Ones */
+            /* *S = #$FFFF */
+            writeword(addr, 0xFFFF);
+            CYCLES(10, 3);
+            break;
+        case 13: /* ABS */
+                 /* ABS --- ABSolute value */
+                 /* *S = |*S| */
+                 /* clearing ST_C seems to be necessary, although ABS will never set it. */
 #if (TMS99XX_MODEL <= TMS9985_ID)
-		/* tms9900/tms9980 only write the result if it has changed */
-		I.STATUS &= ~ (ST_LGT | ST_AGT | ST_EQ | ST_C | ST_OV);
+            /* tms9900/tms9980 only write the result if it has changed */
+            I.STATUS &= ~(ST_LGT | ST_AGT | ST_EQ | ST_C | ST_OV);
 #if (TMS99XX_MODEL == TMS9940_ID)
-		/* I guess ST_DC is cleared here, too*/
-		I.STATUS &= ~ ST_DC;
+            /* I guess ST_DC is cleared here, too*/
+            I.STATUS &= ~ST_DC;
 #endif
-		value = readword(addr);
+            value = readword(addr);
 
-		CYCLES(12, Mooof!);
+            CYCLES(12, Mooof !);
 
-		if (((INT16) value) > 0)
-			I.STATUS |= ST_LGT | ST_AGT;
-		else if (((INT16) value) < 0)
-		{
-			I.STATUS |= ST_LGT;
-			if (value == 0x8000)
-				I.STATUS |= ST_OV;
+            if (((INT16)value) > 0)
+                I.STATUS |= ST_LGT | ST_AGT;
+            else if (((INT16)value) < 0) {
+                I.STATUS |= ST_LGT;
+                if (value == 0x8000)
+                    I.STATUS |= ST_OV;
 #if (TMS99XX_MODEL == TMS9940_ID)
-			if (! (value & 0x0FFF))
-				I.STATUS |= ST_DC;
+                if (!(value & 0x0FFF))
+                    I.STATUS |= ST_DC;
 #endif
-			writeword(addr, - ((INT16) value));
-			CYCLES(2, Mooof!);
-		}
-		else
-			I.STATUS |= ST_EQ;
+                writeword(addr, -((INT16)value));
+                CYCLES(2, Mooof !);
+            } else
+                I.STATUS |= ST_EQ;
 
 #else
-		/* tms9995 always write the result */
-		I.STATUS &= ~ (ST_LGT | ST_AGT | ST_EQ | ST_C | ST_OV);
-		value = readword(addr);
+            /* tms9995 always write the result */
+            I.STATUS &= ~(ST_LGT | ST_AGT | ST_EQ | ST_C | ST_OV);
+            value = readword(addr);
 
-		CYCLES(12 /*Don't know for tms9989*/, 3);
-		if (((INT16) value) > 0)
-			I.STATUS |= ST_LGT | ST_AGT;
-		else if (((INT16) value) < 0)
-		{
-			I.STATUS |= ST_LGT;
-			if (value == 0x8000)
-				I.STATUS |= ST_OV;
-			value = - ((INT16) value);
-		}
-		else
-			I.STATUS |= ST_EQ;
+            CYCLES(12 /*Don't know for tms9989*/, 3);
+            if (((INT16)value) > 0)
+                I.STATUS |= ST_LGT | ST_AGT;
+            else if (((INT16)value) < 0) {
+                I.STATUS |= ST_LGT;
+                if (value == 0x8000)
+                    I.STATUS |= ST_OV;
+                value = -((INT16)value);
+            } else
+                I.STATUS |= ST_EQ;
 
-		writeword(addr, value);
+            writeword(addr, value);
 #endif
 
-		break;
+            break;
 #if (TMS99XX_MODEL >= TMS99105A_ID)
-	/* "These opcode are designed to support the 99610 memory mapper, to allow easy access to
+        /* "These opcode are designed to support the 99610 memory mapper, to allow easy access to
 	another page without the need of switching a page someplace." */
-	case 14:  /* LDS */
-		/* LDS --- Long Distance Source */
-		/* ... */
-		break;
-	case 15:  /* LDD */
-		/* LDD --- Long Distance Destination */
-		/* ... */
-		break;
+        case 14: /* LDS */
+            /* LDS --- Long Distance Source */
+            /* ... */
+            break;
+        case 15: /* LDD */
+            /* LDD --- Long Distance Destination */
+            /* ... */
+            break;
 #else
-	default:
-		/* illegal instructions */
-		HANDLE_ILLEGAL;
-		break;
+        default:
+            /* illegal instructions */
+            HANDLE_ILLEGAL;
+            break;
 #endif
-	}
+    }
 }
-
 
 /*==========================================================================
    Shift instructions,                                         >0800->0BFF
@@ -2614,58 +2586,55 @@ static void h0400(UINT16 opcode)
 
   SRA, SRL, SLA, SRC
 ============================================================================*/
-static void h0800(UINT16 opcode)
-{
-	UINT16 addr;
-	UINT16 cnt = (opcode & 0xF0) >> 4;
-	UINT16 value;
+static void
+h0800(UINT16 opcode) {
+    UINT16 addr;
+    UINT16 cnt = (opcode & 0xF0) >> 4;
+    UINT16 value;
 
-	addr = (opcode & 0xF);
-	addr = ((addr+addr) + I.WP) & ~1;
+    addr = (opcode & 0xF);
+    addr = ((addr + addr) + I.WP) & ~1;
 
-	CYCLES(12, 5);
+    CYCLES(12, 5);
 
-	if (cnt == 0)
-	{
-		CYCLES(8, 2);
+    if (cnt == 0) {
+        CYCLES(8, 2);
 
-		cnt = READREG(0) & 0xF;
+        cnt = READREG(0) & 0xF;
 
-		if (cnt == 0)
-			cnt = 16;
-	}
+        if (cnt == 0)
+            cnt = 16;
+    }
 
-	CYCLES(cnt+cnt, cnt);
+    CYCLES(cnt + cnt, cnt);
 
-	switch ((opcode & 0x300) >> 8)
-	{
-	case 0:   /* SRA */
-		/* SRA --- Shift Right Arithmetic */
-		/* *W >>= C   (*W is filled on the left with a copy of the sign bit) */
-		value = setst_sra_laec(readword(addr), cnt);
-		writeword(addr, value);
-		break;
-	case 1:   /* SRL */
-		/* SRL --- Shift Right Logical */
-		/* *W >>= C   (*W is filled on the left with 0) */
-		value = setst_srl_laec(readword(addr), cnt);
-		writeword(addr, value);
-		break;
-	case 2:   /* SLA */
-		/* SLA --- Shift Left Arithmetic */
-		/* *W <<= C */
-		value = setst_sla_laeco(readword(addr), cnt);
-		writeword(addr, value);
-		break;
-	case 3:   /* SRC */
-		/* SRC --- Shift Right Circular */
-		/* *W = rightcircularshift(*W, C) */
-		value = setst_src_laec(readword(addr), cnt);
-		writeword(addr, value);
-		break;
-	}
+    switch ((opcode & 0x300) >> 8) {
+        case 0: /* SRA */
+            /* SRA --- Shift Right Arithmetic */
+            /* *W >>= C   (*W is filled on the left with a copy of the sign bit) */
+            value = setst_sra_laec(readword(addr), cnt);
+            writeword(addr, value);
+            break;
+        case 1: /* SRL */
+            /* SRL --- Shift Right Logical */
+            /* *W >>= C   (*W is filled on the left with 0) */
+            value = setst_srl_laec(readword(addr), cnt);
+            writeword(addr, value);
+            break;
+        case 2: /* SLA */
+            /* SLA --- Shift Left Arithmetic */
+            /* *W <<= C */
+            value = setst_sla_laeco(readword(addr), cnt);
+            writeword(addr, value);
+            break;
+        case 3: /* SRC */
+            /* SRC --- Shift Right Circular */
+            /* *W = rightcircularshift(*W, C) */
+            value = setst_src_laec(readword(addr), cnt);
+            writeword(addr, value);
+            break;
+    }
 }
-
 
 #if (TMS99XX_MODEL >= TMS99105A_ID)
 /*==========================================================================
@@ -2682,10 +2651,9 @@ static void h0800(UINT16 opcode)
 tms99xxx : TMB, TCMB, TSMB
 tms99110a : CRI, NEGR, CRE, CER
 ============================================================================*/
-static void h0c00(UINT16 opcode)
-{
-	if (opcode & 0x30)
-	{
+static void
+h0c00(UINT16 opcode) {
+    if (opcode & 0x30) {
 #if 0
 		switch ((opcode & 0x30) >> 4)
 		{
@@ -2699,46 +2667,43 @@ static void h0c00(UINT16 opcode)
 			break;
 		}
 #else
-		HANDLE_ILLEGAL;
+        HANDLE_ILLEGAL;
 #endif
-	}
-	else
-	{
-		switch (opcode & 0x0F)
-		{
+    } else {
+        switch (opcode & 0x0F) {
 #if (TMS99XX_MODEL == TMS99110A_ID)
-		/* floating point instructions */
-		case 0:
-			/* CRI --- Convert Real to Integer */
+            /* floating point instructions */
+            case 0:
+                /* CRI --- Convert Real to Integer */
 
-			break;
-		case 2:
-			/* NEGR -- NEGate Real */
+                break;
+            case 2:
+                /* NEGR -- NEGate Real */
 
-			break;
-		case 4:
-			/* CRE --- Convert Real to Extended integer */
+                break;
+            case 4:
+                /* CRE --- Convert Real to Extended integer */
 
-			break;
-		case 6:
-			/* CER --- Convert Extended integer to Real */
+                break;
+            case 6:
+                /* CER --- Convert Extended integer to Real */
 
-			break;
+                break;
 #endif
 
-		/* The next three instructions allow to handle multiprocessor systems */
-		case 9:
-			/* TMB --- Test Memory Bit */
+            /* The next three instructions allow to handle multiprocessor systems */
+            case 9:
+                /* TMB --- Test Memory Bit */
 
-			break;
-		case 10:
-			/* TCMB -- Test and Clear Memory Bit */
+                break;
+            case 10:
+                /* TCMB -- Test and Clear Memory Bit */
 
-			break;
-		case 11:
-			/* TSMB -- Test and Set Memory Bit */
+                break;
+            case 11:
+                /* TSMB -- Test and Set Memory Bit */
 
-			break;
+                break;
 
 #if 0
 		/* the four next instructions support BCD */
@@ -2766,13 +2731,12 @@ static void h0c00(UINT16 opcode)
 
 			break;
 #endif
-		default:
-			HANDLE_ILLEGAL;
-			break;
-		}
-	}
+            default:
+                HANDLE_ILLEGAL;
+                break;
+        }
+    }
 }
-
 
 /*==========================================================================
    Additionnal single-operand instructions,                    >0C40->0FFF
@@ -2785,29 +2749,28 @@ static void h0c00(UINT16 opcode)
 
 tms99110a : AR, CIR, SR, MR, DR, LR, STR
 ============================================================================*/
-static void h0c40(UINT16 opcode)
-{
-	UINT16 src;
+static void
+h0c40(UINT16 opcode) {
+    UINT16 src;
 
-	src = decipheraddr(opcode) & ~1;
+    src = decipheraddr(opcode) & ~1;
 
-	switch ((opcode & 0x03C0) >> 6)
-	{
+    switch ((opcode & 0x03C0) >> 6) {
 #if (TMS99XX_MODEL == TMS99110A_ID)
-	case 1:
-		/* AR ---- Add Real */
-	case 2:
-		/* CIR --- Convert Integer to Real */
-	case 3:
-		/* SR ---- Subtract Real */
-	case 4:
-		/* MR ---- Multiply Real */
-	case 5:
-		/* DR ---- Divide Real */
-	case 6:
-		/* LR ---- Load Real */
-	case 7:
-		/* STR --- STore Real */
+        case 1:
+            /* AR ---- Add Real */
+        case 2:
+            /* CIR --- Convert Integer to Real */
+        case 3:
+            /* SR ---- Subtract Real */
+        case 4:
+            /* MR ---- Multiply Real */
+        case 5:
+            /* DR ---- Divide Real */
+        case 6:
+            /* LR ---- Load Real */
+        case 7:
+            /* STR --- STore Real */
 #endif
 #if 0
 	case 9:
@@ -2825,13 +2788,12 @@ static void h0c40(UINT16 opcode)
 	case 15:
 		/* SD ---- Store Decimal */
 #endif
-	default:
-		HANDLE_ILLEGAL;
-		break;
-	}
+        default:
+            HANDLE_ILLEGAL;
+            break;
+    }
 }
 #endif
-
 
 /*==========================================================================
    Jump, CRU bit instructions,                                 >1000->1FFF
@@ -2845,196 +2807,169 @@ static void h0c40(UINT16 opcode)
   JMP, JLT, JLE, JEQ, JHE, JGT, JNE, JNC, JOC, JNO, JL, JH, JOP
   SBO, SBZ, TB
 ============================================================================*/
-static void h1000(UINT16 opcode)
-{
-	/* we convert 8 bit signed word offset to a 16 bit effective word offset. */
-	INT16 offset = ((INT8) opcode);
+static void
+h1000(UINT16 opcode) {
+    /* we convert 8 bit signed word offset to a 16 bit effective word offset. */
+    INT16 offset = ((INT8)opcode);
 
+    switch ((opcode & 0xF00) >> 8) {
+        case 0: /* JMP */
+            /* JMP --- unconditional JuMP */
+            /* PC += offset */
+            I.PC += (offset + offset);
+            CYCLES(10, 3);
+            break;
+        case 1: /* JLT */
+            /* JLT --- Jump if Less Than (arithmetic) */
+            /* if (A==0 && EQ==0), PC += offset */
+            if (!(I.STATUS & (ST_AGT | ST_EQ))) {
+                I.PC += (offset + offset);
+                CYCLES(10, 3);
+            } else
+                CYCLES(8, 3);
+            break;
+        case 2: /* JLE */
+            /* JLE --- Jump if Lower or Equal (logical) */
+            /* if (L==0 || EQ==1), PC += offset */
+            if ((!(I.STATUS & ST_LGT)) || (I.STATUS & ST_EQ)) {
+                I.PC += (offset + offset);
+                CYCLES(10, 3);
+            } else
+                CYCLES(8, 3);
+            break;
+        case 3: /* JEQ */
+            /* JEQ --- Jump if EQual */
+            /* if (EQ==1), PC += offset */
+            if (I.STATUS & ST_EQ) {
+                I.PC += (offset + offset);
+                CYCLES(10, 3);
+            } else
+                CYCLES(8, 3);
+            break;
+        case 4: /* JHE */
+            /* JHE --- Jump if Higher or Equal (logical) */
+            /* if (L==1 || EQ==1), PC += offset */
+            if (I.STATUS & (ST_LGT | ST_EQ)) {
+                I.PC += (offset + offset);
+                CYCLES(10, 3);
+            } else
+                CYCLES(8, 3);
+            break;
+        case 5: /* JGT */
+            /* JGT --- Jump if Greater Than (arithmetic) */
+            /* if (A==1), PC += offset */
+            if (I.STATUS & ST_AGT) {
+                I.PC += (offset + offset);
+                CYCLES(10, 3);
+            } else
+                CYCLES(8, 3);
+            break;
+        case 6: /* JNE */
+            /* JNE --- Jump if Not Equal */
+            /* if (EQ==0), PC += offset */
+            if (!(I.STATUS & ST_EQ)) {
+                I.PC += (offset + offset);
+                CYCLES(10, 3);
+            } else
+                CYCLES(8, 3);
+            break;
+        case 7: /* JNC */
+            /* JNC --- Jump if No Carry */
+            /* if (C==0), PC += offset */
+            if (!(I.STATUS & ST_C)) {
+                I.PC += (offset + offset);
+                CYCLES(10, 3);
+            } else
+                CYCLES(8, 3);
+            break;
+        case 8: /* JOC */
+            /* JOC --- Jump On Carry */
+            /* if (C==1), PC += offset */
+            if (I.STATUS & ST_C) {
+                I.PC += (offset + offset);
+                CYCLES(10, 3);
+            } else
+                CYCLES(8, 3);
+            break;
+        case 9: /* JNO */
+            /* JNO --- Jump if No Overflow */
+            /* if (OV==0), PC += offset */
+            if (!(I.STATUS & ST_OV)) {
+                I.PC += (offset + offset);
+                CYCLES(10, 3);
+            } else
+                CYCLES(8, 3);
+            break;
+        case 10: /* JL */
+            /* JL ---- Jump if Lower (logical) */
+            /* if (L==0 && EQ==0), PC += offset */
+            if (!(I.STATUS & (ST_LGT | ST_EQ))) {
+                I.PC += (offset + offset);
+                CYCLES(10, 3);
+            } else
+                CYCLES(8, 3);
+            break;
+        case 11: /* JH */
+            /* JH ---- Jump if Higher (logical) */
+            /* if (L==1 && EQ==0), PC += offset */
+            if ((I.STATUS & ST_LGT) && !(I.STATUS & ST_EQ)) {
+                I.PC += (offset + offset);
+                CYCLES(10, 3);
+            } else
+                CYCLES(8, 3);
+            break;
+        case 12: /* JOP */
+            /* JOP --- Jump On (odd) Parity */
+            /* if (P==1), PC += offset */
+            {
+                /* Let's set ST_OP. */
+                int i;
+                UINT8 a;
+                a = lastparity;
+                i = 0;
 
-	switch ((opcode & 0xF00) >> 8)
-	{
-	case 0:   /* JMP */
-		/* JMP --- unconditional JuMP */
-		/* PC += offset */
-		I.PC += (offset + offset);
-		CYCLES(10, 3);
-		break;
-	case 1:   /* JLT */
-		/* JLT --- Jump if Less Than (arithmetic) */
-		/* if (A==0 && EQ==0), PC += offset */
-		if (! (I.STATUS & (ST_AGT | ST_EQ)))
-		{
-			I.PC += (offset + offset);
-			CYCLES(10, 3);
-		}
-		else
-			CYCLES(8, 3);
-		break;
-	case 2:   /* JLE */
-		/* JLE --- Jump if Lower or Equal (logical) */
-		/* if (L==0 || EQ==1), PC += offset */
-		if ((! (I.STATUS & ST_LGT)) || (I.STATUS & ST_EQ))
-		{
-			I.PC += (offset + offset);
-			CYCLES(10, 3);
-		}
-		else
-			CYCLES(8, 3);
-		break;
-	case 3:   /* JEQ */
-		/* JEQ --- Jump if EQual */
-		/* if (EQ==1), PC += offset */
-		if (I.STATUS & ST_EQ)
-		{
-			I.PC += (offset + offset);
-			CYCLES(10, 3);
-		}
-		else
-			CYCLES(8, 3);
-		break;
-	case 4:   /* JHE */
-		/* JHE --- Jump if Higher or Equal (logical) */
-		/* if (L==1 || EQ==1), PC += offset */
-		if (I.STATUS & (ST_LGT | ST_EQ))
-		{
-			I.PC += (offset + offset);
-			CYCLES(10, 3);
-		}
-		else
-			CYCLES(8, 3);
-		break;
-	case 5:   /* JGT */
-		/* JGT --- Jump if Greater Than (arithmetic) */
-		/* if (A==1), PC += offset */
-		if (I.STATUS & ST_AGT)
-		{
-			I.PC += (offset + offset);
-			CYCLES(10, 3);
-		}
-		else
-			CYCLES(8, 3);
-		break;
-	case 6:   /* JNE */
-		/* JNE --- Jump if Not Equal */
-		/* if (EQ==0), PC += offset */
-		if (! (I.STATUS & ST_EQ))
-		{
-			I.PC += (offset + offset);
-			CYCLES(10, 3);
-		}
-		else
-			CYCLES(8, 3);
-		break;
-	case 7:   /* JNC */
-		/* JNC --- Jump if No Carry */
-		/* if (C==0), PC += offset */
-		if (! (I.STATUS & ST_C))
-		{
-			I.PC += (offset + offset);
-			CYCLES(10, 3);
-		}
-		else
-			CYCLES(8, 3);
-		break;
-	case 8:   /* JOC */
-		/* JOC --- Jump On Carry */
-		/* if (C==1), PC += offset */
-		if (I.STATUS & ST_C)
-		{
-			I.PC += (offset + offset);
-			CYCLES(10, 3);
-		}
-		else
-			CYCLES(8, 3);
-		break;
-	case 9:   /* JNO */
-		/* JNO --- Jump if No Overflow */
-		/* if (OV==0), PC += offset */
-		if (! (I.STATUS & ST_OV))
-		{
-			I.PC += (offset + offset);
-			CYCLES(10, 3);
-		}
-		else
-			CYCLES(8, 3);
-		break;
-	case 10:  /* JL */
-		/* JL ---- Jump if Lower (logical) */
-		/* if (L==0 && EQ==0), PC += offset */
-		if (! (I.STATUS & (ST_LGT | ST_EQ)))
-		{
-			I.PC += (offset + offset);
-			CYCLES(10, 3);
-		}
-		else
-			CYCLES(8, 3);
-		break;
-	case 11:  /* JH */
-		/* JH ---- Jump if Higher (logical) */
-		/* if (L==1 && EQ==0), PC += offset */
-		if ((I.STATUS & ST_LGT) && ! (I.STATUS & ST_EQ))
-		{
-			I.PC += (offset + offset);
-			CYCLES(10, 3);
-		}
-		else
-			CYCLES(8, 3);
-		break;
-	case 12:  /* JOP */
-		/* JOP --- Jump On (odd) Parity */
-		/* if (P==1), PC += offset */
-		{
-			/* Let's set ST_OP. */
-			int i;
-			UINT8 a;
-				a = lastparity;
-			i = 0;
+                while (a != 0) {
+                    if (a & 1) /* If current bit is set, */
+                        i++;   /* increment bit count. */
+                    a >>= 1U;  /* Next bit. */
+                }
 
-			while (a != 0)
-			{
-				if (a & 1)  /* If current bit is set, */
-					i++;      /* increment bit count. */
-				a >>= 1U;   /* Next bit. */
-			}
-
-			/* Set ST_OP bit. */
-			/*if (i & 1)
+                /* Set ST_OP bit. */
+                /*if (i & 1)
 				I.STATUS |= ST_OP;
 			else
 				I.STATUS &= ~ ST_OP;*/
 
-			/* Jump accordingly. */
-			if (i & 1)  /*(I.STATUS & ST_OP)*/
-			{
-				I.PC += (offset + offset);
-				CYCLES(10, 3);
-			}
-			else
-				CYCLES(8, 3);
-		}
+                /* Jump accordingly. */
+                if (i & 1) /*(I.STATUS & ST_OP)*/
+                {
+                    I.PC += (offset + offset);
+                    CYCLES(10, 3);
+                } else
+                    CYCLES(8, 3);
+            }
 
-		break;
-	case 13:  /* SBO */
-		/* SBO --- Set Bit to One */
-		/* CRU Bit = 1 */
-		writeCRU((READREG(R12) >> 1) + offset, 1, 1);
-		CYCLES(12, 8);
-		break;
-	case 14:  /* SBZ */
-		/* SBZ --- Set Bit to Zero */
-		/* CRU Bit = 0 */
-		writeCRU((READREG(R12) >> 1) + offset, 1, 0);
-		CYCLES(12, 8);
-		break;
-	case 15:  /* TB */
-		/* TB ---- Test Bit */
-		/* EQ = (CRU Bit == 1) */
-		setst_e(readCRU((READREG(R12)>> 1) + offset, 1) & 1, 1);
-		CYCLES(12, 8);
-		break;
-	}
+            break;
+        case 13: /* SBO */
+            /* SBO --- Set Bit to One */
+            /* CRU Bit = 1 */
+            writeCRU((READREG(R12) >> 1) + offset, 1, 1);
+            CYCLES(12, 8);
+            break;
+        case 14: /* SBZ */
+            /* SBZ --- Set Bit to Zero */
+            /* CRU Bit = 0 */
+            writeCRU((READREG(R12) >> 1) + offset, 1, 0);
+            CYCLES(12, 8);
+            break;
+        case 15: /* TB */
+            /* TB ---- Test Bit */
+            /* EQ = (CRU Bit == 1) */
+            setst_e(readCRU((READREG(R12) >> 1) + offset, 1) & 1, 1);
+            CYCLES(12, 8);
+            break;
+    }
 }
-
 
 /*==========================================================================
    General and One-Register instructions                       >2000->3FFF
@@ -3050,271 +2985,248 @@ tms9940 : DCA, DCS, LIIM
 ==========================================================================*/
 
 /* xop, ldcr and stcr are handled elsewhere */
-static void h2000(UINT16 opcode)
-{
-	UINT16 dest = (opcode & 0x3C0) >> 6;
-	UINT16 src;
-	UINT16 value;
+static void
+h2000(UINT16 opcode) {
+    UINT16 dest = (opcode & 0x3C0) >> 6;
+    UINT16 src;
+    UINT16 value;
 
-	src = decipheraddr(opcode) & ~1;
+    src = decipheraddr(opcode) & ~1;
 
-	switch ((opcode & 0x1C00) >> 10)
-	{
-	case 0:   /* COC */
-		/* COC --- Compare Ones Corresponding */
-		/* status E bit = (S&D == S) */
-		dest = ((dest+dest) + I.WP) & ~1;
-		value = readword(src);
-		setst_e(value & readword(dest), value);
-		CYCLES(14, 4);
-		break;
-	case 1:   /* CZC */
-		/* CZC --- Compare Zeroes Corresponding */
-		/* status E bit = (S&~D == S) */
-		dest = ((dest+dest) + I.WP) & ~1;
-		value = readword(src);
-		setst_e(value & (~ readword(dest)), value);
-		CYCLES(14, 4);
-		break;
-	case 2:   /* XOR */
-		/* XOR --- eXclusive OR */
-		/* D ^= S */
-		dest = ((dest+dest) + I.WP) & ~1;
-		value = readword(dest) ^ readword(src);
-		setst_lae(value);
-		writeword(dest,value);
-		CYCLES(14, 4);
-		break;
-	/*case 3:*/   /* XOP is implemented elsewhere */
-	/*case 4:*/   /* LDCR is implemented elsewhere */
-	/*case 5:*/   /* STCR is implemented elsewhere */
-	case 6:   /* MPY */
-		/* MPY --- MultiPlY  (unsigned) */
-		/* Results:  D:D+1 = D*S */
-		/* Note that early TMS9995 reportedly perform an extra dummy read in PC space */
-		dest = ((dest+dest) + I.WP) & ~1;
-		{
-			unsigned long prod = ((unsigned long) readword(dest)) * ((unsigned long) readword(src));
-			writeword(dest, prod >> 16);
-			writeword(dest+2, prod & 0xFFFF);
-		}
-		CYCLES(52, 23);
-		break;
-	case 7:   /* DIV */
-		/* DIV --- DIVide    (unsigned) */
-		/* D = D/S    D+1 = D%S */
-		dest = ((dest+dest) + I.WP) & ~1;
-		{
-			UINT16 d = readword(src);
-			UINT16 hi = readword(dest);
-			unsigned long divq = (((unsigned long) hi) << 16) | readword(dest+2);
+    switch ((opcode & 0x1C00) >> 10) {
+        case 0: /* COC */
+            /* COC --- Compare Ones Corresponding */
+            /* status E bit = (S&D == S) */
+            dest = ((dest + dest) + I.WP) & ~1;
+            value = readword(src);
+            setst_e(value & readword(dest), value);
+            CYCLES(14, 4);
+            break;
+        case 1: /* CZC */
+            /* CZC --- Compare Zeroes Corresponding */
+            /* status E bit = (S&~D == S) */
+            dest = ((dest + dest) + I.WP) & ~1;
+            value = readword(src);
+            setst_e(value & (~readword(dest)), value);
+            CYCLES(14, 4);
+            break;
+        case 2: /* XOR */
+            /* XOR --- eXclusive OR */
+            /* D ^= S */
+            dest = ((dest + dest) + I.WP) & ~1;
+            value = readword(dest) ^ readword(src);
+            setst_lae(value);
+            writeword(dest, value);
+            CYCLES(14, 4);
+            break;
+        /*case 3:*/ /* XOP is implemented elsewhere */
+        /*case 4:*/ /* LDCR is implemented elsewhere */
+        /*case 5:*/ /* STCR is implemented elsewhere */
+        case 6:     /* MPY */
+            /* MPY --- MultiPlY  (unsigned) */
+            /* Results:  D:D+1 = D*S */
+            /* Note that early TMS9995 reportedly perform an extra dummy read in PC space */
+            dest = ((dest + dest) + I.WP) & ~1;
+            {
+                unsigned long prod = ((unsigned long)readword(dest)) * ((unsigned long)readword(src));
+                writeword(dest, prod >> 16);
+                writeword(dest + 2, prod & 0xFFFF);
+            }
+            CYCLES(52, 23);
+            break;
+        case 7: /* DIV */
+            /* DIV --- DIVide    (unsigned) */
+            /* D = D/S    D+1 = D%S */
+            dest = ((dest + dest) + I.WP) & ~1;
+            {
+                UINT16 d = readword(src);
+                UINT16 hi = readword(dest);
+                unsigned long divq = (((unsigned long)hi) << 16) | readword(dest + 2);
 
-			if (d <= hi)
-			{
-				I.STATUS |= ST_OV;
-				CYCLES(16, 6);
-			}
-			else
-			{
-				I.STATUS &= ~ST_OV;
-				writeword(dest, (divq/d) & 0xFFFF);
-				writeword(dest+2, divq%d);
-				/* tms9900 : from 92 to 124, possibly 92 + 2*(number of bits to 1 (or 0?) in quotient) */
-				/* tms9995 : 28 is the worst case */
-				CYCLES(92, 28);
-			}
-		}
-		break;
-	}
+                if (d <= hi) {
+                    I.STATUS |= ST_OV;
+                    CYCLES(16, 6);
+                } else {
+                    I.STATUS &= ~ST_OV;
+                    writeword(dest, (divq / d) & 0xFFFF);
+                    writeword(dest + 2, divq % d);
+                    /* tms9900 : from 92 to 124, possibly 92 + 2*(number of bits to 1 (or 0?) in quotient) */
+                    /* tms9995 : 28 is the worst case */
+                    CYCLES(92, 28);
+                }
+            }
+            break;
+    }
 }
 
-static void xop(UINT16 opcode)
-{	/* XOP */
-	/* XOP --- eXtended OPeration */
-	/* WP = *(40h+D), PC = *(42h+D) */
-	/* New R13=old WP, New R14=Old IP, New R15=Old ST */
-	/* New R11=S */
-	/* Xop bit set */
+static void
+xop(UINT16 opcode) { /* XOP */
+    /* XOP --- eXtended OPeration */
+    /* WP = *(40h+D), PC = *(42h+D) */
+    /* New R13=old WP, New R14=Old IP, New R15=Old ST */
+    /* New R11=S */
+    /* Xop bit set */
 
-	UINT16 immediate = (opcode & 0x3C0) >> 6;
-	UINT16 operand;
+    UINT16 immediate = (opcode & 0x3C0) >> 6;
+    UINT16 operand;
 
 #if (TMS99XX_MODEL == TMS9940_ID)
-		switch (immediate)
-		{
-		case 0: /* DCA */
-			/* DCA --- Decimal Correct Addition */
-			operand = decipheraddrbyte(opcode);
-			{
-			int value = readbyte(operand);
-			int X = (value >> 4) & 0xf;
-			int Y = value & 0xf;
+    switch (immediate) {
+        case 0: /* DCA */
+            /* DCA --- Decimal Correct Addition */
+            operand = decipheraddrbyte(opcode);
+            {
+                int value = readbyte(operand);
+                int X = (value >> 4) & 0xf;
+                int Y = value & 0xf;
 
-			if (Y >= 10)
-			{
-				Y -= 10;
-				I.STATUS |= ST_DC;
-				X++;
-			}
-			else if (I.STATUS & ST_DC)
-			{
-				Y += 6;
-			}
+                if (Y >= 10) {
+                    Y -= 10;
+                    I.STATUS |= ST_DC;
+                    X++;
+                } else if (I.STATUS & ST_DC) {
+                    Y += 6;
+                }
 
-			if (X >= 10)
-			{
-				X -= 10;
-				I.STATUS |= ST_C;
-			}
-			else if (I.STATUS & ST_C)
-			{
-				X += 6;
-			}
+                if (X >= 10) {
+                    X -= 10;
+                    I.STATUS |= ST_C;
+                } else if (I.STATUS & ST_C) {
+                    X += 6;
+                }
 
-			writebyte(operand, (X << 4) | Y);
-			}
-			break;
-		case 1:	/* DCS */
-			/* DCS --- Decimal Correct Substraction */
-			operand = decipheraddrbyte(opcode);
-			{
-			int value = readbyte(operand);
+                writebyte(operand, (X << 4) | Y);
+            }
+            break;
+        case 1: /* DCS */
+            /* DCS --- Decimal Correct Substraction */
+            operand = decipheraddrbyte(opcode);
+            {
+                int value = readbyte(operand);
 
-			if (! (I.STATUS & ST_DC))
-			{
-				value += 10;
-			}
+                if (!(I.STATUS & ST_DC)) {
+                    value += 10;
+                }
 
-			if (! (I.STATUS & ST_C))
-			{
-				value += 10 << 4;
-			}
+                if (!(I.STATUS & ST_C)) {
+                    value += 10 << 4;
+                }
 
-			I.STATUS ^= ST_DC;
+                I.STATUS ^= ST_DC;
 
-			writebyte(operand, value);
-			}
-			break;
-		case 2: /* LIIM */
-		case 3: /* LIIM */
-			/* LIIM - Load Immediate Interrupt Mask */
-			/* Does the same job as LIMI, with a different opcode format. */
-			/* Note that, unlike TMS9900, the interrupt mask is only 2-bit long. */
-			operand = decipheraddr(opcode);	/* dummy decode (personnal guess) */
+                writebyte(operand, value);
+            }
+            break;
+        case 2: /* LIIM */
+        case 3: /* LIIM */
+            /* LIIM - Load Immediate Interrupt Mask */
+            /* Does the same job as LIMI, with a different opcode format. */
+            /* Note that, unlike TMS9900, the interrupt mask is only 2-bit long. */
+            operand = decipheraddr(opcode); /* dummy decode (personnal guess) */
 
-			I.STATUS = (I.STATUS & 0xFFFC) | (opcode & 0x0003);
-			break;
-		default:  /* normal XOP */
+            I.STATUS = (I.STATUS & 0xFFFC) | (opcode & 0x0003);
+            break;
+        default: /* normal XOP */
 #endif
 
-	operand = decipheraddr(opcode);
+            operand = decipheraddr(opcode);
 
 #if (TMS99XX_MODEL <= TMS9989_ID)
-		(void)readword(operand & ~1); /*dummy read (personnal guess)*/
+            (void)readword(operand & ~1); /*dummy read (personnal guess)*/
 #endif
 
-		contextswitch(0x40 + (immediate << 2));
+            contextswitch(0x40 + (immediate << 2));
 #if (TMS99XX_MODEL != TMS9940_ID)
-		/* The bit is not set on tms9940 */
-		I.STATUS |= ST_X;
+            /* The bit is not set on tms9940 */
+            I.STATUS |= ST_X;
 #endif
-		WRITEREG(R11, operand);
-		CYCLES(36, 15);
-		disable_interrupt_recognition = 1;
+            WRITEREG(R11, operand);
+            CYCLES(36, 15);
+            disable_interrupt_recognition = 1;
 
 #if (TMS99XX_MODEL == TMS9940_ID)
-			break;
-		}
+            break;
+    }
 #endif
 }
 
 /* LDCR and STCR */
-static void ldcr_stcr(UINT16 opcode)
-{
-	UINT16 cnt = (opcode & 0x3C0) >> 6;
-	UINT16 addr;
-	UINT16 value;
+static void
+ldcr_stcr(UINT16 opcode) {
+    UINT16 cnt = (opcode & 0x3C0) >> 6;
+    UINT16 addr;
+    UINT16 value;
 
-	if (cnt == 0)
-		cnt = 16;
+    if (cnt == 0)
+        cnt = 16;
 
-	if (cnt <= 8)
-		addr = decipheraddrbyte(opcode);
-	else
-		addr = decipheraddr(opcode) & ~1;
+    if (cnt <= 8)
+        addr = decipheraddrbyte(opcode);
+    else
+        addr = decipheraddr(opcode) & ~1;
 
-	if (opcode < 0x3400)
-	{	/* LDCR */
-		/* LDCR -- LoaD into CRu */
-		/* CRU R12--CRU R12+D-1 set to S */
-		if (cnt <= 8)
-		{
+    if (opcode < 0x3400) { /* LDCR */
+        /* LDCR -- LoaD into CRu */
+        /* CRU R12--CRU R12+D-1 set to S */
+        if (cnt <= 8) {
 #if (TMS99XX_MODEL != TMS9995_ID)
-			value = readbyte(addr);
+            value = readbyte(addr);
 #else
-			/* just for once, tms9995 behaves like earlier 8-bit tms99xx chips */
-			/* this must be because instruction decoding is too complex */
-			value = readword(addr & ~1);
-			if (addr & 1)
-				value &= 0xFF;
-			else
-				value = (value >> 8) & 0xFF;
+            /* just for once, tms9995 behaves like earlier 8-bit tms99xx chips */
+            /* this must be because instruction decoding is too complex */
+            value = readword(addr & ~1);
+            if (addr & 1)
+                value &= 0xFF;
+            else
+                value = (value >> 8) & 0xFF;
 #endif
-			(void)READREG(cnt+cnt); /*dummy read (reasonnable guess, cf TMS9995)*/
-			setst_byte_laep(value);
-			writeCRU((READREG(R12) >> 1), cnt, value);
-		}
-		else
-		{
-			value = readword(addr);
-			(void)READREG(cnt+cnt); /*dummy read (reasonnable guess, cf TMS9995)*/
-			setst_lae(value);
-			writeCRU((READREG(R12) >> 1), cnt, value);
-		}
-		CYCLES(20 + cnt+cnt, 9 + cnt+cnt);
-	}
-	else
-	{	/* STCR */
-		/* STCR -- STore from CRu */
-		/* S = CRU R12--CRU R12+D-1 */
-		if (cnt <= 8)
-		{
+            (void)READREG(cnt + cnt); /*dummy read (reasonnable guess, cf TMS9995)*/
+            setst_byte_laep(value);
+            writeCRU((READREG(R12) >> 1), cnt, value);
+        } else {
+            value = readword(addr);
+            (void)READREG(cnt + cnt); /*dummy read (reasonnable guess, cf TMS9995)*/
+            setst_lae(value);
+            writeCRU((READREG(R12) >> 1), cnt, value);
+        }
+        CYCLES(20 + cnt + cnt, 9 + cnt + cnt);
+    } else { /* STCR */
+        /* STCR -- STore from CRu */
+        /* S = CRU R12--CRU R12+D-1 */
+        if (cnt <= 8) {
 #if (TMS99XX_MODEL != TMS9995_ID)
-			(void)readbyte(addr); /*dummy read*/
-			(void)READREG(cnt+cnt); /*dummy read (reasonnable guess, cf TMS9995)*/
-			value = readCRU((READREG(R12) >> 1), cnt);
-			setst_byte_laep(value);
-			writebyte(addr, value);
-			CYCLES((cnt != 8) ? 42 : 44, 19 + cnt);
+            (void)readbyte(addr);     /*dummy read*/
+            (void)READREG(cnt + cnt); /*dummy read (reasonnable guess, cf TMS9995)*/
+            value = readCRU((READREG(R12) >> 1), cnt);
+            setst_byte_laep(value);
+            writebyte(addr, value);
+            CYCLES((cnt != 8) ? 42 : 44, 19 + cnt);
 #else
-			/* just for once, tms9995 behaves like earlier 8-bit tms99xx chips */
-			/* this must be because instruction decoding is too complex */
-			int value2 = readword(addr);
+            /* just for once, tms9995 behaves like earlier 8-bit tms99xx chips */
+            /* this must be because instruction decoding is too complex */
+            int value2 = readword(addr);
 
-			READREG(cnt+cnt); /*dummy read (guessed from timing table)*/
-			value = readCRU((READREG(R12) >> 1), cnt);
-			setst_byte_laep(value);
+            READREG(cnt + cnt); /*dummy read (guessed from timing table)*/
+            value = readCRU((READREG(R12) >> 1), cnt);
+            setst_byte_laep(value);
 
-			if (addr & 1)
-				writeword(addr, (value & 0x00FF) | (value2 & 0xFF00));
-			else
-				writeword(addr, (value2 & 0x00FF) | ((value << 8) & 0xFF00));
+            if (addr & 1)
+                writeword(addr, (value & 0x00FF) | (value2 & 0xFF00));
+            else
+                writeword(addr, (value2 & 0x00FF) | ((value << 8) & 0xFF00));
 
-			CYCLES(Mooof!, 19 + cnt);
+            CYCLES(Mooof !, 19 + cnt);
 #endif
-		}
-		else
-		{
-			(void)readword(addr); /*dummy read*/
-			(void)READREG(cnt+cnt); /*dummy read (reasonnable guess, cf TMS9995)*/
-			value = readCRU((READREG(R12) >> 1), cnt);
-			setst_lae(value);
-			writeword(addr, value);
-			CYCLES((cnt != 16) ? 58 : 60, 27 + cnt);
-		}
-	}
+        } else {
+            (void)readword(addr);     /*dummy read*/
+            (void)READREG(cnt + cnt); /*dummy read (reasonnable guess, cf TMS9995)*/
+            value = readCRU((READREG(R12) >> 1), cnt);
+            setst_lae(value);
+            writeword(addr, value);
+            CYCLES((cnt != 16) ? 58 : 60, 27 + cnt);
+        }
+    }
 }
-
 
 /*==========================================================================
    Two-Operand instructions                                    >4000->FFFF
@@ -3329,353 +3241,1244 @@ static void ldcr_stcr(UINT16 opcode)
 ============================================================================*/
 
 /* word instructions */
-static void h4000w(UINT16 opcode)
-{
-	UINT16 src;
-	UINT16 dest;
-	UINT16 value;
-	int a,b;
+static void
+h4000w(UINT16 opcode) {
+    UINT16 src;
+    UINT16 dest;
+    UINT16 value;
+    int a, b;
 
-	src = decipheraddr(opcode) & ~1;
-	dest = decipheraddr(opcode >> 6) & ~1;
+    src = decipheraddr(opcode) & ~1;
+    dest = decipheraddr(opcode >> 6) & ~1;
 
-	switch ((opcode >> 13) & 0x0007)    /* ((opcode & 0xE000) >> 13) */
-	{
-	case 2:   /* SZC */
-		/* SZC --- Set Zeros Corresponding */
-		/* D &= ~S */
-		value = readword(dest) & (~ readword(src));
-		setst_lae(value);
-		writeword(dest, value);
-		CYCLES(14, 4);
-		break;
-	case 3:   /* S */
-		/* S ----- Subtract */
-		/* D -= S */
-		a = readword(dest);
-		b = readword(src);
-		value = setst_sub_laeco(a, b);
-		writeword(dest, value);
-		CYCLES(14, 4);
-		break;
-	case 4:   /* C */
-		/* C ----- Compare */
-		/* ST = (D - S) */
-		a = readword(dest);
-		b = readword(src);
-		setst_c_lae(a, b);
-		CYCLES(14, 4);
-		break;
-	case 5:   /* A */
-		/* A ----- Add */
-		/* D += S */
-		a = readword(dest);
-		b = readword(src);
-		value = setst_add_laeco(a, b);
-		writeword(dest, value);
-		CYCLES(14, 4);
-		break;
-	case 6:   /* MOV */
-		/* MOV --- MOVe */
-		/* D = S */
-		value = readword(src);
-		setst_lae(value);
+    switch ((opcode >> 13) & 0x0007) /* ((opcode & 0xE000) >> 13) */
+    {
+        case 2: /* SZC */
+            /* SZC --- Set Zeros Corresponding */
+            /* D &= ~S */
+            value = readword(dest) & (~readword(src));
+            setst_lae(value);
+            writeword(dest, value);
+            CYCLES(14, 4);
+            break;
+        case 3: /* S */
+            /* S ----- Subtract */
+            /* D -= S */
+            a = readword(dest);
+            b = readword(src);
+            value = setst_sub_laeco(a, b);
+            writeword(dest, value);
+            CYCLES(14, 4);
+            break;
+        case 4: /* C */
+            /* C ----- Compare */
+            /* ST = (D - S) */
+            a = readword(dest);
+            b = readword(src);
+            setst_c_lae(a, b);
+            CYCLES(14, 4);
+            break;
+        case 5: /* A */
+            /* A ----- Add */
+            /* D += S */
+            a = readword(dest);
+            b = readword(src);
+            value = setst_add_laeco(a, b);
+            writeword(dest, value);
+            CYCLES(14, 4);
+            break;
+        case 6: /* MOV */
+            /* MOV --- MOVe */
+            /* D = S */
+            value = readword(src);
+            setst_lae(value);
 #if (TMS99XX_MODEL <= TMS9989_ID)
-		/* MOV performs a dummy read... */
-		(void)readword(dest);
+            /* MOV performs a dummy read... */
+            (void)readword(dest);
 #endif
-		writeword(dest, value);
-		CYCLES(14, 3);
-		break;
-	case 7:   /* SOC */
-		/* SOC --- Set Ones Corresponding */
-		/* D |= S */
-		value = readword(dest) | readword(src);
-		setst_lae(value);
-		writeword(dest, value);
-		CYCLES(14, 4);
-		break;
-	}
+            writeword(dest, value);
+            CYCLES(14, 3);
+            break;
+        case 7: /* SOC */
+            /* SOC --- Set Ones Corresponding */
+            /* D |= S */
+            value = readword(dest) | readword(src);
+            setst_lae(value);
+            writeword(dest, value);
+            CYCLES(14, 4);
+            break;
+    }
 }
 
 /* byte instruction */
-static void h4000b(UINT16 opcode)
-{
-	UINT16 src;
-	UINT16 dest;
-	UINT16 value;
+static void
+h4000b(UINT16 opcode) {
+    UINT16 src;
+    UINT16 dest;
+    UINT16 value;
 
-	src = decipheraddrbyte(opcode);
-	dest = decipheraddrbyte(opcode >> 6);
+    src = decipheraddrbyte(opcode);
+    dest = decipheraddrbyte(opcode >> 6);
 
-	switch ((opcode >> 13) & 0x0007)    /* ((opcode & 0xE000) >> 13) */
-	{
-	case 2:   /* SZCB */
-		/* SZCB -- Set Zeros Corresponding, Byte */
-		/* D &= ~S */
-		value = readbyte(dest) & (~ readbyte(src));
-		setst_byte_laep(value);
-		writebyte(dest, value);
-		CYCLES(14, 4);
-		break;
-	case 3:   /* SB */
-		/* SB ---- Subtract, Byte */
-		/* D -= S */
-		value = setst_subbyte_laecop(readbyte(dest), readbyte(src));
-		writebyte(dest, value);
-		CYCLES(14, 4);
-		break;
-	case 4:   /* CB */
-		/* CB ---- Compare Bytes */
-		/* ST = (D - S) */
-		value = readbyte(src);
-		setst_c_lae(readbyte(dest)<<8, value<<8);
-		lastparity = value;
-		CYCLES(14, 4);
-		break;
-	case 5:   /* AB */
-		/* AB ---- Add, Byte */
-		/* D += S */
-		value = setst_addbyte_laecop(readbyte(dest), readbyte(src));
-		writebyte(dest, value);
-		break;
-	case 6:   /* MOVB */
-		/* MOVB -- MOVe Bytes */
-		/* D = S */
-		value = readbyte(src);
-		setst_byte_laep(value);
+    switch ((opcode >> 13) & 0x0007) /* ((opcode & 0xE000) >> 13) */
+    {
+        case 2: /* SZCB */
+            /* SZCB -- Set Zeros Corresponding, Byte */
+            /* D &= ~S */
+            value = readbyte(dest) & (~readbyte(src));
+            setst_byte_laep(value);
+            writebyte(dest, value);
+            CYCLES(14, 4);
+            break;
+        case 3: /* SB */
+            /* SB ---- Subtract, Byte */
+            /* D -= S */
+            value = setst_subbyte_laecop(readbyte(dest), readbyte(src));
+            writebyte(dest, value);
+            CYCLES(14, 4);
+            break;
+        case 4: /* CB */
+            /* CB ---- Compare Bytes */
+            /* ST = (D - S) */
+            value = readbyte(src);
+            setst_c_lae(readbyte(dest) << 8, value << 8);
+            lastparity = value;
+            CYCLES(14, 4);
+            break;
+        case 5: /* AB */
+            /* AB ---- Add, Byte */
+            /* D += S */
+            value = setst_addbyte_laecop(readbyte(dest), readbyte(src));
+            writebyte(dest, value);
+            break;
+        case 6: /* MOVB */
+            /* MOVB -- MOVe Bytes */
+            /* D = S */
+            value = readbyte(src);
+            setst_byte_laep(value);
 #if (TMS99XX_MODEL <= TMS9989_ID)
-		/* on tms9900, MOVB needs to read destination, because it cannot actually read one single byte.
+            /* on tms9900, MOVB needs to read destination, because it cannot actually read one single byte.
 		  It reads a word, replaces the revelant byte, then write the result */
-		/* A tms9980 theorically does not need to do so, but still does... */
-		readbyte(dest);
+            /* A tms9980 theorically does not need to do so, but still does... */
+            readbyte(dest);
 #endif
-		writebyte(dest, value);
-		CYCLES(14, 3);
-		break;
-	case 7:   /* SOCB */
-		/* SOCB -- Set Ones Corresponding, Byte */
-		/* D |= S */
-		value = readbyte(dest) | readbyte(src);
-		setst_byte_laep(value);
-		writebyte(dest, value);
-		CYCLES(14, 4);
-		break;
-	}
+            writebyte(dest, value);
+            CYCLES(14, 3);
+            break;
+        case 7: /* SOCB */
+            /* SOCB -- Set Ones Corresponding, Byte */
+            /* D |= S */
+            value = readbyte(dest) | readbyte(src);
+            setst_byte_laep(value);
+            writebyte(dest, value);
+            CYCLES(14, 4);
+            break;
+    }
 }
 
-
-INLINE void execute(UINT16 opcode)
-{
+INLINE void
+execute(UINT16 opcode) {
 #if (TMS99XX_MODEL <= TMS9985_ID)
 
-	/* tms9900-like instruction set*/
+    /* tms9900-like instruction set*/
 
-	static void (* jumptable[128])(UINT16) =
-	{
-		&illegal,&h0200,&h0400,&h0400,&h0800,&h0800,&illegal,&illegal,
-		&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,
-		&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&xop,&xop,
-		&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&h2000,&h2000,&h2000,&h2000,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b
-	};
+    static void (*jumptable[128])(UINT16) = {
+        &illegal, &h0200,  &h0400,  &h0400,  &h0800,     &h0800,     &illegal,   &illegal,   &h1000,  &h1000,
+        &h1000,   &h1000,  &h1000,  &h1000,  &h1000,     &h1000,     &h2000,     &h2000,     &h2000,  &h2000,
+        &h2000,   &h2000,  &xop,    &xop,    &ldcr_stcr, &ldcr_stcr, &ldcr_stcr, &ldcr_stcr, &h2000,  &h2000,
+        &h2000,   &h2000,  &h4000w, &h4000w, &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w, &h4000w,
+        &h4000b,  &h4000b, &h4000b, &h4000b, &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000w, &h4000w,
+        &h4000w,  &h4000w, &h4000w, &h4000w, &h4000w,    &h4000w,    &h4000b,    &h4000b,    &h4000b, &h4000b,
+        &h4000b,  &h4000b, &h4000b, &h4000b, &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w, &h4000w,
+        &h4000w,  &h4000w, &h4000b, &h4000b, &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000b, &h4000b,
+        &h4000w,  &h4000w, &h4000w, &h4000w, &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000b, &h4000b,
+        &h4000b,  &h4000b, &h4000b, &h4000b, &h4000b,    &h4000b,    &h4000w,    &h4000w,    &h4000w, &h4000w,
+        &h4000w,  &h4000w, &h4000w, &h4000w, &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000b, &h4000b,
+        &h4000b,  &h4000b, &h4000w, &h4000w, &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w, &h4000w,
+        &h4000b,  &h4000b, &h4000b, &h4000b, &h4000b,    &h4000b,    &h4000b,    &h4000b};
 
-	(* jumptable[opcode >> 9])(opcode);
+    (*jumptable[opcode >> 9])(opcode);
 
 #elif (TMS99XX_MODEL <= TMS9995_ID)
 
-	/* tms9989 and tms9995 include 4 extra instructions, and one additionnal instruction type */
+    /* tms9989 and tms9995 include 4 extra instructions, and one additionnal instruction type */
 
-	static void (* jumptable[256])(UINT16) =
-	{
-		&h0040,&h0100,&h0200,&h0200,&h0400,&h0400,&h0400,&h0400,
-		&h0800,&h0800,&h0800,&h0800,&illegal,&illegal,&illegal,&illegal,
-		&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,
-		&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,
-		&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,
-		&h2000,&h2000,&h2000,&h2000,&xop,&xop,&xop,&xop,
-		&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,
-		&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b
-	};
+    static void (*jumptable[256])(UINT16) = {
+        &h0040,     &h0100,     &h0200,  &h0200,     &h0400,     &h0400,     &h0400,     &h0400,     &h0800,
+        &h0800,     &h0800,     &h0800,  &illegal,   &illegal,   &illegal,   &illegal,   &h1000,     &h1000,
+        &h1000,     &h1000,     &h1000,  &h1000,     &h1000,     &h1000,     &h1000,     &h1000,     &h1000,
+        &h1000,     &h1000,     &h1000,  &h1000,     &h1000,     &h2000,     &h2000,     &h2000,     &h2000,
+        &h2000,     &h2000,     &h2000,  &h2000,     &h2000,     &h2000,     &h2000,     &h2000,     &xop,
+        &xop,       &xop,       &xop,    &ldcr_stcr, &ldcr_stcr, &ldcr_stcr, &ldcr_stcr, &ldcr_stcr, &ldcr_stcr,
+        &ldcr_stcr, &ldcr_stcr, &h2000,  &h2000,     &h2000,     &h2000,     &h2000,     &h2000,     &h2000,
+        &h2000,     &h4000w,    &h4000w, &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w,
+        &h4000w,    &h4000w,    &h4000w, &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000b,
+        &h4000b,    &h4000b,    &h4000b, &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000b,
+        &h4000b,    &h4000b,    &h4000b, &h4000b,    &h4000b,    &h4000b,    &h4000w,    &h4000w,    &h4000w,
+        &h4000w,    &h4000w,    &h4000w, &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w,
+        &h4000w,    &h4000w,    &h4000w, &h4000w,    &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000b,
+        &h4000b,    &h4000b,    &h4000b, &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000b,
+        &h4000b,    &h4000b,    &h4000w, &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w,
+        &h4000w,    &h4000w,    &h4000w, &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w,
+        &h4000b,    &h4000b,    &h4000b, &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000b,
+        &h4000b,    &h4000b,    &h4000b, &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000w,    &h4000w,
+        &h4000w,    &h4000w,    &h4000w, &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w,
+        &h4000w,    &h4000w,    &h4000w, &h4000w,    &h4000w,    &h4000b,    &h4000b,    &h4000b,    &h4000b,
+        &h4000b,    &h4000b,    &h4000b, &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000b,
+        &h4000b,    &h4000b,    &h4000b, &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w,
+        &h4000w,    &h4000w,    &h4000w, &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w,
+        &h4000w,    &h4000b,    &h4000b, &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000b,
+        &h4000b,    &h4000b,    &h4000b, &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000w,
+        &h4000w,    &h4000w,    &h4000w, &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w,    &h4000w,
+        &h4000w,    &h4000w,    &h4000w, &h4000w,    &h4000w,    &h4000w,    &h4000b,    &h4000b,    &h4000b,
+        &h4000b,    &h4000b,    &h4000b, &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000b,    &h4000b,
+        &h4000b,    &h4000b,    &h4000b, &h4000b};
 
-	(* jumptable[opcode >> 8])(opcode);
+    (*jumptable[opcode >> 8])(opcode);
 
 #elif (TMS99XX_MODEL >= TMS99105A_ID)
 
-	/* tms99xxx include even more instruction types */
+    /* tms99xxx include even more instruction types */
 
-	static void (* jumptable[1024])(UINT16) =
-	{
-		&h0000,&h0040,&h0040,&illegal,&h0100,&h0100,&h0100,&h0100,
-		&h0200,&h0200,&h0200,&h0200,&h0200,&h0200,&h0200,&h0200,
-		&h0400,&h0400,&h0400,&h0400,&h0400,&h0400,&h0400,&h0400,
-		&h0400,&h0400,&h0400,&h0400,&h0400,&h0400,&h0400,&h0400,
-		&h0800,&h0800,&h0800,&h0800,&h0800,&h0800,&h0800,&h0800,
-		&h0800,&h0800,&h0800,&h0800,&h0800,&h0800,&h0800,&h0800,
+    static void (*jumptable[1024])(UINT16) = {
+        &h0000,
+        &h0040,
+        &h0040,
+        &illegal,
+        &h0100,
+        &h0100,
+        &h0100,
+        &h0100,
+        &h0200,
+        &h0200,
+        &h0200,
+        &h0200,
+        &h0200,
+        &h0200,
+        &h0200,
+        &h0200,
+        &h0400,
+        &h0400,
+        &h0400,
+        &h0400,
+        &h0400,
+        &h0400,
+        &h0400,
+        &h0400,
+        &h0400,
+        &h0400,
+        &h0400,
+        &h0400,
+        &h0400,
+        &h0400,
+        &h0400,
+        &h0400,
+        &h0800,
+        &h0800,
+        &h0800,
+        &h0800,
+        &h0800,
+        &h0800,
+        &h0800,
+        &h0800,
+        &h0800,
+        &h0800,
+        &h0800,
+        &h0800,
+        &h0800,
+        &h0800,
+        &h0800,
+        &h0800,
 #if (TMS99XX_MODEL == TMS99110A_ID)
-		&h0c00,&h0c40,&h0c40,&h0c40,&h0c40,&h0c40,&h0c40,&h0c40,
+        &h0c00,
+        &h0c40,
+        &h0c40,
+        &h0c40,
+        &h0c40,
+        &h0c40,
+        &h0c40,
+        &h0c40,
 #else
-		&h0c00,&illegal,&illegal,&illegal,&illegal,&illegal,&illegal,&illegal,
+        &h0c00,
+        &illegal,
+        &illegal,
+        &illegal,
+        &illegal,
+        &illegal,
+        &illegal,
+        &illegal,
 #endif
-		&illegal,&illegal,&illegal,&illegal,&illegal,&illegal,&illegal,&illegal,
-		&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,
-		&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,
-		&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,
-		&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,
-		&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,
-		&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,
-		&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,
-		&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,&h1000,
-		&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,
-		&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,
-		&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,
-		&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,
-		&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,
-		&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,
-		&xop,&xop,&xop,&xop,&xop,&xop,&xop,&xop,
-		&xop,&xop,&xop,&xop,&xop,&xop,&xop,&xop,
-		&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,
-		&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,
-		&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,
-		&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,&ldcr_stcr,
-		&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,
-		&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,
-		&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,
-		&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,&h2000,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,&h4000w,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,
-		&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b,&h4000b
-	};
+        &illegal,
+        &illegal,
+        &illegal,
+        &illegal,
+        &illegal,
+        &illegal,
+        &illegal,
+        &illegal,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h1000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &xop,
+        &xop,
+        &xop,
+        &xop,
+        &xop,
+        &xop,
+        &xop,
+        &xop,
+        &xop,
+        &xop,
+        &xop,
+        &xop,
+        &xop,
+        &xop,
+        &xop,
+        &xop,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &ldcr_stcr,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h2000,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000w,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b,
+        &h4000b
+    };
 
-	(* jumptable[opcode >> 6])(opcode);
+    (*jumptable[opcode >> 6])(opcode);
 
 #endif
 }

@@ -12,42 +12,42 @@
 
 #ifndef PROPERTIES_H
 #define PROPERTIES_H
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
 /* Get title string to display in the top of the property page,
  * Called also in Audit32.c
  */
-char * GameInfoTitle(UINT nIndex);
+char* GameInfoTitle(UINT nIndex);
 
 /* Called in win32ui.c to create the property page */
-void    InitPropertyPage(HINSTANCE hInst, HWND hwnd, int game_num, HICON hIcon);
+void InitPropertyPage(HINSTANCE hInst, HWND hwnd, int game_num, HICON hIcon);
 
 #define PROPERTIES_PAGE 0
-#define AUDIT_PAGE      1   
+#define AUDIT_PAGE      1
 
-void    InitPropertyPageToPage(HINSTANCE hInst, HWND hwnd, int game_num, HICON hIcon, int start_page);
-void    InitDefaultPropertyPage(HINSTANCE hInst, HWND hWnd);
+void InitPropertyPageToPage(HINSTANCE hInst, HWND hwnd, int game_num, HICON hIcon, int start_page);
+void InitDefaultPropertyPage(HINSTANCE hInst, HWND hWnd);
 
 /* Get Help ID array for WM_HELP and WM_CONTEXTMENU */
 DWORD_PTR GetHelpIDs(void);
 
 /* Get Game status text string */
-const char *GameInfoStatus(int driver_index);
+const char* GameInfoStatus(int driver_index);
 
 /* Property sheet info for layout.c */
-typedef struct
-{
-	BOOL bOnDefaultPage;
-	BOOL (*pfnFilterProc)(const struct InternalMachineDriver *drv, const struct GameDriver *gamedrv);
-	DWORD dwDlgID;
-	DLGPROC pfnDlgProc;
+typedef struct {
+    BOOL bOnDefaultPage;
+    BOOL (*pfnFilterProc)(const struct InternalMachineDriver* drv, const struct GameDriver* gamedrv);
+    DWORD dwDlgID;
+    DLGPROC pfnDlgProc;
 } PROPERTYSHEETINFO;
 
 extern const PROPERTYSHEETINFO g_propSheets[];
 
-BOOL PropSheetFilter_Vector(const struct InternalMachineDriver *drv, const struct GameDriver *gamedrv);
+BOOL PropSheetFilter_Vector(const struct InternalMachineDriver* drv, const struct GameDriver* gamedrv);
 
 INT_PTR CALLBACK GamePropertiesDialogProc(HWND hDlg, UINT Msg, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK GameOptionsProc(HWND hDlg, UINT Msg, WPARAM wParam, LPARAM lParam);

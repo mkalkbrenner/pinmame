@@ -4,10 +4,10 @@
 
 #include "StdAfx.h"
 
-#if _ATL_VER<0x0700
+#if _ATL_VER < 0x0700
 #ifdef _ATL_STATIC_REGISTRY
-#include <statreg.h>
 #include <statreg.cpp>
+#include <statreg.h>
 #endif
 
 #include <atlimpl.cpp>

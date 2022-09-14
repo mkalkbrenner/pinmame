@@ -19,27 +19,27 @@
 */
 #ifndef __SOUND_STREAM_PRIV_H
 #define __SOUND_STREAM_PRIV_H
-#include "sysdep_dsp.h"
 #include "begin_code.h"
+#include "sysdep_dsp.h"
 
 struct sample_buf_fifo_struct;
 
 struct sound_stream_sample_buf {
-   int length;
-   int pos;
-   unsigned char *data;
+    int length;
+    int pos;
+    unsigned char* data;
 };
 
 struct sound_stream_struct {
-   struct sysdep_dsp_struct *dsp;
-   int bytes_per_sample;
-   int sample_buf_size;
-   int sample_buf_count;
-   int output_buf_size;
-   unsigned char *output_buf;
-   struct sound_stream_sample_buf *sample_buf;
-   struct sample_buf_fifo_struct *sample_buf_fifo;
-   struct sample_buf_fifo_struct *empty_sample_buf_fifo;
+    struct sysdep_dsp_struct* dsp;
+    int bytes_per_sample;
+    int sample_buf_size;
+    int sample_buf_count;
+    int output_buf_size;
+    unsigned char* output_buf;
+    struct sound_stream_sample_buf* sample_buf;
+    struct sample_buf_fifo_struct* sample_buf_fifo;
+    struct sample_buf_fifo_struct* empty_sample_buf_fifo;
 };
 
 #include "end_code.h"

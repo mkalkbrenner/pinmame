@@ -3,7 +3,8 @@
  */
 #ifndef MSC_H
 #define MSC_H
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	/* GCC supports "pragma once" correctly since 3.4 */
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) /* GCC supports "pragma once" correctly since 3.4 */
 #pragma once
 #endif
 
@@ -23,11 +24,11 @@
  *
  * Note that case-insensitive string comparisions are not in ISO C99:2003 (e.g. stricmp, strnicmp)
  */
-#if _MSC_VER < 1400	// missing in MSVC until VS2005
+#if _MSC_VER < 1400 // missing in MSVC until VS2005
 #define vsnprintf _vsnprintf
 #endif
-#define snprintf _snprintf	// last check: VS2008 = 1500
+#define snprintf _snprintf // last check: VS2008 = 1500
 
-#endif	/* _MSC_VER */
+#endif /* _MSC_VER */
 
-#endif	/* MSC_H */
+#endif /* MSC_H */

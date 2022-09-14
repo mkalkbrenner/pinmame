@@ -12,7 +12,8 @@
 
 #ifndef AUDIT32_H
 #define AUDIT32_H
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
@@ -25,7 +26,7 @@ INT_PTR CALLBACK GameAuditDialogProc(HWND hDlg, UINT Msg, WPARAM wParam, LPARAM 
 int Mame32VerifyRomSet(int game);
 int Mame32VerifySampleSet(int game);
 
-const char * GetAuditString(int audit_result);
+const char* GetAuditString(int audit_result);
 BOOL IsAuditResultKnown(int audit_result);
 BOOL IsAuditResultYes(int audit_result);
 BOOL IsAuditResultNo(int audit_result);

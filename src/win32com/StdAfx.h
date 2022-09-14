@@ -12,7 +12,7 @@
 #define STRICT
 #ifndef _WIN32_WINNT
 #if _MSC_VER >= 1800
- #define _WIN32_WINNT 0x0500
+#define _WIN32_WINNT 0x0500
 #elif _MSC_VER < 1600
 #define _WIN32_WINNT 0x0400
 #else
@@ -32,13 +32,12 @@ extern CComModule _Module;
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
 // ATL doesn't define this
-#define COMMAND_CODE_RANGE_HANDLER(idFirst, idLast, code, func) \
-	if(uMsg == WM_COMMAND && code == HIWORD(wParam) && LOWORD(wParam) >= idFirst  && LOWORD(wParam) <= idLast) \
-	{ \
-		bHandled = TRUE; \
-		lResult = func(HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled); \
-		if(bHandled) \
-			return TRUE; \
-	}
+#define COMMAND_CODE_RANGE_HANDLER(idFirst, idLast, code, func)                                                        \
+    if (uMsg == WM_COMMAND && code == HIWORD(wParam) && LOWORD(wParam) >= idFirst && LOWORD(wParam) <= idLast) {       \
+        bHandled = TRUE;                                                                                               \
+        lResult = func(HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);                                        \
+        if (bHandled)                                                                                                  \
+            return TRUE;                                                                                               \
+    }
 
 #endif // !defined(AFX_STDAFX_H__4432134E_5CC1_4D23_9A76_D334DA24C2EC__INCLUDED)

@@ -16,10 +16,7 @@
 #include "Screenshot.h"
 #include "win32ui.h"
 
-int WINAPI WinMain(HINSTANCE    hInstance,
-                   HINSTANCE    hPrevInstance,
-                   LPSTR        lpCmdLine,
-                   int          nCmdShow)
-{
-	return Mame32Main(hInstance, lpCmdLine, nCmdShow);
+int WINAPI
+WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+    return Mame32Main(hInstance, lpCmdLine, nCmdShow);
 }

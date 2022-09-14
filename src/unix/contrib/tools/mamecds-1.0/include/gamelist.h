@@ -1,13 +1,13 @@
 #ifndef __MAMELIST_H__
 #define __MAMELIST_H__
 
-#include <sys/stat.h>
-#include <sys/types.h>
+#include "utils.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "utils.h"
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #define GAME_1      0
 #define GAME_A      1
@@ -38,44 +38,43 @@
 #define GAME_Z      26
 #define GAME_NEOGEO 27
 
-typedef struct mamegame
-{
-	char base[8+1];				/* Base del juego (para .zip, .jpg)		*/
-	char nombre[MAXCAD];		/* Nombre real del juego				*/
-	char anyo[5+1];				/* Año del juego						*/
-	char fabricante[MAXCAD];	/* Fabricante del juego					*/
+typedef struct mamegame {
+    char base[8 + 1];        /* Base del juego (para .zip, .jpg)		*/
+    char nombre[MAXCAD];     /* Nombre real del juego				*/
+    char anyo[5 + 1];        /* Año del juego						*/
+    char fabricante[MAXCAD]; /* Fabricante del juego					*/
 
-	char cloneof[8+1];			/* "base" es clonico de "clone"			*/
-	char clones[50][8+1];		/* clonicos de "base"					*/
-	char samplesrom[MAXCAD];	/* Fichero con los samples del juego	*/
-	char artwork[MAXCAD];		/* Fichero con el artwork del juego		*/
-	char titleimage[MAXCAD];	/* Fichero con la imagen del titulo		*/
-	char gameimage[MAXCAD];		/* Fichero con la imagen del juego		*/
+    char cloneof[8 + 1];     /* "base" es clonico de "clone"			*/
+    char clones[50][8 + 1];  /* clonicos de "base"					*/
+    char samplesrom[MAXCAD]; /* Fichero con los samples del juego	*/
+    char artwork[MAXCAD];    /* Fichero con el artwork del juego		*/
+    char titleimage[MAXCAD]; /* Fichero con la imagen del titulo		*/
+    char gameimage[MAXCAD];  /* Fichero con la imagen del juego		*/
 
-	int hasgame;				/* ¿Existe el fichero de roms?			*/
-	int isclone;				/* ¿Es un clonico?						*/
-	int hasclones;				/* ¿Tiene juegos clonicos?				*/
-	int hastitle;				/* ¿Tiene imagen del titulo?			*/
-	int hasimage;				/* ¿Tiene imagen del juego?				*/
-	int hassamples;				/* ¿Tiene fichero de samples?			*/
-	int hasartwork;				/* ¿Tiene fichero de artwork?			*/
+    int hasgame;    /* ¿Existe el fichero de roms?			*/
+    int isclone;    /* ¿Es un clonico?						*/
+    int hasclones;  /* ¿Tiene juegos clonicos?				*/
+    int hastitle;   /* ¿Tiene imagen del titulo?			*/
+    int hasimage;   /* ¿Tiene imagen del juego?				*/
+    int hassamples; /* ¿Tiene fichero de samples?			*/
+    int hasartwork; /* ¿Tiene fichero de artwork?			*/
 
-	int tipo;					/* MAME, NEOGEO, ...					*/
-	int tamanyo;				/* Tamaño en bytes rom+samples+artwork+html+imagen+titulo */
-	int tamanyorom;				/* Tamaño en bytes rom */
-	int tamanyosamples;			/* Tamaño en bytes samples */
-	int tamanyoartwork;			/* Tamaño en bytes artwork */
-	int numerocd;				/* Numero de CD en el que esta incluido	*/
+    int tipo;           /* MAME, NEOGEO, ...					*/
+    int tamanyo;        /* Tamaño en bytes rom+samples+artwork+html+imagen+titulo */
+    int tamanyorom;     /* Tamaño en bytes rom */
+    int tamanyosamples; /* Tamaño en bytes samples */
+    int tamanyoartwork; /* Tamaño en bytes artwork */
+    int numerocd;       /* Numero de CD en el que esta incluido	*/
 
-	struct mamegame *next;
+    struct mamegame* next;
 } MAMEGAME;
 
-int njuegos_letra[GAME_NEOGEO+1]; /* GAME_NEOGEO=27 */
+int njuegos_letra[GAME_NEOGEO + 1]; /* GAME_NEOGEO=27 */
 int njuegos_mame;
 int njuegos_neogeo;
 
-struct mamegame *MakeGameList(char *mame);
-int PrintGameList(struct mamegame *lista);
-int cuenta_juegos(struct mamegame *lista, int tipo, int ncd);
+struct mamegame* MakeGameList(char* mame);
+int PrintGameList(struct mamegame* lista);
+int cuenta_juegos(struct mamegame* lista, int tipo, int ncd);
 
 #endif

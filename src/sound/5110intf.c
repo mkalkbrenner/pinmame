@@ -16,14 +16,11 @@
 #include "driver.h"
 #include "tms5110.h"
 
-
 /* the state of the streamed output */
 static int stream;
 
 /* static function prototypes */
-static void tms5110_update(int ch, INT16 *buffer, int samples);
-
-
+static void tms5110_update(int ch, INT16* buffer, int samples);
 
 /******************************************************************************
 
@@ -31,30 +28,29 @@ static void tms5110_update(int ch, INT16 *buffer, int samples);
 
 ******************************************************************************/
 
-int tms5110_sh_start(const struct MachineSound *msound)
-{
-    const struct TMS5110interface *intf = msound->sound_interface;
+int
+tms5110_sh_start(const struct MachineSound* msound) {
+    const struct TMS5110interface* intf = msound->sound_interface;
 
-    if (intf->M0_callback==NULL)
-    {
-        logerror("\n file: 5110intf.c, tms5110_sh_start(), line 53:\n  Missing _mandatory_ 'M0_callback' function pointer in the TMS5110 interface\n  This function is used by TMS5110 to call for a single bits\n  needed to generate the speech\n  Aborting startup...\n");
+    if (intf->M0_callback == NULL) {
+        logerror("\n file: 5110intf.c, tms5110_sh_start(), line 53:\n  Missing _mandatory_ 'M0_callback' function "
+                 "pointer in the TMS5110 interface\n  This function is used by TMS5110 to call for a single bits\n  "
+                 "needed to generate the speech\n  Aborting startup...\n");
         return 1;
     }
-    tms5110_set_M0_callback( intf->M0_callback );
+    tms5110_set_M0_callback(intf->M0_callback);
 
     /* reset the 5110 */
     tms5110_reset();
 
-	/* initialize a stream */
-	stream = stream_init("TMS5110", intf->mixing_level, intf->baseclock/80., 0, tms5110_update);
-	if (stream == -1)
-		return 1;
+    /* initialize a stream */
+    stream = stream_init("TMS5110", intf->mixing_level, intf->baseclock / 80., 0, tms5110_update);
+    if (stream == -1)
+        return 1;
 
     /* request a sound channel */
     return 0;
 }
-
-
 
 /******************************************************************************
 
@@ -62,11 +58,8 @@ int tms5110_sh_start(const struct MachineSound *msound)
 
 ******************************************************************************/
 
-void tms5110_sh_stop(void)
-{
-}
-
-
+void
+tms5110_sh_stop(void) {}
 
 /******************************************************************************
 
@@ -74,11 +67,8 @@ void tms5110_sh_stop(void)
 
 ******************************************************************************/
 
-void tms5110_sh_update(void)
-{
-}
-
-
+void
+tms5110_sh_update(void) {}
 
 /******************************************************************************
 
@@ -87,8 +77,7 @@ commands like Speech, Reset, etc., are loaded into the chip via the CTL pins
 
 ******************************************************************************/
 
-WRITE_HANDLER( tms5110_CTL_w )
-{
+WRITE_HANDLER(tms5110_CTL_w) {
     /* bring up to date first */
     stream_update(stream, 0);
     tms5110_CTL_set(data);
@@ -100,14 +89,11 @@ WRITE_HANDLER( tms5110_CTL_w )
 
 ******************************************************************************/
 
-WRITE_HANDLER( tms5110_PDC_w )
-{
+WRITE_HANDLER(tms5110_PDC_w) {
     /* bring up to date first */
     stream_update(stream, 0);
     tms5110_PDC_set(data);
 }
-
-
 
 /******************************************************************************
 
@@ -115,14 +101,11 @@ WRITE_HANDLER( tms5110_PDC_w )
 
 ******************************************************************************/
 
-READ_HANDLER( tms5110_status_r )
-{
+READ_HANDLER(tms5110_status_r) {
     /* bring up to date first */
     stream_update(stream, 0);
     return tms5110_status_read();
 }
-
-
 
 /******************************************************************************
 
@@ -130,14 +113,12 @@ READ_HANDLER( tms5110_status_r )
 
 ******************************************************************************/
 
-int tms5110_ready_r(void)
-{
+int
+tms5110_ready_r(void) {
     /* bring up to date first */
     stream_update(stream, 0);
     return tms5110_ready_read();
 }
-
-
 
 /******************************************************************************
 
@@ -145,12 +126,10 @@ int tms5110_ready_r(void)
 
 ******************************************************************************/
 
-static void tms5110_update(int ch, INT16 *buffer, int samples)
-{
-	tms5110_process(buffer, samples);
+static void
+tms5110_update(int ch, INT16* buffer, int samples) {
+    tms5110_process(buffer, samples);
 }
-
-
 
 /******************************************************************************
 
@@ -158,11 +137,10 @@ static void tms5110_update(int ch, INT16 *buffer, int samples)
 
 ******************************************************************************/
 
-void tms5110_set_frequency(double frequency)
-{
-	if (stream != -1)
-	{
-		stream_update(stream, 0);
-		stream_set_sample_rate(stream, frequency/80.);
-	}
+void
+tms5110_set_frequency(double frequency) {
+    if (stream != -1) {
+        stream_update(stream, 0);
+        stream_set_sample_rate(stream, frequency / 80.);
+    }
 }

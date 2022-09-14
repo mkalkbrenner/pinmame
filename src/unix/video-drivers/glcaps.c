@@ -12,8 +12,8 @@
 
 #include "gltool.h"
 
-void LIBAPIENTRY printGLCapabilities ( GLCapabilities *glCaps )
-{
+void LIBAPIENTRY
+printGLCapabilities(GLCapabilities* glCaps) {
     fprintf(stdout, "\t gl_supported: %d !\n", glCaps->gl_supported);
     fprintf(stdout, "\t doubleBuff: %d, ", (int)glCaps->buffer);
     fprintf(stdout, " rgba: %d, ", (int)glCaps->color);
@@ -32,4 +32,3 @@ void LIBAPIENTRY printGLCapabilities ( GLCapabilities *glCaps )
 
     fflush(stdout);
 }
-

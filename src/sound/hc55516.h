@@ -2,16 +2,17 @@
 
 #ifndef HC55516_H
 #define HC55516_H
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
-#define MAX_HC55516		4
+#define MAX_HC55516 4
 
 // Set the known sample clock rate for an HC55516 chip.  'num' is the chip
 // number - most games only use one HC55516 chip, in which case this should
 // be 0.  If the game uses multiple chips, set the frequency for each chip
-// individually.  This can be called from the init_GAME() routine for an 
+// individually.  This can be called from the init_GAME() routine for an
 // individual game driver to set that game's clock rate.
 //
 // This information isn't currently used for anything, but we're keeping
@@ -26,20 +27,19 @@
 //
 void hc55516_set_sample_clock(int num, int frequency);
 
-
 // start the hc55516 subsystem
-int hc55516_sh_start(const struct MachineSound *msound);
+int hc55516_sh_start(const struct MachineSound* msound);
 
 // Low-pass output filter types
-#define HC55516_FILTER_C8228   1        // Williams speech board Type 2 (C-8228), system 6/7 (optionally, otherwise C-8226 with a MC3417) and system 9
-#define HC55516_FILTER_SYS11   2        // Williams System 11
-#define HC55516_FILTER_WPC89   3        // Pre-DCS WPC sound boards
+#define HC55516_FILTER_C8228                                                                                           \
+    1 // Williams speech board Type 2 (C-8228), system 6/7 (optionally, otherwise C-8226 with a MC3417) and system 9
+#define HC55516_FILTER_SYS11 2 // Williams System 11
+#define HC55516_FILTER_WPC89 3 // Pre-DCS WPC sound boards
 
-struct hc55516_interface
-{
-	int num;
-	int volume[MAX_HC55516];
-	int output_filter_type;
+struct hc55516_interface {
+    int num;
+    int volume[MAX_HC55516];
+    int output_filter_type;
 };
 
 #ifdef PINMAME
@@ -78,17 +78,16 @@ void hc55516_clock_set_w(int num, int data);
 /* clears the clock state and sets the databit */
 void hc55516_digit_clock_clear_w(int num, int data);
 
-WRITE_HANDLER( hc55516_0_digit_w );
-WRITE_HANDLER( hc55516_0_clock_w );
-WRITE_HANDLER( hc55516_0_clock_clear_w );
-WRITE_HANDLER( hc55516_0_clock_set_w );
-WRITE_HANDLER( hc55516_0_digit_clock_clear_w );
+WRITE_HANDLER(hc55516_0_digit_w);
+WRITE_HANDLER(hc55516_0_clock_w);
+WRITE_HANDLER(hc55516_0_clock_clear_w);
+WRITE_HANDLER(hc55516_0_clock_set_w);
+WRITE_HANDLER(hc55516_0_digit_clock_clear_w);
 
-WRITE_HANDLER( hc55516_1_digit_w );
-WRITE_HANDLER( hc55516_1_clock_w );
-WRITE_HANDLER( hc55516_1_clock_clear_w );
-WRITE_HANDLER( hc55516_1_clock_set_w );
-WRITE_HANDLER( hc55516_1_digit_clock_clear_w );
-
+WRITE_HANDLER(hc55516_1_digit_w);
+WRITE_HANDLER(hc55516_1_clock_w);
+WRITE_HANDLER(hc55516_1_clock_clear_w);
+WRITE_HANDLER(hc55516_1_clock_set_w);
+WRITE_HANDLER(hc55516_1_digit_clock_clear_w);
 
 #endif

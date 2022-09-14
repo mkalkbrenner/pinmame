@@ -22,10 +22,11 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
  * MA 02111-1307, USA.
  */
- 
+
 #ifndef NETTLE_SHA1_H_INCLUDED
 #define NETTLE_SHA1_H_INCLUDED
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
@@ -34,34 +35,25 @@ typedef unsigned int uint32_t;
 typedef unsigned char uint8_t;
 #endif
 
-#define SHA1_DIGEST_SIZE 20
-#define SHA1_DATA_SIZE 64
+#define SHA1_DIGEST_SIZE    20
+#define SHA1_DATA_SIZE      64
 
 /* Digest is kept internally as 4 32-bit words. */
 #define _SHA1_DIGEST_LENGTH 5
 
-struct sha1_ctx
-{
-  uint32_t digest[_SHA1_DIGEST_LENGTH];   /* Message digest */
-  uint32_t count_low, count_high;         /* 64-bit block count */
-  uint8_t block[SHA1_DATA_SIZE];          /* SHA1 data buffer */
-  unsigned int index;                     /* index into buffer */
+struct sha1_ctx {
+    uint32_t digest[_SHA1_DIGEST_LENGTH]; /* Message digest */
+    uint32_t count_low, count_high;       /* 64-bit block count */
+    uint8_t block[SHA1_DATA_SIZE];        /* SHA1 data buffer */
+    unsigned int index;                   /* index into buffer */
 };
 
-void
-sha1_init(struct sha1_ctx *ctx);
+void sha1_init(struct sha1_ctx* ctx);
 
-void
-sha1_update(struct sha1_ctx *ctx,
-	    unsigned length,
-	    const uint8_t *data);
+void sha1_update(struct sha1_ctx* ctx, unsigned length, const uint8_t* data);
 
-void
-sha1_final(struct sha1_ctx *ctx);
+void sha1_final(struct sha1_ctx* ctx);
 
-void
-sha1_digest(const struct sha1_ctx *ctx,
-	    unsigned length,
-	    uint8_t *digest);
+void sha1_digest(const struct sha1_ctx* ctx, unsigned length, uint8_t* digest);
 
 #endif /* NETTLE_SHA1_H_INCLUDED */

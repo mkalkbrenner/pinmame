@@ -67,476 +67,418 @@
 
 ***************************************************************************/
 
-#include "driver.h"
 #include "saa1099.h"
+#include "driver.h"
 #include <math.h>
 
 #include "../ext/vgm/vgmwrite.h"
 
-#define LEFT	0x00
-#define RIGHT	0x01
+#define LEFT  0x00
+#define RIGHT 0x01
 
-#define BOOL UINT8
+#define BOOL  UINT8
 
 /* this structure defines a channel */
-struct saa1099_channel
-{
-	UINT8 frequency;		/* frequency (0x00..0xff) */
-	BOOL freq_enable;		/* frequency enable */
-	BOOL noise_enable;		/* noise enable */
-	UINT8 octave; 			/* octave (0x00..0x07) */
-	UINT16 amplitude[2];	/* amplitude (0x00..0x0f) */
-	UINT8 envelope[2];		/* envelope (0x00..0x0f or 0x10 == off) */
+struct saa1099_channel {
+    UINT8 frequency;     /* frequency (0x00..0xff) */
+    BOOL freq_enable;    /* frequency enable */
+    BOOL noise_enable;   /* noise enable */
+    UINT8 octave;        /* octave (0x00..0x07) */
+    UINT16 amplitude[2]; /* amplitude (0x00..0x0f) */
+    UINT8 envelope[2];   /* envelope (0x00..0x0f or 0x10 == off) */
 
-	/* vars to simulate the square wave */
-	int counter;
-	UINT8 level;
+    /* vars to simulate the square wave */
+    int counter;
+    UINT8 level;
 };
+
 #define freq(x) ((511 - x.frequency) << (8 - x.octave)) // clock / ((511 - frequency) * 2^(8 - octave))
 
 /* this structure defines a noise channel */
-struct saa1099_noise
-{
-	/* vars to simulate the noise generator output */
-	int counter;
-	int freq;
-	UINT32 level;					/* noise polynomal shifter */
+struct saa1099_noise {
+    /* vars to simulate the noise generator output */
+    int counter;
+    int freq;
+    UINT32 level; /* noise polynomal shifter */
 };
 
 /* this structure defines a SAA1099 chip */
-struct SAA1099
-{
-	int stream;						/* our stream */
-	UINT8 noise_params[2];			/* noise generators parameters */
-	BOOL env_enable[2];				/* envelope generators enable */
-	BOOL env_reverse_right[2];		/* envelope reversed for right channel */
-	UINT8 env_mode[2];				/* envelope generators mode */
-	BOOL env_bits[2];				/* non zero = 3 bits resolution */
-	BOOL env_clock[2];				/* envelope clock mode (non-zero external) */
-	UINT8 env_step[2];				/* current envelope step */
-	BOOL all_ch_enable;				/* all channels enable */
-	BOOL sync_state;				/* sync all channels */
-	UINT8 selected_reg;				/* selected register */
-	struct saa1099_channel channels[6];	/* channels */
-	struct saa1099_noise noise[2];	/* noise generators */
-	double master_clock;
+struct SAA1099 {
+    int stream;                         /* our stream */
+    UINT8 noise_params[2];              /* noise generators parameters */
+    BOOL env_enable[2];                 /* envelope generators enable */
+    BOOL env_reverse_right[2];          /* envelope reversed for right channel */
+    UINT8 env_mode[2];                  /* envelope generators mode */
+    BOOL env_bits[2];                   /* non zero = 3 bits resolution */
+    BOOL env_clock[2];                  /* envelope clock mode (non-zero external) */
+    UINT8 env_step[2];                  /* current envelope step */
+    BOOL all_ch_enable;                 /* all channels enable */
+    BOOL sync_state;                    /* sync all channels */
+    UINT8 selected_reg;                 /* selected register */
+    struct saa1099_channel channels[6]; /* channels */
+    struct saa1099_noise noise[2];      /* noise generators */
+    double master_clock;
 
-	unsigned short vgm_idx;
+    unsigned short vgm_idx;
 };
 
 /* saa1099 chips */
 static struct SAA1099 saa1099[MAX_SAA1099];
 
-static const UINT16 amplitude_lookup[16] = {
-	 0*32767/16,  1*32767/16,  2*32767/16,  3*32767/16,
-	 4*32767/16,  5*32767/16,  6*32767/16,  7*32767/16,
-	 8*32767/16,  9*32767/16, 10*32767/16, 11*32767/16,
-	12*32767/16, 13*32767/16, 14*32767/16, 15*32767/16
-};
+static const UINT16 amplitude_lookup[16] = {0 * 32767 / 16,  1 * 32767 / 16,  2 * 32767 / 16,  3 * 32767 / 16,
+                                            4 * 32767 / 16,  5 * 32767 / 16,  6 * 32767 / 16,  7 * 32767 / 16,
+                                            8 * 32767 / 16,  9 * 32767 / 16,  10 * 32767 / 16, 11 * 32767 / 16,
+                                            12 * 32767 / 16, 13 * 32767 / 16, 14 * 32767 / 16, 15 * 32767 / 16};
 
 static const UINT8 envelope[8][64] = {
-	/* zero amplitude */
-	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	/* maximum amplitude */
-	{15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
-	 15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
-	 15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
-	 15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15, },
-	/* single decay */
-	{15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
-	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	/* repetitive decay */
-	{15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
-	 15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
-	 15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
-	 15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 },
-	/* single triangular */
-	{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
-	 15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
-	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	/* repetitive triangular */
-	{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
-	 15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
-	  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
-	 15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 },
-	/* single attack */
-	{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
-	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-	/* repetitive attack */
-	{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
-	  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
-	  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
-	  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15 }
-};
+    /* zero amplitude */
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    /* maximum amplitude */
+    {
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+        15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+    },
+    /* single decay */
+    {15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    /* repetitive decay */
+    {15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
+     15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0},
+    /* single triangular */
+    {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    /* repetitive triangular */
+    {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
+     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0},
+    /* single attack */
+    {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    /* repetitive attack */
+    {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}};
 
-static void saa1099_envelope(int chip, int ch)
-{
-	struct SAA1099 *saa = &saa1099[chip];
-	if (saa->env_enable[ch])
-	{
-		int step, mode, mask;
-		mode = saa->env_mode[ch];
-		/* step from 0..63 and then loop in steps 32..63 */
-		step = saa->env_step[ch] =
-			((saa->env_step[ch] + 1) & 0x3f) | (saa->env_step[ch] & 0x20);
+static void
+saa1099_envelope(int chip, int ch) {
+    struct SAA1099* saa = &saa1099[chip];
+    if (saa->env_enable[ch]) {
+        int step, mode, mask;
+        mode = saa->env_mode[ch];
+        /* step from 0..63 and then loop in steps 32..63 */
+        step = saa->env_step[ch] = ((saa->env_step[ch] + 1) & 0x3f) | (saa->env_step[ch] & 0x20);
 
-		mask = 15;
-		if (saa->env_bits[ch])
-			mask &= ~1; 	/* 3 bit resolution, mask LSB */
+        mask = 15;
+        if (saa->env_bits[ch])
+            mask &= ~1; /* 3 bit resolution, mask LSB */
 
-		saa->channels[ch*3+0].envelope[ LEFT] =
-		saa->channels[ch*3+1].envelope[ LEFT] =
-		saa->channels[ch*3+2].envelope[ LEFT] = envelope[mode][step] & mask;
-		if (saa->env_reverse_right[ch])
-		{
-			saa->channels[ch*3+0].envelope[RIGHT] =
-			saa->channels[ch*3+1].envelope[RIGHT] =
-			saa->channels[ch*3+2].envelope[RIGHT] = (15 - envelope[mode][step]) & mask;
-		}
-		else
-		{
-			saa->channels[ch*3+0].envelope[RIGHT] =
-			saa->channels[ch*3+1].envelope[RIGHT] =
-			saa->channels[ch*3+2].envelope[RIGHT] = envelope[mode][step] & mask;
-		}
-	}
-	else
-	{
-		/* envelope mode off, set all envelope factors to 16 */
-		saa->channels[ch*3+0].envelope[ LEFT] =
-		saa->channels[ch*3+1].envelope[ LEFT] =
-		saa->channels[ch*3+2].envelope[ LEFT] =
-		saa->channels[ch*3+0].envelope[RIGHT] =
-		saa->channels[ch*3+1].envelope[RIGHT] =
-		saa->channels[ch*3+2].envelope[RIGHT] = 16;
-	}
+        saa->channels[ch * 3 + 0].envelope[LEFT] = saa->channels[ch * 3 + 1].envelope[LEFT] =
+            saa->channels[ch * 3 + 2].envelope[LEFT] = envelope[mode][step] & mask;
+        if (saa->env_reverse_right[ch]) {
+            saa->channels[ch * 3 + 0].envelope[RIGHT] = saa->channels[ch * 3 + 1].envelope[RIGHT] =
+                saa->channels[ch * 3 + 2].envelope[RIGHT] = (15 - envelope[mode][step]) & mask;
+        } else {
+            saa->channels[ch * 3 + 0].envelope[RIGHT] = saa->channels[ch * 3 + 1].envelope[RIGHT] =
+                saa->channels[ch * 3 + 2].envelope[RIGHT] = envelope[mode][step] & mask;
+        }
+    } else {
+        /* envelope mode off, set all envelope factors to 16 */
+        saa->channels[ch * 3 + 0].envelope[LEFT] = saa->channels[ch * 3 + 1].envelope[LEFT] =
+            saa->channels[ch * 3 + 2].envelope[LEFT] = saa->channels[ch * 3 + 0].envelope[RIGHT] =
+                saa->channels[ch * 3 + 1].envelope[RIGHT] = saa->channels[ch * 3 + 2].envelope[RIGHT] = 16;
+    }
 }
 
+static void
+saa1099_update(int chip, INT16** buffer, int length) {
+    struct SAA1099* saa = &saa1099[chip];
+    int j, ch;
+    //int clk2div512;
 
-static void saa1099_update(int chip, INT16 **buffer, int length)
-{
-	struct SAA1099 *saa = &saa1099[chip];
-	int j, ch;
-	//int clk2div512;
+    /* if the channels are disabled we're done */
+    if (!saa->all_ch_enable) {
+        /* init output data */
+        memset(buffer[LEFT], 0, length * sizeof(INT16));
+        memset(buffer[RIGHT], 0, length * sizeof(INT16));
+        return;
+    }
 
-	/* if the channels are disabled we're done */
-	if (!saa->all_ch_enable)
-	{
-		/* init output data */
-		memset(buffer[LEFT],0,length*sizeof(INT16));
-		memset(buffer[RIGHT],0,length*sizeof(INT16));
-		return;
-	}
+    for (ch = 0; ch < 2; ch++) {
+        switch (saa->noise_params[ch]) {
+            case 0:
+            case 1:
+            case 2:
+                saa->noise[ch].freq = 256 << saa->noise_params[ch];
+                break;
+            case 3:
+                saa->noise[ch].freq = freq(saa->channels[ch * 3]);
+                break;
+        }
+    }
 
-	for (ch = 0; ch < 2; ch++)
-	{
-		switch (saa->noise_params[ch])
-		{
-		case 0:
-		case 1:
-		case 2: saa->noise[ch].freq = 256 << saa->noise_params[ch]; break;
-		case 3: saa->noise[ch].freq = freq(saa->channels[ch * 3]); break;
-		}
-	}
+    // clock fix thanks to http://www.vogons.org/viewtopic.php?p=344227#p344227
+    //old: clk2div512 = 2 * saa->master_clock / 512;
+    //new/fixed: clk2div512 = (saa->master_clock + 128) / 256;
 
-	// clock fix thanks to http://www.vogons.org/viewtopic.php?p=344227#p344227
-	//old: clk2div512 = 2 * saa->master_clock / 512;
-	//new/fixed: clk2div512 = (saa->master_clock + 128) / 256;
+    /* fill all data needed */
+    for (j = 0; j < length; j++) {
+        int output_l = 0, output_r = 0;
 
-	/* fill all data needed */
-	for( j = 0; j < length; j++ )
-	{
-		int output_l = 0, output_r = 0;
+        /* for each channel */
+        for (ch = 0; ch < 6; ch++) {
+            UINT8 level = 0; // output level (0...2, 0 = off, 1 = 100%, 2 = 50%)
+            UINT8 noise_out;
+            UINT8 tone_out;
 
-		/* for each channel */
-		for (ch = 0; ch < 6; ch++)
-		{
-			UINT8 level = 0; // output level (0...2, 0 = off, 1 = 100%, 2 = 50%)
-			UINT8 noise_out;
-			UINT8 tone_out;
+            /* check the actual position in the square wave */
+            while (saa->channels[ch].counter <= 0) {
+                saa->channels[ch].counter += freq(saa->channels[ch]);
+                saa->channels[ch].level ^= 1;
 
-			/* check the actual position in the square wave */
-			while (saa->channels[ch].counter <= 0)
-			{
-				saa->channels[ch].counter += freq(saa->channels[ch]);
-				saa->channels[ch].level ^= 1;
+                /* eventually clock the envelope counters */
+                if (ch == 1 && saa->env_clock[0] == 0)
+                    saa1099_envelope(chip, 0);
+                if (ch == 4 && saa->env_clock[1] == 0)
+                    saa1099_envelope(chip, 1);
+            }
+            saa->channels[ch].counter -= 256;
 
-				/* eventually clock the envelope counters */
-				if (ch == 1 && saa->env_clock[0] == 0)
-					saa1099_envelope(chip, 0);
-				if (ch == 4 && saa->env_clock[1] == 0)
-					saa1099_envelope(chip, 1);
-			}
-			saa->channels[ch].counter -= 256;
+            // if the noise is enabled
+            noise_out = saa->noise[ch / 3].level & 1; // noise output (noise 0: chan 0-2, noise 1: chan 3-5)
+            tone_out = saa->channels[ch].level & 1;   // tone output
+            if (saa->channels[ch].noise_enable) {
+                // if both noise and square wave are enabled, output is tone output
+                if (saa->channels[ch].freq_enable) {
+                    // half amplitude if the noise level is high
+                    if (noise_out)
+                        level = tone_out << 1;
+                    else
+                        level = tone_out;
+                } else {
+                    // output is noise output
+                    level = noise_out;
+                }
+            }
+            // if the square wave is enabled
+            else if (saa->channels[ch].freq_enable) {
+                // output is tone output
+                level = tone_out;
+            }
 
-			// if the noise is enabled
-			noise_out = saa->noise[ch/3].level & 1; // noise output (noise 0: chan 0-2, noise 1: chan 3-5)
-			tone_out = saa->channels[ch].level & 1; // tone output
-			if (saa->channels[ch].noise_enable)
-			{
-				// if both noise and square wave are enabled, output is tone output
-				if (saa->channels[ch].freq_enable)
-				{
-					// half amplitude if the noise level is high
-					if (noise_out)
-						level = tone_out << 1;
-					else
-						level = tone_out;
-				}
-				else
-				{
-					// output is noise output
-					level = noise_out;
-				}
-			}
-			// if the square wave is enabled
-			else if (saa->channels[ch].freq_enable)
-			{
-				// output is tone output
-				level = tone_out;
-			}
-
-			// if the output level is high
-			if (level > 0)
-			{
+            // if the output level is high
+            if (level > 0) {
 #if 0
 				output_l += (int)saa->channels[ch].amplitude[ LEFT] * saa->channels[ch].envelope[ LEFT] / 16 / level;
 				output_r += (int)saa->channels[ch].amplitude[RIGHT] * saa->channels[ch].envelope[RIGHT] / 16 / level;
 #else
-			// Now with bipolar output. -Valley Bell
-				output_l += (int)saa->channels[ch].amplitude[ LEFT] * saa->channels[ch].envelope[ LEFT] / 32 / level;
-				output_r += (int)saa->channels[ch].amplitude[RIGHT] * saa->channels[ch].envelope[RIGHT] / 32 / level;
-			}
-			else
-			{
-				output_l -= (int)saa->channels[ch].amplitude[ LEFT] * saa->channels[ch].envelope[ LEFT] / 32 / level;
-				output_r -= (int)saa->channels[ch].amplitude[RIGHT] * saa->channels[ch].envelope[RIGHT] / 32 / level;
+                // Now with bipolar output. -Valley Bell
+                output_l += (int)saa->channels[ch].amplitude[LEFT] * saa->channels[ch].envelope[LEFT] / 32 / level;
+                output_r += (int)saa->channels[ch].amplitude[RIGHT] * saa->channels[ch].envelope[RIGHT] / 32 / level;
+            } else {
+                output_l -= (int)saa->channels[ch].amplitude[LEFT] * saa->channels[ch].envelope[LEFT] / 32 / level;
+                output_r -= (int)saa->channels[ch].amplitude[RIGHT] * saa->channels[ch].envelope[RIGHT] / 32 / level;
 #endif
-			}
-		}
+            }
+        }
 
-		for (ch = 0; ch < 2; ch++)
-		{
-			/* check the actual position in noise generator */
-			while (saa->noise[ch].counter <= 0)
-			{
-				saa->noise[ch].counter += saa->noise[ch].freq; // clock / ((511 - frequency) * 2^(8 - octave)) or clock / 2^(8 + noise period)
-				if( ((saa->noise[ch].level & 0x4000) == 0) == ((saa->noise[ch].level & 0x0040) == 0) )
-					saa->noise[ch].level = (saa->noise[ch].level << 1) | 1;
-				else
-					saa->noise[ch].level <<= 1;
-			}
-			saa->noise[ch].counter -= 256;
-		}
-		/* write sound data to the buffer */
-		buffer[LEFT][j] = output_l / 6;
-		buffer[RIGHT][j] = output_r / 6;
-	}
+        for (ch = 0; ch < 2; ch++) {
+            /* check the actual position in noise generator */
+            while (saa->noise[ch].counter <= 0) {
+                saa->noise[ch].counter +=
+                    saa->noise[ch].freq; // clock / ((511 - frequency) * 2^(8 - octave)) or clock / 2^(8 + noise period)
+                if (((saa->noise[ch].level & 0x4000) == 0) == ((saa->noise[ch].level & 0x0040) == 0))
+                    saa->noise[ch].level = (saa->noise[ch].level << 1) | 1;
+                else
+                    saa->noise[ch].level <<= 1;
+            }
+            saa->noise[ch].counter -= 256;
+        }
+        /* write sound data to the buffer */
+        buffer[LEFT][j] = output_l / 6;
+        buffer[RIGHT][j] = output_r / 6;
+    }
 }
 
+int
+saa1099_sh_start(const struct MachineSound* msound) {
+    int i, j;
+    const struct SAA1099_interface* intf = msound->sound_interface;
 
+    /* for each chip allocate one stream */
+    for (i = 0; i < intf->numchips; i++) {
+        int vol[2];
+        double sample_rate;
+        char buf[2][64];
+        const char* name[2];
+        struct SAA1099* saa = &saa1099[i];
 
-int saa1099_sh_start(const struct MachineSound *msound)
-{
-	int i, j;
-	const struct SAA1099_interface *intf = msound->sound_interface;
+        memset(saa, 0, sizeof(struct SAA1099));
 
+        saa->master_clock = 7159090.5;          // = XTAL(14'318'181) / 2 //!! 4000000 8000000 6000000 ?
+        sample_rate = saa->master_clock / 256.; // current MAME
+        //sample_rate = saa->master_clock / 128.0 * 8; // previously / VGMPlay
 
-	/* for each chip allocate one stream */
-	for (i = 0; i < intf->numchips; i++)
-	{
-		int vol[2];
-		double sample_rate;
-		char buf[2][64];
-		const char *name[2];
-		struct SAA1099 *saa = &saa1099[i];
+        for (j = 0; j < 2; j++) {
+            sprintf(buf[j], "SAA1099 #%d", i);
+            name[j] = buf[j];
+            vol[j] = MIXER(intf->volume[i][j], j ? MIXER_PAN_RIGHT : MIXER_PAN_LEFT);
+        }
+        saa->stream = stream_init_multi(2, name, vol, sample_rate, i, saa1099_update);
 
-		memset(saa, 0, sizeof(struct SAA1099));
+        saa->vgm_idx = vgm_open(VGMC_SAA1099, saa->master_clock);
+    }
 
-		saa->master_clock = 7159090.5; // = XTAL(14'318'181) / 2 //!! 4000000 8000000 6000000 ?
-		sample_rate = saa->master_clock / 256.; // current MAME
-		//sample_rate = saa->master_clock / 128.0 * 8; // previously / VGMPlay
-
-		for (j = 0; j < 2; j++)
-		{
-			sprintf(buf[j], "SAA1099 #%d", i);
-			name[j] = buf[j];
-			vol[j] = MIXER(intf->volume[i][j], j ? MIXER_PAN_RIGHT : MIXER_PAN_LEFT);
-		}
-		saa->stream = stream_init_multi(2, name, vol, sample_rate, i, saa1099_update);
-
-		saa->vgm_idx = vgm_open(VGMC_SAA1099, saa->master_clock);
-	}
-
-	return 0;
+    return 0;
 }
 
-void saa1099_sh_stop(void)
-{
+void
+saa1099_sh_stop(void) {}
+
+static void
+saa1099_control_port_w(int chip, int reg, int data) {
+    struct SAA1099* saa = &saa1099[chip];
+
+    if ((data & 0xff) > 0x1c) {
+        /* Error! */
+        logerror("%04x: (SAA1099 #%d) Unknown register selected\n", activecpu_get_pc(), chip);
+    }
+
+    saa->selected_reg = data & 0x1f;
+    if (saa->selected_reg == 0x18 || saa->selected_reg == 0x19) {
+        /* clock the envelope channels */
+        if (saa->env_clock[0])
+            saa1099_envelope(chip, 0);
+        if (saa->env_clock[1])
+            saa1099_envelope(chip, 1);
+    }
 }
 
-static void saa1099_control_port_w( int chip, int reg, int data )
-{
-	struct SAA1099 *saa = &saa1099[chip];
+static void
+saa1099_write_port_w(int chip, int offset, int data) {
+    struct SAA1099* saa = &saa1099[chip];
+    const int reg = saa->selected_reg;
+    int ch;
 
-	if ((data & 0xff) > 0x1c)
-	{
-		/* Error! */
-		logerror("%04x: (SAA1099 #%d) Unknown register selected\n",activecpu_get_pc(), chip);
-	}
+    /* first update the stream to this point in time */
+    stream_update(saa->stream, 0);
 
-	saa->selected_reg = data & 0x1f;
-	if (saa->selected_reg == 0x18 || saa->selected_reg == 0x19)
-	{
-		/* clock the envelope channels */
-		if (saa->env_clock[0])
-			saa1099_envelope(chip,0);
-		if (saa->env_clock[1])
-			saa1099_envelope(chip,1);
-	}
+    vgm_write(saa->vgm_idx, 0x00, reg & 0x7F, data);
+
+    switch (reg) {
+        /* channel i amplitude */
+        case 0x00:
+        case 0x01:
+        case 0x02:
+        case 0x03:
+        case 0x04:
+        case 0x05:
+            ch = reg & 7;
+            saa->channels[ch].amplitude[LEFT] = amplitude_lookup[data & 0x0f];
+            saa->channels[ch].amplitude[RIGHT] = amplitude_lookup[(data >> 4) & 0x0f];
+            break;
+        /* channel i frequency */
+        case 0x08:
+        case 0x09:
+        case 0x0a:
+        case 0x0b:
+        case 0x0c:
+        case 0x0d:
+            ch = reg & 7;
+            saa->channels[ch].frequency = data & 0xff;
+            break;
+        /* channel i octave */
+        case 0x10:
+        case 0x11:
+        case 0x12:
+            ch = (reg - 0x10) << 1;
+            saa->channels[ch + 0].octave = data & 0x07;
+            saa->channels[ch + 1].octave = (data >> 4) & 0x07;
+            break;
+        /* channel i frequency enable */
+        case 0x14:
+            saa->channels[0].freq_enable = data & 0x01;
+            saa->channels[1].freq_enable = (data & 0x02) ? 1 : 0;
+            saa->channels[2].freq_enable = (data & 0x04) ? 1 : 0;
+            saa->channels[3].freq_enable = (data & 0x08) ? 1 : 0;
+            saa->channels[4].freq_enable = (data & 0x10) ? 1 : 0;
+            saa->channels[5].freq_enable = (data & 0x20) ? 1 : 0;
+            break;
+        /* channel i noise enable */
+        case 0x15:
+            saa->channels[0].noise_enable = data & 0x01;
+            saa->channels[1].noise_enable = (data & 0x02) ? 1 : 0;
+            saa->channels[2].noise_enable = (data & 0x04) ? 1 : 0;
+            saa->channels[3].noise_enable = (data & 0x08) ? 1 : 0;
+            saa->channels[4].noise_enable = (data & 0x10) ? 1 : 0;
+            saa->channels[5].noise_enable = (data & 0x20) ? 1 : 0;
+            break;
+        /* noise generators parameters */
+        case 0x16:
+            saa->noise_params[0] = data & 0x03;
+            saa->noise_params[1] = (data >> 4) & 0x03;
+            break;
+        /* envelope generators parameters */
+        case 0x18:
+        case 0x19:
+            ch = reg - 0x18;
+            saa->env_reverse_right[ch] = data & 0x01;
+            saa->env_mode[ch] = (data >> 1) & 0x07;
+            saa->env_bits[ch] = (data & 0x10) ? 1 : 0;
+            saa->env_clock[ch] = (data & 0x20) ? 1 : 0;
+            saa->env_enable[ch] = (data & 0x80) ? 1 : 0;
+            /* reset the envelope */
+            saa->env_step[ch] = 0;
+            break;
+        /* channels enable & reset generators */
+        case 0x1c:
+            saa->all_ch_enable = data & 0x01;
+            saa->sync_state = (data & 0x02) ? 1 : 0;
+            if (data & 0x02) {
+                int i;
+
+                /* Synch & Reset generators */
+                logerror("%04x: (SAA1099 #%d) -reg 0x1c- Chip reset\n", activecpu_get_pc(), chip);
+                for (i = 0; i < 6; i++) {
+                    saa->channels[i].level = 0;
+                    saa->channels[i].counter = freq(saa->channels[i]);
+                }
+            }
+            break;
+        default: /* Error! */
+            logerror("%04x: (SAA1099 #%d) Unknown operation (reg:%02x, data:%02x)\n", activecpu_get_pc(), chip, reg,
+                     data);
+            break;
+    }
 }
-
-
-static void saa1099_write_port_w( int chip, int offset, int data )
-{
-	struct SAA1099 *saa = &saa1099[chip];
-	const int reg = saa->selected_reg;
-	int ch;
-
-	/* first update the stream to this point in time */
-	stream_update(saa->stream, 0);
-
-	vgm_write(saa->vgm_idx, 0x00, reg & 0x7F, data);
-
-	switch (reg)
-	{
-	/* channel i amplitude */
-	case 0x00:	case 0x01:	case 0x02:	case 0x03:	case 0x04:	case 0x05:
-		ch = reg & 7;
-		saa->channels[ch].amplitude[LEFT] = amplitude_lookup[data & 0x0f];
-		saa->channels[ch].amplitude[RIGHT] = amplitude_lookup[(data >> 4) & 0x0f];
-		break;
-	/* channel i frequency */
-	case 0x08:	case 0x09:	case 0x0a:	case 0x0b:	case 0x0c:	case 0x0d:
-		ch = reg & 7;
-		saa->channels[ch].frequency = data & 0xff;
-		break;
-	/* channel i octave */
-	case 0x10:	case 0x11:	case 0x12:
-		ch = (reg - 0x10) << 1;
-		saa->channels[ch + 0].octave = data & 0x07;
-		saa->channels[ch + 1].octave = (data >> 4) & 0x07;
-		break;
-	/* channel i frequency enable */
-	case 0x14:
-		saa->channels[0].freq_enable =  data & 0x01;
-		saa->channels[1].freq_enable = (data & 0x02) ? 1 : 0;
-		saa->channels[2].freq_enable = (data & 0x04) ? 1 : 0;
-		saa->channels[3].freq_enable = (data & 0x08) ? 1 : 0;
-		saa->channels[4].freq_enable = (data & 0x10) ? 1 : 0;
-		saa->channels[5].freq_enable = (data & 0x20) ? 1 : 0;
-		break;
-	/* channel i noise enable */
-	case 0x15:
-		saa->channels[0].noise_enable =  data & 0x01;
-		saa->channels[1].noise_enable = (data & 0x02) ? 1 : 0;
-		saa->channels[2].noise_enable = (data & 0x04) ? 1 : 0;
-		saa->channels[3].noise_enable = (data & 0x08) ? 1 : 0;
-		saa->channels[4].noise_enable = (data & 0x10) ? 1 : 0;
-		saa->channels[5].noise_enable = (data & 0x20) ? 1 : 0;
-		break;
-	/* noise generators parameters */
-	case 0x16:
-		saa->noise_params[0] = data & 0x03;
-		saa->noise_params[1] = (data >> 4) & 0x03;
-		break;
-	/* envelope generators parameters */
-	case 0x18:	case 0x19:
-		ch = reg - 0x18;
-		saa->env_reverse_right[ch] = data & 0x01;
-		saa->env_mode[ch] = (data >> 1) & 0x07;
-		saa->env_bits[ch] = (data & 0x10) ? 1 : 0;
-		saa->env_clock[ch] = (data & 0x20) ? 1 : 0;
-		saa->env_enable[ch] = (data & 0x80) ? 1 : 0;
-		/* reset the envelope */
-		saa->env_step[ch] = 0;
-		break;
-	/* channels enable & reset generators */
-	case 0x1c:
-		saa->all_ch_enable = data & 0x01;
-		saa->sync_state = (data & 0x02) ? 1 : 0;
-		if (data & 0x02)
-		{
-			int i;
-
-			/* Synch & Reset generators */
-			logerror("%04x: (SAA1099 #%d) -reg 0x1c- Chip reset\n",activecpu_get_pc(), chip);
-			for (i = 0; i < 6; i++)
-			{
-				saa->channels[i].level = 0;
-				saa->channels[i].counter = freq(saa->channels[i]);
-			}
-		}
-		break;
-	default:	/* Error! */
-		logerror("%04x: (SAA1099 #%d) Unknown operation (reg:%02x, data:%02x)\n",activecpu_get_pc(), chip, reg, data);
-		break;
-	}
-}
-
 
 /*******************************************
 	SAA1099 interface functions
 *******************************************/
 
-WRITE_HANDLER( saa1099_control_port_0_w )
-{
-	saa1099_control_port_w(0, offset, data);
+WRITE_HANDLER(saa1099_control_port_0_w) { saa1099_control_port_w(0, offset, data); }
+
+WRITE_HANDLER(saa1099_write_port_0_w) { saa1099_write_port_w(0, offset, data); }
+
+WRITE_HANDLER(saa1099_control_port_1_w) { saa1099_control_port_w(1, offset, data); }
+
+WRITE_HANDLER(saa1099_write_port_1_w) { saa1099_write_port_w(1, offset, data); }
+
+WRITE16_HANDLER(saa1099_control_port_0_lsb_w) {
+    if (ACCESSING_LSB)
+        saa1099_control_port_w(0, offset, data & 0xff);
 }
 
-WRITE_HANDLER( saa1099_write_port_0_w )
-{
-	saa1099_write_port_w(0, offset, data);
+WRITE16_HANDLER(saa1099_write_port_0_lsb_w) {
+    if (ACCESSING_LSB)
+        saa1099_write_port_w(0, offset, data & 0xff);
 }
 
-WRITE_HANDLER( saa1099_control_port_1_w )
-{
-	saa1099_control_port_w(1, offset, data);
+WRITE16_HANDLER(saa1099_control_port_1_lsb_w) {
+    if (ACCESSING_LSB)
+        saa1099_control_port_w(1, offset, data & 0xff);
 }
 
-WRITE_HANDLER( saa1099_write_port_1_w )
-{
-	saa1099_write_port_w(1, offset, data);
-}
-
-WRITE16_HANDLER( saa1099_control_port_0_lsb_w )
-{
-	if (ACCESSING_LSB)
-		saa1099_control_port_w(0, offset, data & 0xff);
-}
-
-WRITE16_HANDLER( saa1099_write_port_0_lsb_w )
-{
-	if (ACCESSING_LSB)
-		saa1099_write_port_w(0, offset, data & 0xff);
-}
-
-WRITE16_HANDLER( saa1099_control_port_1_lsb_w )
-{
-	if (ACCESSING_LSB)
-		saa1099_control_port_w(1, offset, data & 0xff);
-}
-
-WRITE16_HANDLER( saa1099_write_port_1_lsb_w )
-{
-	if (ACCESSING_LSB)
-		saa1099_write_port_w(1, offset, data & 0xff);
+WRITE16_HANDLER(saa1099_write_port_1_lsb_w) {
+    if (ACCESSING_LSB)
+        saa1099_write_port_w(1, offset, data & 0xff);
 }

@@ -33,127 +33,109 @@ Version 0.2, December 1999
  instead of using token[0], this allows the caller to remove the - for
  a commandline option for example. (Hans de Goede)
 */
+#include "parser.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "parser.h"
 
-struct parser_struct *parser_create(const struct parser_element *element[])
-{
-   int i,j;
-   struct parser_struct *parser = NULL;
-   
-   if (!element)
-      return NULL;
-      
-   for(i=0; element[i]; i++)
-   {
-      for(j=0; element[i][j].name; j++)
-      {
-         if(element[i][j].arg_count > BUF_SIZE)
-         {
-            fprintf(stderr,
-               "error parser doesn't support commands with more then %d arguments",
-               BUF_SIZE);
-            return NULL;
-         }
-      }
-   }
-   
-   if (!(parser = calloc(1, sizeof(struct parser_struct))))
-   {
-      fprintf(stderr, "error malloc failed for struct parser_struct");
-      return NULL;
-   }
-   parser->element = element;
-   return parser;
+struct parser_struct*
+parser_create(const struct parser_element* element[]) {
+    int i, j;
+    struct parser_struct* parser = NULL;
+
+    if (!element)
+        return NULL;
+
+    for (i = 0; element[i]; i++) {
+        for (j = 0; element[i][j].name; j++) {
+            if (element[i][j].arg_count > BUF_SIZE) {
+                fprintf(stderr, "error parser doesn't support commands with more then %d arguments", BUF_SIZE);
+                return NULL;
+            }
+        }
+    }
+
+    if (!(parser = calloc(1, sizeof(struct parser_struct)))) {
+        fprintf(stderr, "error malloc failed for struct parser_struct");
+        return NULL;
+    }
+    parser->element = element;
+    return parser;
 }
 
-void parser_destroy(struct parser_struct *parser)
-{
-   if (parser)
-      free(parser);
+void
+parser_destroy(struct parser_struct* parser) {
+    if (parser)
+        free(parser);
 }
 
-static const struct parser_element *parser_find_element(
-   struct parser_struct *parser, const char *command)
-{
-   int i,j;
-   
-   for(i=0; parser->element[i]; i++)
-   {
-      for(j=0; parser->element[i][j].name; j++)
-      {
-         if(!strcmp(command, parser->element[i][j].name) ||
-            (parser->element[i][j].shortname &&
-               !strcmp(command, parser->element[i][j].shortname)))
-         {
-            return &parser->element[i][j];
-         }
-      }
-   }
-   fprintf(stderr, "error unknown command: %s", command);
-   return NULL;
+static const struct parser_element*
+parser_find_element(struct parser_struct* parser, const char* command) {
+    int i, j;
+
+    for (i = 0; parser->element[i]; i++) {
+        for (j = 0; parser->element[i][j].name; j++) {
+            if (!strcmp(command, parser->element[i][j].name)
+                || (parser->element[i][j].shortname && !strcmp(command, parser->element[i][j].shortname))) {
+                return &parser->element[i][j];
+            }
+        }
+    }
+    fprintf(stderr, "error unknown command: %s", command);
+    return NULL;
 }
 
-int parser_parse_string(struct parser_struct *parser, char *string)
-{
-   int i;
-   const char *command;
-   const char *arg[BUF_SIZE];
-   const struct parser_element *element = NULL;
-  
-   if(!(command = strtok(string, " \t\r\n")))
-      return 0;
- 
-   if(!(element = parser_find_element(parser, command)))
-      return -1;
+int
+parser_parse_string(struct parser_struct* parser, char* string) {
+    int i;
+    const char* command;
+    const char* arg[BUF_SIZE];
+    const struct parser_element* element = NULL;
 
-   for(i=0; i < element->arg_count; i++)
-   {
-      arg[i] = strtok(NULL, " \t\r\n");
-      if (!arg[i])
-      {
-         fprintf(stderr, "error %s requires %d arguments",
-            element->name, element->arg_count);
-         return -1;
-      }
-   }
-   
-   return (*element->function)(arg, element->flags);
+    if (!(command = strtok(string, " \t\r\n")))
+        return 0;
+
+    if (!(element = parser_find_element(parser, command)))
+        return -1;
+
+    for (i = 0; i < element->arg_count; i++) {
+        arg[i] = strtok(NULL, " \t\r\n");
+        if (!arg[i]) {
+            fprintf(stderr, "error %s requires %d arguments", element->name, element->arg_count);
+            return -1;
+        }
+    }
+
+    return (*element->function)(arg, element->flags);
 }
 
-int parser_parse_tokens(struct parser_struct *parser, const char *command,
-   int tokenc, const char *tokenv[], int *tokens_used)
-{
-   const struct parser_element *element = NULL;
-   
-   *tokens_used = 0;
-      
-   if(!(element = parser_find_element(parser, command)))
-      return -1;
+int
+parser_parse_tokens(struct parser_struct* parser, const char* command, int tokenc, const char* tokenv[],
+                    int* tokens_used) {
+    const struct parser_element* element = NULL;
 
-   if (tokenc < element->arg_count)
-   {
-      fprintf(stderr, "error %s requires %d arguments",
-         element->name, element->arg_count);
-      return -1;
-   }
-   *tokens_used = element->arg_count;
-   return (*element->function)(tokenv, element->flags);
+    *tokens_used = 0;
+
+    if (!(element = parser_find_element(parser, command)))
+        return -1;
+
+    if (tokenc < element->arg_count) {
+        fprintf(stderr, "error %s requires %d arguments", element->name, element->arg_count);
+        return -1;
+    }
+    *tokens_used = element->arg_count;
+    return (*element->function)(tokenv, element->flags);
 }
 
-int parser_get_arg_count(struct parser_struct *parser, const char *command,
-   int *arg_count)
-{
-   const struct parser_element *element = NULL;
-   
-   *arg_count = 0;
-      
-   if(!(element = parser_find_element(parser, command)))
-      return -1;
-   
-   *arg_count = element->arg_count;
-   return 0;
-}
+int
+parser_get_arg_count(struct parser_struct* parser, const char* command, int* arg_count) {
+    const struct parser_element* element = NULL;
 
+    *arg_count = 0;
+
+    if (!(element = parser_find_element(parser, command)))
+        return -1;
+
+    *arg_count = element->arg_count;
+    return 0;
+}

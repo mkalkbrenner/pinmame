@@ -8,7 +8,8 @@
 
 #ifndef __OSINLINE__
 #define __OSINLINE__
-#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || (__GNUC__ >= 4)	// GCC supports "pragma once" correctly since 3.4
+#if !defined(__GNUC__) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)                                                       \
+    || (__GNUC__ >= 4) // GCC supports "pragma once" correctly since 3.4
 #pragma once
 #endif
 
@@ -23,7 +24,6 @@
 //#define pdt16		osd_pdt16
 //#define pdt16np		osd_pdt16np
 
-
 //============================================================
 //	PROTOTYPES
 //============================================================
@@ -32,7 +32,6 @@
 //void osd_pdo16( UINT16 *dest, const UINT16 *source, int count, UINT8 *pri, UINT32 pcode );
 //void osd_pdt16( UINT16 *dest, const UINT16 *source, const UINT8 *pMask, int mask, int value, int count, UINT8 *pri, UINT32 pcode );
 //void osd_pdt16np( UINT16 *dest, const UINT16 *source, const UINT8 *pMask, int mask, int value, int count, UINT8 *pri, UINT32 pcode );
-
 
 //============================================================
 //	INLINE FUNCTIONS

@@ -1,6 +1,6 @@
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>
 /* make ansi compilation happy */
 #define inline __inline__
 #if defined(__ARCH_freebsd)
@@ -20,71 +20,66 @@
 	0x11.
 */
 
-void readyVgaRegs(void)
-	{
-	int v;
+void
+readyVgaRegs(void) {
+    int v;
 
-	   /*
+    /*
 	   outportb(0x3d4,0x11);
     v = inportb(0x3d5) & 0x7f;
 	outportb(0x3d4,0x11);
 	outportb(0x3d5,v);
 	   */
-	   
-	   outb(0x11,0x3d4);
-	   v = inb(0x3d5) & 0x7f;
-	   outb(0x11,0x3d4);
-	   outb(v,0x3d5);
-	   
-	
-	}
+
+    outb(0x11, 0x3d4);
+    v = inb(0x3d5) & 0x7f;
+    outb(0x11, 0x3d4);
+    outb(v, 0x3d5);
+}
 
 /*
 	outReg sets a single register according to the contents of the
 	passed Register structure.
 */
 
-void outReg(Register r)
-	{
-	switch (r.port)
-		{
-		/* First handle special cases: */
+void
+outReg(Register r) {
+    switch (r.port) {
+            /* First handle special cases: */
 
-		case ATTRCON_ADDR:
-			inb(STATUS_ADDR);  		/* reset read/write flip-flop */
-			outb(r.index | 0x20,ATTRCON_ADDR);
-										/* ensure VGA output is enabled */
-			outb(r.value,ATTRCON_ADDR);
-			break;
+        case ATTRCON_ADDR:
+            inb(STATUS_ADDR); /* reset read/write flip-flop */
+            outb(r.index | 0x20, ATTRCON_ADDR);
+            /* ensure VGA output is enabled */
+            outb(r.value, ATTRCON_ADDR);
+            break;
 
-		case MISC_ADDR:
-		case VGAENABLE_ADDR:
-			outb(r.value,r.port);	/*	directly to the port */
-			break;
+        case MISC_ADDR:
+        case VGAENABLE_ADDR:
+            outb(r.value, r.port); /*	directly to the port */
+            break;
 
-		case SEQ_ADDR:
-		case GRACON_ADDR:
-		case CRTC_ADDR:
-		default:						/* This is the default method: */
-			outb(r.index,r.port);	/*	index to port			   */
-			outb(r.value,r.port+1);/*	value to port+1 		   */
-			break;
-		}
-	}
-
+        case SEQ_ADDR:
+        case GRACON_ADDR:
+        case CRTC_ADDR:
+        default:                       /* This is the default method: */
+            outb(r.index, r.port);     /*	index to port			   */
+            outb(r.value, r.port + 1); /*	value to port+1 		   */
+            break;
+    }
+}
 
 /*
 	outRegArray sets n registers according to the array pointed to by r.
 	First, indexes 0-7 of the CRT controller are enabled for writing.
 */
 
-void outRegArray(Register *r, int n)
-	{
+void
+outRegArray(Register* r, int n) {
     readyVgaRegs();
-	while (n--)
-		outReg(*r++);
-	}
-
+    while (n--)
+        outReg(*r++);
+}
 
 /*
 	loadRegArray opens the given file, does some validity checking, then
