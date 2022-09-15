@@ -56,5 +56,5 @@ jobs:
       - name: Upload xmpinmame binary artifact
         uses: actions/upload-artifact@v3
         with:
-          name: LISY xpinmame ${{ matrix.cpu_info }}
+          name: LISY ${{ matrix.cpu_info }} ${{ matrix.base_image }}
           path: xpinmame.vid_lisy
