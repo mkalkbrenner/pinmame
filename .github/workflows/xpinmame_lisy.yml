@@ -4,21 +4,25 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.cpu_info }}
+    name: ${{ matrix.cpu_info }}/${{ matrix.base_image }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        target: [zero, zero2_64]
+        target: [zero_raspios, zero2_64_raspios, zero_raspian]
         include:
-          - target: zero
+          - target: zero_raspios
             cpu: arm1176
             cpu_info: raspberrypi_zero_w
             base_image: raspios_lite:latest
-          - target: zero2_64
+          - target: zero2_64_raspios
             cpu: cortex-a53
             cpu_info: raspberrypi_zero2_w_arm64
             base_image: raspios_lite_arm64:latest
+          - target: zero_raspian
+            cpu: arm1176
+            cpu_info: raspberrypi_zero_w
+            base_image: raspbian_lite:2020-02-13
     steps:
       - name: Checkout pinmame
         uses: actions/checkout@v2
