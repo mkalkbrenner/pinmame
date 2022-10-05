@@ -17,6 +17,9 @@ extern int throttle;
 extern int autoframeskip;
 extern int allow_sleep;
 
+extern UINT8  g_raw_gtswpc_dmd[];
+extern UINT32 g_raw_gtswpc_dmdframes;
+
 int g_fHandleKeyboard = 0;
 int g_fHandleMechanics = 0;
 int g_fDumpFrames = 0;
@@ -350,10 +353,17 @@ extern "C" void libpinmame_update_display(const int index, const struct core_dis
 	if (_displaysInit) {
 		if (_p_Config->cb_OnDisplayUpdated) {
 			if (dmd) {
-				if (memcmp(_displayData[index], p_data, (displayLayout.width * displayLayout.height) * sizeof(UINT8))) {
-					memcpy(_displayData[index], p_data, (displayLayout.width * displayLayout.height) * sizeof(UINT8));
-					(*(_p_Config->cb_OnDisplayUpdated))(index, _displayData[index], &displayLayout);
-				}
+                if (memcmp(_displayData[index], p_data, (displayLayout.width * displayLayout.height) * sizeof(UINT8))) {
+                    memcpy(_displayData[index], p_data, (displayLayout.width * displayLayout.height) * sizeof(UINT8));
+
+                    if (_p_Config->useWpcRawDmd && g_raw_gtswpc_dmdframes == 3) {
+                        displayLayout.type = WPCRAWDMD;
+                        (*(_p_Config->cb_OnDisplayUpdated))(index, g_raw_gtswpc_dmd, &displayLayout);
+                    }
+                    else {
+                        (*(_p_Config->cb_OnDisplayUpdated))(index, _displayData[index], &displayLayout);
+                    }
+                }
 			}
 			else {
 				if (memcmp(_displayData[index], p_data, displayLayout.length * sizeof(UINT16))) {

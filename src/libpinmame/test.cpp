@@ -272,6 +272,7 @@ int main(int, char**) {
 		AUDIO_FORMAT_FLOAT,
 		44100,
 		"",
+        false,
 		&OnStateUpdated,
 		&OnDisplayAvailable,
 		&OnDisplayUpdated,

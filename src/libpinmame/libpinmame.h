@@ -51,6 +51,7 @@ typedef enum {
 	SEG7SC = 12,                // 7 segments, small, with comma
 	SEG16S = 13,                // 16 segments with split top and bottom line
 	DMD = 14,                   // DMD Display
+    WPCRAWDMD = 114,            // Raw DMD (WPC)
 	VIDEO = 15,                 // VIDEO Display
 	SEG16N = 16,                // 16 segments without commas
 	SEG16D = 17,                // 16 segments with periods only
@@ -345,6 +346,7 @@ typedef struct {
 	const PINMAME_AUDIO_FORMAT audioFormat;
 	const int sampleRate;
 	const char vpmPath[MAX_PATH];
+    bool useWpcRawDmd;
 	PinmameOnStateUpdatedCallback cb_OnStateUpdated;
 	PinmameOnDisplayAvailableCallback cb_OnDisplayAvailable;
 	PinmameOnDisplayUpdatedCallback cb_OnDisplayUpdated;
