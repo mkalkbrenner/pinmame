@@ -4,8 +4,11 @@
 #include <string.h>
 #include <chrono>
 #include <thread>
-#include <libusb-1.0/libusb.h>
-
+#if defined(__linux__) || defined(__unix__)
+  #include <libusb-1.0/libusb.h>
+#elif defined(__APPLE__)
+  #include "/usr/local/Cellar/libusb/1.0.26/include/libusb-1.0/libusb.h"
+#endif
 #include "libpinmame.h"
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -464,7 +467,7 @@ int main(int, char**) {
 		AUDIO_FORMAT_FLOAT,
 		44100,
 		"",
-        true,
+        false,
 		&OnStateUpdated,
 		&OnDisplayAvailable,
 		&OnDisplayUpdated,
