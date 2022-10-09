@@ -24,6 +24,7 @@ struct libusb_device_descriptor desc;
 struct libusb_context *ctx = NULL;
 
 UINT8 OutputBuffer[65536] = {};
+char byte[4] = {0};
 
 int Pin2dmdInit() {
     static int ret = 0;
@@ -90,187 +91,217 @@ int Pin2dmdInit() {
     return ret;
 }
 
-void Pin2dmdRender(UINT16 width, UINT16 height, UINT8* Buffer, int bitDepth) {
-    UINT8 Header[4] = {};
+void Pin2dmdRender(UINT16 width, UINT16 height, UINT8* Buffer, int bitDepth, bool samSpa) {
+    if (
+        (width == 256 && height == 64 && Pin2dmdHD) ||
+        (width == 192 && height == 64 && (Pin2dmdXL || Pin2dmdHD)) ||
+        (width == 128 && height <= 32 && (Pin2dmd || Pin2dmdXL || Pin2dmdHD))
+    ) {
+        int outputBufferIndex = 4;
+        int frameSizeInByte = width * height / 8;
+        int chunksOf512Bytes = (frameSizeInByte / 512) * bitDepth;
+        int bitShift = 0;
 
-    if (width == 256 && height == 64) {
-        if (Pin2dmd || Pin2dmdXL) {
-            /* todo: implement scaleDown() for Capcom Football Flipper
-            UINT8 scaleBuffer[(128 * 32 / 8 * 6) + 4] = {};
-            //scale down to 128x32
-            for (int i = 0; i < bitDepth; i++)
-                scaleDown(scaleBuffer + 4 + (i * 512), OutputBuffer + 4 + (i * 2048), 2048);
-            if (bitDepth == 2) {
-                scaleBuffer[0] = 0x81; // frame sync bytes
-                scaleBuffer[1] = 0xC3;
-                scaleBuffer[2] = 0xE8;
-                scaleBuffer[3] = 0x2;
-                libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, scaleBuffer, 1028, NULL, 1000);
-            }
-            else if (bitDepth == 4) {
-                scaleBuffer[0] = 0x81; // frame sync bytes
-                scaleBuffer[1] = 0xC3;
-                scaleBuffer[2] = 0xE7;
-                scaleBuffer[3] = 0x0;
-                libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, scaleBuffer, 2052, NULL, 1000);
-            }
-            else if (bitDepth == 6) {
-                scaleBuffer[0] = 0x81; // frame sync bytes
-                scaleBuffer[1] = 0xC3;
-                scaleBuffer[2] = 0xE8;
-                scaleBuffer[3] = 0x6;
-                libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, scaleBuffer, 3076, NULL, 1000);
-            }
-             */
+        OutputBuffer[0] = 0x81;
+        OutputBuffer[1] = 0xc3;
+        if (bitDepth == 4 && width == 128 && height == 32) {
+            OutputBuffer[2] = 0xe7; // 4 bit header
+            OutputBuffer[3] = 0x00;
+        } else {
+            OutputBuffer[2] = 0xe8; // non 4 bit header
+            OutputBuffer[3] = chunksOf512Bytes; // number of 512 byte chunks
         }
-        else if (Pin2dmdHD) {
-            if (bitDepth == 2) {
-                UINT8 OutputBuffer[4100] = {};
-                Header[0] = 0x81;
-                Header[1] = 0xc3;
-                Header[2] = 0xe8;
-                Header[3] = 8; //number 512 byte chunks
-                memcpy(&OutputBuffer[4], Buffer, 4096);
-                libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, OutputBuffer, 4100, NULL, 1000);
-            }
-            else if (bitDepth == 4) {
-                UINT8 OutputBuffer[8196] = {};
-                Header[0] = 0x81;
-                Header[1] = 0xc3;
-                Header[2] = 0xe8;
-                Header[3] = 16; //number 512 byte chunks
-                memcpy(&OutputBuffer[4], Buffer, 8192);
-                libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, OutputBuffer, 8196, NULL, 1000);
-            }
-            else if (bitDepth == 6) {
-                UINT8 OutputBuffer[12292] = {};
-                Header[0] = 0x81;
-                Header[1] = 0xc3;
-                Header[2] = 0xe8;
-                Header[3] = 24; //number 512 byte chunks
-                memcpy(&OutputBuffer[4], Buffer, 12288);
-                libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, OutputBuffer, 12292, NULL, 1000);
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (bitDepth == 2) {
+                    switch (Buffer[y * width + x]) {
+                        case 0x14: // 20%
+                            //Activate if you want to have the entire Display to glow, a kind of background color.
+                            //byte0 |= (1 << bitShift);
+                            break;
+                        case 0x21: // 33%
+                            byte[0] |= (1 << bitShift);
+                            break;
+                        case 0x43: // 67%
+                            byte[1] |= (1 << bitShift);
+                            break;
+                        case 0x64: // 100%
+                            byte[0] |= (1 << bitShift);
+                            byte[1] |= (1 << bitShift);
+                            break;
+                    }
+                } else if (bitDepth == 4) {
+                    if (samSpa) {
+                        switch(Buffer[y * width + x]) {
+                            case 0x00:
+                                break;
+                            case 0x14:
+                                byte[0] |= (1 << bitShift);
+                                break;
+                            case 0x19:
+                                byte[1] |= (1 << bitShift);
+                                break;
+                            case 0x1E:
+                                byte[0] |= (1 << bitShift);
+                                byte[1] |= (1 << bitShift);
+                                break;
+                            case 0x23:
+                                byte[2] |= (1 << bitShift);
+                                break;
+                            case 0x28:
+                                byte[0] |= (1 << bitShift);
+                                byte[2] |= (1 << bitShift);
+                                break;
+                            case 0x2D:
+                                byte[1] |= (1 << bitShift);
+                                byte[2] |= (1 << bitShift);
+                                break;
+                            case 0x32:
+                                byte[0] |= (1 << bitShift);
+                                byte[1] |= (1 << bitShift);
+                                byte[2] |= (1 << bitShift);
+                                break;
+                            case 0x37:
+                                byte[3] |= (1 << bitShift);
+                                break;
+                            case 0x3C:
+                                byte[0] |= (1 << bitShift);
+                                byte[3] |= (1 << bitShift);
+                                break;
+                            case 0x41:
+                                byte[1] |= (1 << bitShift);
+                                byte[3] |= (1 << bitShift);
+                                break;
+                            case 0x46:
+                                byte[0] |= (1 << bitShift);
+                                byte[1] |= (1 << bitShift);
+                                byte[3] |= (1 << bitShift);
+                                break;
+                            case 0x4B:
+                                byte[2] |= (1 << bitShift);
+                                byte[3] |= (1 << bitShift);
+                                break;
+                            case 0x50:
+                                byte[0] |= (1 << bitShift);
+                                byte[2] |= (1 << bitShift);
+                                byte[3] |= (1 << bitShift);
+                                break;
+                            case 0x5A:
+                                byte[1] |= (1 << bitShift);
+                                byte[2] |= (1 << bitShift);
+                                byte[3] |= (1 << bitShift);
+                                break;
+                            case 0x64:
+                                byte[0] |= (1 << bitShift);
+                                byte[1] |= (1 << bitShift);
+                                byte[2] |= (1 << bitShift);
+                                byte[3] |= (1 << bitShift);
+                                break;
+                        }
+                    } else {
+                        switch (Buffer[y * width + x]) {
+                            case 0x00:
+                                break;
+                            case 0x1E:
+                                byte[0] |= (1 << bitShift);
+                                break;
+                            case 0x23:
+                                byte[1] |= (1 << bitShift);
+                                break;
+                            case 0x28:
+                                byte[0] |= (1 << bitShift);
+                                byte[1] |= (1 << bitShift);
+                                break;
+                            case 0x2D:
+                                byte[2] |= (1 << bitShift);
+                                break;
+                            case 0x32:
+                                byte[0] |= (1 << bitShift);
+                                byte[2] |= (1 << bitShift);
+                                break;
+                            case 0x37:
+                                byte[1] |= (1 << bitShift);
+                                byte[2] |= (1 << bitShift);
+                                break;
+                            case 0x3C:
+                                byte[0] |= (1 << bitShift);
+                                byte[1] |= (1 << bitShift);
+                                byte[2] |= (1 << bitShift);
+                                break;
+                            case 0x41:
+                                byte[3] |= (1 << bitShift);
+                                break;
+                            case 0x46:
+                                byte[0] |= (1 << bitShift);
+                                byte[3] |= (1 << bitShift);
+                                break;
+                            case 0x4B:
+                                byte[1] |= (1 << bitShift);
+                                byte[3] |= (1 << bitShift);
+                                break;
+                            case 0x50:
+                                byte[0] |= (1 << bitShift);
+                                byte[1] |= (1 << bitShift);
+                                byte[3] |= (1 << bitShift);
+                                break;
+                            case 0x55:
+                                byte[2] |= (1 << bitShift);
+                                byte[3] |= (1 << bitShift);
+                                break;
+                            case 0x5A:
+                                byte[0] |= (1 << bitShift);
+                                byte[2] |= (1 << bitShift);
+                                byte[3] |= (1 << bitShift);
+                                break;
+                            case 0x5F:
+                                byte[1] |= (1 << bitShift);
+                                byte[2] |= (1 << bitShift);
+                                byte[3] |= (1 << bitShift);
+                                break;
+                            case 0x64:
+                                byte[0] |= (1 << bitShift);
+                                byte[1] |= (1 << bitShift);
+                                byte[2] |= (1 << bitShift);
+                                byte[3] |= (1 << bitShift);
+                                break;
+                        }
+                    }
+                }
+
+                bitShift++;
+                if (bitShift > 7) {
+                    bitShift = 0;
+                    for (int i = 0; i < bitDepth; i++) {
+                        OutputBuffer[(frameSizeInByte * i) + outputBufferIndex] = byte[i];
+                        byte[i] = 0;
+                    }
+                    outputBufferIndex++;
+                }
             }
         }
-    }
-    else if (width == 192 && height == 64) {
-        if (Pin2dmd) {
-            /* todo: implement scaleDown() for Data East big DMD
-            UINT8 scaleBuffer[(128 * 32 / 8 * 6) + 4] = {};
-            //scale down to 128x32
-            for (int i = 0; i < bitDepth; i++)
-                scaleDown(scaleBuffer + 4 + (i * 512), OutputBuffer + 4 + (i * 1536), 1536);
-            if (bitDepth == 2) {
-                scaleBuffer[0] = 0x81; // frame sync bytes
-                scaleBuffer[1] = 0xC3;
-                scaleBuffer[2] = 0xE8;
-                scaleBuffer[3] = 0x2;
-                libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, scaleBuffer, 1028, NULL, 1000);
-            }
-            else if (bitDepth == 4) {
-                scaleBuffer[0] = 0x81; // frame sync bytes
-                scaleBuffer[1] = 0xC3;
-                scaleBuffer[2] = 0xE7;
-                scaleBuffer[3] = 0x0;
-                libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, scaleBuffer, 2052, NULL, 1000);
-            }
-            else if (bitDepth == 6) {
-                scaleBuffer[0] = 0x81; // frame sync bytes
-                scaleBuffer[1] = 0xC3;
-                scaleBuffer[2] = 0xE8;
-                scaleBuffer[3] = 0x6;
-                libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, scaleBuffer, 3076, NULL, 1000);
-            }
-             */
-        }
-        else if (Pin2dmdXL || Pin2dmdHD) {
-            if (bitDepth == 2) {
-                UINT8 OutputBuffer[3076] = {};
-                OutputBuffer[0] = 0x81;
-                OutputBuffer[1] = 0xc3;
-                OutputBuffer[2] = 0xe8;
-                OutputBuffer[3] = 6; //number 512 byte chunks
-                memcpy(&OutputBuffer[4], Buffer, 3072);
-                libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, OutputBuffer, 3076, NULL, 1000);
-            }
-            else if (bitDepth == 4) {
-                UINT8 OutputBuffer[6148] = {};
-                OutputBuffer[0] = 0x81;
-                OutputBuffer[1] = 0xc3;
-                OutputBuffer[2] = 0xe8;
-                OutputBuffer[3] = 12; //number 512 byte chunks
-                memcpy(&OutputBuffer[4], Buffer, 6144);
-                libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, OutputBuffer, 6148, NULL, 1000);
-            }
-            else if (bitDepth == 6) {
-                UINT8 OutputBuffer[9220] = {};
-                OutputBuffer[0] = 0x81;
-                OutputBuffer[1] = 0xc3;
-                OutputBuffer[2] = 0xe8;
-                OutputBuffer[3] = 18; //number 512 byte chunks
-                memcpy(&OutputBuffer[4], Buffer, 9216);
-                libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, OutputBuffer, 9220, NULL, 1000);
-            }
-        }
-    }
-    else if (width == 128 && height == 32) {
-        if (bitDepth == 2) {
-            if (Pin2dmd || Pin2dmdXL || Pin2dmdHD) {
-                UINT8 OutputBuffer[1028] = {};
-                OutputBuffer[0] = 0x81;
-                OutputBuffer[1] = 0xc3;
-                OutputBuffer[2] = 0xe8;
-                OutputBuffer[3] = 2; //number 512 byte chunks
-                memcpy(&OutputBuffer[4], Buffer, 1024);
-                libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, OutputBuffer, 1028, NULL, 1000);
-            }
-        }
-        else if (bitDepth == 4) {
-            if (Pin2dmd || Pin2dmdXL || Pin2dmdHD) {
-                UINT8 OutputBuffer[2052] = {};
-                OutputBuffer[0] = 0x81;
-                OutputBuffer[1] = 0xc3;
-                OutputBuffer[2] = 0xe7;
-                OutputBuffer[3] = 0x00;
-                memcpy(&OutputBuffer[4], Buffer, 2048);
-                libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, OutputBuffer, 2052, NULL, 1000);
-            }
-        }
-        else if (bitDepth == 6) {
-            if (Pin2dmd || Pin2dmdXL || Pin2dmdHD) {
-                UINT8 OutputBuffer[3076] = {};
-                OutputBuffer[0] = 0x81;
-                OutputBuffer[1] = 0xc3;
-                OutputBuffer[2] = 0xe8;
-                OutputBuffer[3] = 6; //number 512 byte chunks
-                memcpy(&OutputBuffer[4], Buffer, 3072);
-                libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, OutputBuffer, 3076, NULL, 1000);
-            }
-        }
-        else if (bitDepth == 15) {
-            if (Pin2dmd) {
-                UINT8 OutputBuffer[7684] = {};
-                OutputBuffer[0] = 0x81;
-                OutputBuffer[1] = 0xc3;
-                OutputBuffer[2] = 0xe8;
-                OutputBuffer[3] = 15; //number 512 byte chunks
-                memcpy(&OutputBuffer[4], Buffer, 7680);
-                libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, OutputBuffer, 7684, NULL, 1000);
-            }
-        }
+
+        // The OutputBuffer to be sent consists of a 4 byte header and a number of chunks of 512 bytes.
+        libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, OutputBuffer, (chunksOf512Bytes * 512) + 4, NULL, 1000);
     }
 }
 
-void Pin2dmdRenderWpcRaw(UINT16 width, UINT16 height, UINT8* Buffer) {
-    if (width == 128 && height == 32) {
-        if (Pin2dmd || Pin2dmdXL || Pin2dmdHD) {
-            UINT8 OutputBuffer[1540] = {};
-            OutputBuffer[0] = 0x52; // WPC RAW mode
-            OutputBuffer[1] = 0x80;
-            OutputBuffer[2] = 0x20;
-            OutputBuffer[3] = 3; // number of 512 byte chunks
-            memcpy(&OutputBuffer[4], Buffer, 1536);
-            libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, OutputBuffer, 1540, NULL, 1000);
-        }
+void Pin2dmdRenderRaw(UINT16 width, UINT16 height, UINT8* Buffer, UINT32 frames) {
+    if (
+        (width == 256 && height == 64 && Pin2dmdHD) ||
+        (width == 192 && height == 64 && (Pin2dmdXL || Pin2dmdHD)) ||
+        (width == 128 && height <= 32 && (Pin2dmd || Pin2dmdXL || Pin2dmdHD))
+    ) {
+        int frameSizeInByte = width * height / 8;
+        int chunksOf512Bytes = (frameSizeInByte / 512) * frames;
+        int bufferSizeInBytes = frameSizeInByte * frames;
+
+        OutputBuffer[0] = 0x52; // RAW mode
+        OutputBuffer[1] = 0x80;
+        OutputBuffer[2] = 0x20;
+        OutputBuffer[3] = chunksOf512Bytes; // number of 512 byte chunks
+        memcpy(&OutputBuffer[4], Buffer, bufferSizeInBytes);
+
+        libusb_bulk_transfer(MyLibusbDeviceHandle, EP_OUT, OutputBuffer, bufferSizeInBytes, NULL, 1000);
     }
 }

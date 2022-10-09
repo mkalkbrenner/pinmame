@@ -356,8 +356,8 @@ extern "C" void libpinmame_update_display(const int index, const struct core_dis
                 if (memcmp(_displayData[index], p_data, (displayLayout.width * displayLayout.height) * sizeof(UINT8))) {
                     memcpy(_displayData[index], p_data, (displayLayout.width * displayLayout.height) * sizeof(UINT8));
 
-                    if (_p_Config->useWpcRawDmd && g_raw_gtswpc_dmdframes == 3) {
-                        displayLayout.type = WPCRAWDMD;
+                    if (_p_Config->useRawDmd) {
+                        displayLayout.type = RAWDMD;
                         (*(_p_Config->cb_OnDisplayUpdated))(index, g_raw_gtswpc_dmd, &displayLayout);
                     }
                     else {
