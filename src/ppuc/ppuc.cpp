@@ -138,7 +138,7 @@ int main(int, char**) {
 		AUDIO_FORMAT_FLOAT,
 		44100,
 		"",
-        false,
+        false, // RAW DMD
 		&OnStateUpdated,
 		&OnDisplayAvailable,
 		&OnDisplayUpdated,
