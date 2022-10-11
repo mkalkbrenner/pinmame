@@ -154,11 +154,16 @@ void sendEvent(Event* event) {
 
 int main (int argc, char **argv) {
     char *config_file = NULL;
+    char *opt_serial = NULL;
+
     int c;
-    while ((c = getopt(argc, argv, "c:")) != -1) {
+    while ((c = getopt(argc, argv, "cs:")) != -1) {
         switch (c) {
             case 'c':
                 config_file = optarg;
+                break;
+            case 's':
+                opt_serial = optarg;
                 break;
             case '?':
                 if (optopt == 'c')
@@ -184,56 +189,13 @@ int main (int argc, char **argv) {
     int pin2dmd = Pin2dmdInit();
     printf("PIN2DMD: %d\n", pin2dmd);
 
-	PinmameConfig config = {
-		AUDIO_FORMAT_FLOAT,
-		44100,
-		"",
-        false, // RAW DMD
-		&OnStateUpdated,
-		&OnDisplayAvailable,
-		&OnDisplayUpdated,
-		&OnAudioAvailable,
-		&OnAudioUpdated,
-		&OnMechAvailable,
-		&OnMechUpdated,
-		&OnSolenoidUpdated,
-		&OnConsoleDataUpdated,
-		&IsKeyPressed,
-	};
-
-	#if defined(_WIN32) || defined(_WIN64)
-		snprintf((char*)config.vpmPath, MAX_PATH, "%s%s\\pinmame\\", getenv("HOMEDRIVE"), getenv("HOMEPATH"));
-	#else
-		snprintf((char*)config.vpmPath, MAX_PATH, "%s/.pinmame/", getenv("HOME"));
-	#endif
-
-	PinmameSetConfig(&config);
-
-	PinmameSetHandleKeyboard(0);
-	PinmameSetHandleMechanics(0);
-
-	//PinmameRun("mm_109c");
-	//PinmameRun("fh_906h");
-	//PinmameRun("hh7");
-	//PinmameRun("rescu911");
-	//PinmameRun("tf_180h");
-	//PinmameRun("flashgdn");
-	//PinmameRun("fourx4");
-	//PinmameRun("ripleys");
-	//PinmameRun("fh_l9");
-	//PinmameRun("acd_168hc");
-	//PinmameRun("snspares");
-    //PinmameRun("t2_l8")
-    //PinmameRun("lw3_208")
-
     // Connection to serial port
-    char errorOpening = serial.openDevice(c_serial.c_str(), 115200);
+    char errorOpening = serial.openDevice(opt_serial ? opt_serial : c_serial.c_str(), 115200);
 
     // If connection fails, return the error code otherwise, display a success message
     if (errorOpening!=1) {
         return errorOpening;
     }
-    printf("Successful connection to %s\n", c_serial.c_str());
 
     // Disable DTR, otherwise Arduino will reset permanently.
     serial.clearDTR();
@@ -243,6 +205,34 @@ int main (int argc, char **argv) {
 
     msg[0] = (UINT8) 255;
     msg[5] = (UINT8) 255;
+
+    PinmameConfig config = {
+            AUDIO_FORMAT_FLOAT,
+            44100,
+            "",
+            false, // RAW DMD
+            &OnStateUpdated,
+            &OnDisplayAvailable,
+            &OnDisplayUpdated,
+            &OnAudioAvailable,
+            &OnAudioUpdated,
+            &OnMechAvailable,
+            &OnMechUpdated,
+            &OnSolenoidUpdated,
+            &OnConsoleDataUpdated,
+            &IsKeyPressed,
+    };
+
+#if defined(_WIN32) || defined(_WIN64)
+    snprintf((char*)config.vpmPath, MAX_PATH, "%s%s\\pinmame\\", getenv("HOMEDRIVE"), getenv("HOMEPATH"));
+#else
+    snprintf((char*)config.vpmPath, MAX_PATH, "%s/.pinmame/", getenv("HOME"));
+#endif
+
+    PinmameSetConfig(&config);
+
+    PinmameSetHandleKeyboard(0);
+    PinmameSetHandleMechanics(0);
 
     int changedLampStates[PinmameGetMaxLamps() * 2];
 
