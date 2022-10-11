@@ -6,8 +6,9 @@
 #include <thread>
 
 #include "libpinmame.h"
-#include "pin2dmd.h"
-//#include "../libpinmame/dump.h"
+#include "pin2dmd/pin2dmd.h"
+#include "serialib/serialib.h"
+#include "Event.h"
 
 #if defined(_WIN32) || defined(_WIN64)
 #define CLEAR_SCREEN "cls"
@@ -15,8 +16,22 @@
 #define CLEAR_SCREEN "clear"
 #endif
 
+#if defined (_WIN32) || defined(_WIN64)
+//for serial ports above "COM9", we must use this extended syntax of "\\.\COMx".
+    //also works for COM0 to COM9.
+    //https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea?redirectedfrom=MSDN#communications-resources
+    #define SERIAL_PORT "\\\\.\\COM1"
+#endif
+#if defined (__linux__) || defined(__APPLE__)
+#define SERIAL_PORT "/dev/tty.usbserial-1420"
+#endif
+
 typedef unsigned char UINT8;
 typedef unsigned short UINT16;
+
+UINT8 msg[6] = {0};
+// Serial object
+serialib serial;
 
 void CALLBACK Game(PinmameGame* game) {
 	printf("Game(): name=%s, description=%s, manufacturer=%s, year=%s, flags=%lu, found=%d\n",
@@ -128,6 +143,20 @@ int CALLBACK IsKeyPressed(PINMAME_KEYCODE keycode) {
 	return 0;
 }
 
+void sendEvent(Event* event) {
+    //     = (UINT8) 255;
+    msg[1] = (UINT8) event->sourceId;
+    msg[2] = event->eventId >> 8;
+    msg[3] = event->eventId & 0xff;
+    msg[4] = event->value;
+    //     = (UINT8) 255;
+
+    if (serial.writeBytes(msg, 6)) printf("Sent Event.\n");
+
+    // delete the event and free the memory
+    delete event;
+}
+
 int main(int, char**) {
 	system(CLEAR_SCREEN);
 
@@ -176,11 +205,46 @@ int main(int, char**) {
     //PinmameRun("t2_l8")
     //PinmameRun("lw3_208")
 
-	if (PinmameRun("t2_l8") == OK) {
+    // Connection to serial port
+    char errorOpening = serial.openDevice(SERIAL_PORT, 115200);
+
+    // If connection fails, return the error code otherwise, display a success message
+    if (errorOpening!=1) {
+        return errorOpening;
+    }
+    printf("Successful connection to %s\n", SERIAL_PORT);
+
+    // Disable DTR, otherwise Arduino will reset permanently.
+    serial.clearDTR();
+
+    printf("RTS %d\n", serial.isRTS());
+    printf("DTR %d\n", serial.isDTR());
+
+    msg[0] = (UINT8) 255;
+    msg[5] = (UINT8) 255;
+
+    int changedLampStates[PinmameGetMaxLamps() * 2];
+
+	if (PinmameRun("lw3_208") == OK) {
 		while (1) {
-			std::this_thread::sleep_for(std::chrono::microseconds(100));
+			std::this_thread::sleep_for(std::chrono::microseconds(1000));
+            int count = PinmameGetChangedLamps(changedLampStates);
+            for (int c = 0; c < count;) {
+                UINT16 lampNo = changedLampStates[c++];
+                UINT8 lampState = changedLampStates[c++] == 0 ? 0 : 1;
+
+                printf("Lamp updated: lampNo=%d, lampState=%d\n",
+                       lampNo,
+                       lampState);
+
+                Event* event = new Event(EVENT_SOURCE_LIGHT, lampNo, lampState);
+                sendEvent(event);
+            }
 		}
 	}
+
+    // Close the serial device
+    serial.closeDevice();
 
 	return 0;
 }

@@ -594,8 +594,10 @@ set_target_properties(pinmame PROPERTIES
 )
 
 add_executable(ppuc
-   src/ppuc/pin2dmd.h
-   src/ppuc/pin2dmd.cpp
+   src/ppuc/pin2dmd/pin2dmd.h
+   src/ppuc/pin2dmd/pin2dmd.cpp
+   src/ppuc/serialib/serialib.h
+   src/ppuc/serialib/serialib.cpp
    src/ppuc/ppuc.cpp
 )
 
@@ -608,5 +610,5 @@ target_link_libraries(ppuc LINK_PUBLIC
 
 set_target_properties(ppuc PROPERTIES
    SKIP_BUILD_RPATH TRUE
-   LINK_FLAGS "-Wl,-rpath,@executable_path, -L/usr/local/Cellar/libusb/1.0.26/lib"
+   LINK_FLAGS "-Wl,-rpath,@executable_path -L/usr/local/Cellar/libusb/1.0.26/lib"
 )

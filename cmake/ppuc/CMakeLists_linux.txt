@@ -597,8 +597,10 @@ set_target_properties(pinmame PROPERTIES
 )
 
 add_executable(ppuc
-   src/ppuc/pin2dmd.h
-   src/ppuc/pin2dmd.cpp
+   src/ppuc/pin2dmd/pin2dmd.h
+   src/ppuc/pin2dmd/pin2dmd.cpp
+   src/ppuc/serialib/serialib.h
+   src/ppuc/serialib/serialib.cpp
    src/ppuc/ppuc.cpp
 )
 
