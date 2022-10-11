@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -5,9 +6,11 @@
 #include <chrono>
 #include <thread>
 
+#include "yaml-cpp/yaml.h"
+#include "serialib/serialib.h"
+
 #include "libpinmame.h"
 #include "pin2dmd/pin2dmd.h"
-#include "serialib/serialib.h"
 #include "Event.h"
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -16,22 +19,14 @@
 #define CLEAR_SCREEN "clear"
 #endif
 
-#if defined (_WIN32) || defined(_WIN64)
-//for serial ports above "COM9", we must use this extended syntax of "\\.\COMx".
-    //also works for COM0 to COM9.
-    //https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea?redirectedfrom=MSDN#communications-resources
-    #define SERIAL_PORT "\\\\.\\COM1"
-#endif
-#if defined (__linux__) || defined(__APPLE__)
-#define SERIAL_PORT "/dev/tty.usbserial-1420"
-#endif
-
 typedef unsigned char UINT8;
 typedef unsigned short UINT16;
 
 UINT8 msg[6] = {0};
 // Serial object
 serialib serial;
+
+YAML::Node ppuc_config;
 
 void CALLBACK Game(PinmameGame* game) {
 	printf("Game(): name=%s, description=%s, manufacturer=%s, year=%s, flags=%lu, found=%d\n",
@@ -157,8 +152,34 @@ void sendEvent(Event* event) {
     delete event;
 }
 
-int main(int, char**) {
-	system(CLEAR_SCREEN);
+int main (int argc, char **argv) {
+    char *config_file = NULL;
+    int c;
+    while ((c = getopt(argc, argv, "c:")) != -1) {
+        switch (c) {
+            case 'c':
+                config_file = optarg;
+                break;
+            case '?':
+                if (optopt == 'c')
+                    fprintf(stderr, "Option -%c requires the config file path as argument.\n", optopt);
+                else if (isprint(optopt))
+                    fprintf(stderr, "Unknown option `-%c'.\n", optopt);
+                else
+                    fprintf(stderr,
+                            "Unknown option character `\\x%x'.\n",
+                            optopt);
+                return 1;
+            default:
+                abort();
+        }
+    }
+
+    ppuc_config = YAML::LoadFile(config_file);
+    std::string c_serial = ppuc_config["serial"].as<std::string>();
+    std::string c_rom = ppuc_config["rom"].as<std::string>();
+
+    system(CLEAR_SCREEN);
 
     int pin2dmd = Pin2dmdInit();
     printf("PIN2DMD: %d\n", pin2dmd);
@@ -206,13 +227,13 @@ int main(int, char**) {
     //PinmameRun("lw3_208")
 
     // Connection to serial port
-    char errorOpening = serial.openDevice(SERIAL_PORT, 115200);
+    char errorOpening = serial.openDevice(c_serial.c_str(), 115200);
 
     // If connection fails, return the error code otherwise, display a success message
     if (errorOpening!=1) {
         return errorOpening;
     }
-    printf("Successful connection to %s\n", SERIAL_PORT);
+    printf("Successful connection to %s\n", c_serial.c_str());
 
     // Disable DTR, otherwise Arduino will reset permanently.
     serial.clearDTR();
@@ -225,7 +246,7 @@ int main(int, char**) {
 
     int changedLampStates[PinmameGetMaxLamps() * 2];
 
-	if (PinmameRun("lw3_208") == OK) {
+	if (PinmameRun(c_rom.c_str()) == OK) {
 		while (1) {
 			std::this_thread::sleep_for(std::chrono::microseconds(1000));
             int count = PinmameGetChangedLamps(changedLampStates);
