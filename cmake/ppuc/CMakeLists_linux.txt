@@ -608,8 +608,11 @@ find_package(libusb)
 
 find_package(yaml-cpp)
 
+find_package(OpenAL)
+
 target_link_libraries(ppuc LINK_PUBLIC
    pinmame
    libusb-1.0.so
    yaml-cpp
+   openal
 )
