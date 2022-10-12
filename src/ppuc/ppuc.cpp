@@ -1,17 +1,22 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
+#include <unistd.h>
+
 #include <chrono>
+#include <queue>
 #include <thread>
 
-#include "yaml-cpp/yaml.h"
-#include "serialib/serialib.h"
+#include <AL/al.h>
+#include <AL/alc.h>
 
+#include "yaml-cpp/yaml.h"
+
+#include "Event.h"
 #include "libpinmame.h"
 #include "pin2dmd/pin2dmd.h"
-#include "Event.h"
+#include "serialib/serialib.h"
 
 #if defined(_WIN32) || defined(_WIN64)
 #define CLEAR_SCREEN "cls"
@@ -21,6 +26,17 @@
 
 typedef unsigned char UINT8;
 typedef unsigned short UINT16;
+
+#define MAX_AUDIO_BUFFERS 4
+#define MAX_AUDIO_QUEUE_SIZE 10
+
+
+ALuint _audioSource;
+ALuint _audioBuffers[MAX_AUDIO_BUFFERS];
+std::queue<void*> _audioQueue;
+int _audioChannels;
+int _audioSampleRate;
+
 
 UINT8 msg[6] = {0};
 // Serial object
@@ -99,11 +115,79 @@ int CALLBACK OnAudioAvailable(PinmameAudioInfo* p_audioInfo) {
 		p_audioInfo->framesPerSecond,
 		p_audioInfo->samplesPerFrame,
 		p_audioInfo->bufferSize);
+
+    _audioChannels = p_audioInfo->channels;
+    _audioSampleRate = (int) p_audioInfo->sampleRate;
+
+    for (int index = 0; index < MAX_AUDIO_BUFFERS; index++) {
+        int bufferSize = p_audioInfo->samplesPerFrame * _audioChannels * sizeof(int16_t);
+        void* p_buffer = malloc(bufferSize);
+        memset(p_buffer, 0, bufferSize);
+
+        alBufferData(_audioBuffers[index], _audioChannels == 2 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16,
+                     p_buffer,
+                     bufferSize,
+                     _audioSampleRate);
+    }
+
+    alSourceQueueBuffers(_audioSource, MAX_AUDIO_BUFFERS, _audioBuffers);
+    alSourcePlay(_audioSource);
+
 	return p_audioInfo->samplesPerFrame;
 }
 
 int CALLBACK OnAudioUpdated(void* p_buffer, int samples) {
-	return samples;
+    if (_audioQueue.size() >= MAX_AUDIO_QUEUE_SIZE) {
+        while (!_audioQueue.empty()) {
+            void* p_destBuffer = _audioQueue.front();
+
+            free(p_destBuffer);
+            _audioQueue.pop();
+        }
+    }
+
+    int bufferSize = samples * _audioChannels * sizeof(int16_t);
+    void* p_destBuffer = malloc(bufferSize);
+    memcpy(p_destBuffer, p_buffer, bufferSize);
+
+    _audioQueue.push(p_destBuffer);
+
+    ALint buffersProcessed;
+    alGetSourcei(_audioSource, AL_BUFFERS_PROCESSED, &buffersProcessed);
+
+    if (buffersProcessed <= 0) {
+        return samples;
+    }
+
+    while (buffersProcessed > 0) {
+        ALuint buffer = 0;
+        alSourceUnqueueBuffers(_audioSource, 1, &buffer);
+
+        if (_audioQueue.size() > 0) {
+            void* p_destBuffer = _audioQueue.front();
+
+            alBufferData(buffer,
+                         _audioChannels == 2 ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16,
+                         p_destBuffer,
+                         bufferSize,
+                         _audioSampleRate);
+
+            free(p_destBuffer);
+            _audioQueue.pop();
+        }
+
+        alSourceQueueBuffers(_audioSource, 1, &buffer);
+        buffersProcessed--;
+    }
+
+    ALint state;
+    alGetSourcei(_audioSource, AL_SOURCE_STATE, &state);
+
+    if (state != AL_PLAYING) {
+        alSourcePlay(_audioSource);
+    }
+
+    return samples;
 }
 
 void CALLBACK OnSolenoidUpdated(int solenoid, int isActive) {
@@ -157,7 +241,9 @@ int main (int argc, char **argv) {
     char *opt_serial = NULL;
 
     int c;
-    while ((c = getopt(argc, argv, "cs:")) != -1) {
+    // The options argument is a string that specifies the option characters that are valid for this program. An option
+    // character in this string can be followed by a colon (‘:’) to indicate that it takes a required argument.
+    while ((c = getopt(argc, argv, "c:s:")) != -1) {
         switch (c) {
             case 'c':
                 config_file = optarg;
@@ -184,30 +270,37 @@ int main (int argc, char **argv) {
     std::string c_serial = ppuc_config["serial"].as<std::string>();
     std::string c_rom = ppuc_config["rom"].as<std::string>();
 
-    system(CLEAR_SCREEN);
+    const ALCchar *defaultDeviceName = alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
+    ALCdevice *device = alcOpenDevice(defaultDeviceName);
 
-    int pin2dmd = Pin2dmdInit();
-    printf("PIN2DMD: %d\n", pin2dmd);
+    ALCcontext *context = alcCreateContext(device, NULL);
+    alcMakeContextCurrent(context);
+
+    alGenSources((ALuint) 1, &_audioSource);
+    alGenBuffers(MAX_AUDIO_BUFFERS, _audioBuffers);
 
     // Connection to serial port
     char errorOpening = serial.openDevice(opt_serial ? opt_serial : c_serial.c_str(), 115200);
 
     // If connection fails, return the error code otherwise, display a success message
     if (errorOpening!=1) {
+        printf("Unable to open serial device: %s\n", opt_serial ? opt_serial : c_serial.c_str());
         return errorOpening;
     }
 
     // Disable DTR, otherwise Arduino will reset permanently.
     serial.clearDTR();
 
-    printf("RTS %d\n", serial.isRTS());
-    printf("DTR %d\n", serial.isDTR());
-
     msg[0] = (UINT8) 255;
     msg[5] = (UINT8) 255;
 
+    system(CLEAR_SCREEN);
+
+    int pin2dmd = Pin2dmdInit();
+    printf("PIN2DMD: %d\n", pin2dmd);
+
     PinmameConfig config = {
-            AUDIO_FORMAT_FLOAT,
+            AUDIO_FORMAT_INT16,
             44100,
             "",
             false, // RAW DMD

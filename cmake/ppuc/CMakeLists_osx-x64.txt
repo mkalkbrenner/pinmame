@@ -10,7 +10,6 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_VISIBILITY_PRESET hidden)
 set(CMAKE_OSX_ARCHITECTURES x86_64)
-set(CMAKE_MODULE_PATH cmake/ppuc)
 
 add_compile_definitions(
    HAS_M6809=1
@@ -601,17 +600,20 @@ add_executable(ppuc
    src/ppuc/ppuc.cpp
 )
 
-find_package(libusb)
-
-find_package(yaml-cpp)
+target_include_directories(ppuc PUBLIC
+   /usr/local/opt/libusb/include
+   /usr/local/opt/openal-soft/include
+   /usr/local/opt/yaml-cpp/include
+)
 
 target_link_libraries(ppuc LINK_PUBLIC
    pinmame
-   usb-1.0
-   yaml-cpp
+   /usr/local/opt/openal-soft/lib/libopenal.dylib
+   /usr/local/opt/libusb/lib/libusb-1.0.dylib
+   /usr/local/opt/yaml-cpp/lib/libyaml-cpp.dylib
 )
 
 set_target_properties(ppuc PROPERTIES
    SKIP_BUILD_RPATH TRUE
-   LINK_FLAGS "-Wl,-rpath,@executable_path -L/usr/local/opt/libusb/lib -L/usr/local/opt/yaml-cpp/lib"
+   LINK_FLAGS "-Wl,-rpath,@executable_path"
 )
