@@ -37,5 +37,5 @@ cmake --build build/Release
 
 Run
 ```shell
-build/Release/ppuc -c src/ppuc/examples/lw3.yml
+sudo build/Release/ppuc -c src/ppuc/examples/lw3.yml
 ```

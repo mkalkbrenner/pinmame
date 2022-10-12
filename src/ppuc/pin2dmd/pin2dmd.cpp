@@ -45,10 +45,13 @@ int Pin2dmdInit() {
     }
 
     if (VID == desc.idVendor && PID == desc.idProduct) {
-        libusb_open(devs[i], &MyLibusbDeviceHandle);
+        ret = libusb_open(devs[i], &MyLibusbDeviceHandle);
+        if (ret < 0) {
+            return ret;
+        }
     }
     else {
-        return 0;
+        return -99;
     }
 
     libusb_free_device_list(devs, 1);
@@ -56,7 +59,7 @@ int Pin2dmdInit() {
     if (MyLibusbDeviceHandle == NULL) {
         libusb_close(MyLibusbDeviceHandle);
         libusb_exit(ctx);
-        return 0;
+        return -99;
     }
 
     ret = libusb_get_string_descriptor_ascii(MyLibusbDeviceHandle, desc.iProduct, product, 256);
@@ -66,7 +69,7 @@ int Pin2dmdInit() {
         //Closes a device opened since the claim interface is failed.
         libusb_close(MyLibusbDeviceHandle);
         libusb_exit(ctx);
-        return 0;
+        return -99;
     }
 
     string = (const char*)product;
