@@ -5,35 +5,37 @@ macOS
 -----
 
 Install
-```
+```shell
 brew install libusb yaml-cpp
 ```
 
 Compile
-```
-cp cmake/libpinmame/CMakeLists_osx-x64.txt CMakeLists.txt
+```shell
+cp cmake/ppuc/CMakeLists_osx-x64.txt CMakeLists.txt
 cmake -DCMAKE_BUILD_TYPE=Release -B build/Release
 cmake --build build/Release
 ```
 
 Run
-```
+```shell
 build/Release/ppuc -c src/ppuc/examples/lw3.yml
 ```
 
 Linux
 -----
 
-Install _libusb_ and _yaml-cpp_ dev packages.
-
-Compile
+Install
+```shell
+apt install libopenal-dev libyaml-cpp-dev libusb-dev
 ```
-cp cmake/libpinmame/CMakeLists_linux.txt CMakeLists.txt
+Compile
+```shell
+cp cmake/ppuc/CMakeLists_linux.txt CMakeLists.txt
 cmake -DCMAKE_BUILD_TYPE=Release -B build/Release
 cmake --build build/Release
 ```
 
 Run
-```
+```shell
 build/Release/ppuc -c src/ppuc/examples/lw3.yml
 ```
