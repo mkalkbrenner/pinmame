@@ -267,7 +267,7 @@ int main (int argc, char **argv) {
     }
 
     ppuc_config = YAML::LoadFile(config_file);
-    std::string c_serial = ppuc_config["serial"].as<std::string>();
+    std::string c_serial = ppuc_config["serialPort"].as<std::string>();
     std::string c_rom = ppuc_config["rom"].as<std::string>();
 
     const ALCchar *defaultDeviceName = alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);

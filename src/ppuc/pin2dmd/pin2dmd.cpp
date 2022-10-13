@@ -1,9 +1,6 @@
 #include <string.h>
-#if defined(__linux__) || defined(__unix__)
 #include <libusb-1.0/libusb.h>
-#elif defined(__APPLE__)
-#include "/usr/local/Cellar/libusb/1.0.26/include/libusb-1.0/libusb.h"
-#endif
+
 #include "pin2dmd.h"
 
 //define PIN2DMD vendor id and product id
