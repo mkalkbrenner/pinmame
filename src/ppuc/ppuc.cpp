@@ -23,7 +23,7 @@ typedef unsigned short UINT16;
 
 #define MAX_AUDIO_BUFFERS 4
 #define MAX_AUDIO_QUEUE_SIZE 10
-
+#define MAX_IO_BOARDS 8
 
 ALuint _audioSource;
 ALuint _audioBuffers[MAX_AUDIO_BUFFERS];
@@ -39,6 +39,7 @@ serialib serial;
 YAML::Node ppuc_config;
 
 bool opt_debug = false;
+int game_state = 0;
 
 void CALLBACK Game(PinmameGame* game) {
 	printf("Game(): name=%s, description=%s, manufacturer=%s, year=%s, flags=%lu, found=%d\n",
@@ -64,6 +65,8 @@ void CALLBACK OnStateUpdated(int state) {
 		mechConfig.sw[0].endPos = 5;
 
 		PinmameSetMech(0, &mechConfig);
+
+        game_state = state;
 	}
 }
 
@@ -238,10 +241,31 @@ void sendEvent(Event* event) {
     delete event;
 }
 
+Event* receiveEvent() {
+    std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+
+    // Set a timeout of 0.5us whne waiting for an I/O board event.
+    while ((std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start)).count() < 500) {
+        if (serial.available() >= 6) {
+            UINT8 poll[6] = {0};
+            if (serial.readBytes(poll, 6)) {
+                if (poll[0] == 255 && poll[5] == 255) {
+                    return new Event(poll[1], (((UINT16) poll[2]) << 8) + poll[3], poll[4]);
+                }
+            }
+            return NULL;
+        }
+    }
+
+    return NULL;
+}
+
 int main (int argc, char **argv) {
     const char *config_file = NULL;
     const char *opt_rom = NULL;
     const char *opt_serial = NULL;
+    UINT8 boardsToPoll[MAX_IO_BOARDS];
+    UINT8 numBoardsToPoll = 0;
 
     int c;
     // The options argument is a string that specifies the option characters that are valid for this program. An option
@@ -275,25 +299,17 @@ int main (int argc, char **argv) {
 
     // Load config file. But options set via command line are preferred.
     ppuc_config = YAML::LoadFile(config_file);
-    std::string c_rom = ppuc_config["rom"].as<std::string>();
-    if (!opt_rom) opt_rom = c_rom.c_str();
-    std::string c_serial = ppuc_config["serialPort"].as<std::string>();
-    if (!opt_serial) opt_serial = c_serial.c_str();
+
     if (!opt_debug) opt_debug = ppuc_config["debug"].as<bool>();
 
-    // Initialize the sound device
-    const ALCchar *defaultDeviceName = alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
-    ALCdevice *device = alcOpenDevice(defaultDeviceName);
+    std::string c_rom = ppuc_config["rom"].as<std::string>();
+    if (!opt_rom) opt_rom = c_rom.c_str();
 
-    ALCcontext *context = alcCreateContext(device, NULL);
-    alcMakeContextCurrent(context);
+    std::string c_serial = ppuc_config["serialPort"].as<std::string>();
+    if (!opt_serial) opt_serial = c_serial.c_str();
 
-    alGenSources((ALuint) 1, &_audioSource);
-    alGenBuffers(MAX_AUDIO_BUFFERS, _audioBuffers);
-
-    // Connection to serial port
+    // Connection to serial port.
     char errorOpening = serial.openDevice(opt_serial, 115200);
-
     // If connection fails, return the error code otherwise, display a success message
     if (errorOpening != 1) {
         if (opt_debug) printf("Unable to open serial device: %s\n", opt_serial);
@@ -302,11 +318,35 @@ int main (int argc, char **argv) {
 
     // Disable DTR, otherwise Arduino will reset permanently.
     serial.clearDTR();
-
     msg[0] = (UINT8) 255;
     msg[5] = (UINT8) 255;
 
+    // Wait for the serial communication to be established before continuing.
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
+    const YAML::Node& boards = ppuc_config["boards"];
+    for (YAML::Node n_board : boards) {
+        if (n_board["pollEvents"].as<bool>()) {
+            boardsToPoll[numBoardsToPoll++] = n_board["number"].as<UINT8>();
+        }
+    }
+
+    const YAML::Node& switches = ppuc_config["switches"];
+    for (YAML::Node n_switch : switches) {
+        // Send switch configuration to I/O boards
+
+        // Sync initial switch states, for example coin door closed.
+    }
+
+    // Initialize the sound device
+    const ALCchar *defaultDeviceName = alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
+    ALCdevice *device = alcOpenDevice(defaultDeviceName);
+    ALCcontext *context = alcCreateContext(device, NULL);
+    alcMakeContextCurrent(context);
+    alGenSources((ALuint) 1, &_audioSource);
+    alGenBuffers(MAX_AUDIO_BUFFERS, _audioBuffers);
+
+    // Initialize displays.
     int pin2dmd = Pin2dmdInit();
     if (opt_debug) printf("PIN2DMD: %d\n", pin2dmd);
 
@@ -341,8 +381,45 @@ int main (int argc, char **argv) {
     int changedLampStates[PinmameGetMaxLamps() * 2];
 
 	if (PinmameRun(opt_rom) == OK) {
-		while (1) {
-			std::this_thread::sleep_for(std::chrono::microseconds(1000));
+        // Pinball machines were slower than modern CPUs. There's no need to update states too frequently at full speed.
+        int sleep_us = 1000;
+        // Poll I/O boards for events (mainly switches) every 50us.
+        int poll_interval_ms = 50;
+        int poll_trigger = poll_interval_ms * 1000 / sleep_us;
+
+        while (1) {
+			std::this_thread::sleep_for(std::chrono::microseconds(sleep_us));
+
+            if (!game_state) continue;
+
+            if (--poll_trigger <= 0) {
+                poll_trigger = poll_interval_ms * 1000 / sleep_us;
+
+                for (int i = 0; i < numBoardsToPoll; i++) {
+                    sendEvent(new Event(EVENT_POLL_EVENTS, 1, boardsToPoll[i]));
+
+                    bool null_event = false;
+                    Event *event;
+                    while (!null_event && (event = receiveEvent())) {
+                        switch (event->sourceId) {
+                            case EVENT_SOURCE_SWITCH:
+                                if (opt_debug)
+                                    printf("Switch update received: switchNo=%d, switchState=%d\n",
+                                           event->eventId,
+                                           event->value * 255);
+                                PinmameSetSwitch(event->eventId, event->value * 255);
+                                break;
+
+                            case EVENT_NULL:
+                                null_event = true;
+                                break;
+                        }
+
+                        delete event;
+                    }
+                }
+            }
+
             int count = PinmameGetChangedLamps(changedLampStates);
             for (int c = 0; c < count;) {
                 UINT16 lampNo = changedLampStates[c++];
@@ -352,8 +429,7 @@ int main (int argc, char **argv) {
                        lampNo,
                        lampState);
 
-                Event* event = new Event(EVENT_SOURCE_LIGHT, lampNo, lampState);
-                sendEvent(event);
+                sendEvent(new Event(EVENT_SOURCE_LIGHT, lampNo, lampState));
             }
 		}
 	}

@@ -20,8 +20,9 @@
 #define EVENT_SOURCE_EFFECT   70 // "F" custom event from running Effect
 #define EVENT_SOURCE_GI       71 // "G" WPC GI
 #define EVENT_SOURCE_LIGHT    76 // "L" VPX/DOF/PUP lights, mainly playfield inserts
+#define EVENT_NULL            78 // "N" NULL event
 #define EVENT_SOURCE_SOUND    79 // "O" sound command
-#define EVENT_READ_SWITCHES   82 // "R" Read switches command
+#define EVENT_POLL_EVENTS     80 // "P" Poll events command, mainly read switches
 #define EVENT_SOURCE_SOLENOID 83 // "S" VPX/DOF/PUP includes flashers
 #define EVENT_SOURCE_SWITCH   87 // "W" VPX/DOF/PUP
 

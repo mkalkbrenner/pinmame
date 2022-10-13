@@ -8,12 +8,12 @@ debug: false
 boards:
   -
     description: "IO board 0, sends switch events"
-    address: 0
-    pollEvents: 1
+    number: 0
+    pollEvents: true
   -
     description: "IO board 3, doesn't send switch events"
-    address: 3
-    pollEvents: 0
+    number: 3
+    pollEvents: false
 
 lamps:
   ledType: GBRW
