@@ -1,2 +1,3 @@
 rom: lw3_208
-serial: /dev/tty.usbserial-1420
+serialPort: /dev/tty.usbserial-1420
+debug: false

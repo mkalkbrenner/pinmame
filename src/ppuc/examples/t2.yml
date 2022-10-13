@@ -3,7 +3,7 @@ ppucVersion: 1
 rom: t2_l8
 serialPort: /dev/tty.usbserial-1420
 display: pin2dmd
-debug: 1
+debug: false
 
 boards:
   -

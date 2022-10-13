@@ -1,2 +1,3 @@
 rom: lw3_208
-serial: \\\\.\\COM1
+serialPort: \\\\.\\COM1
+debug: false

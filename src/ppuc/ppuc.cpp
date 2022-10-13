@@ -18,12 +18,6 @@
 #include "pin2dmd/pin2dmd.h"
 #include "serialib/serialib.h"
 
-#if defined(_WIN32) || defined(_WIN64)
-#define CLEAR_SCREEN "cls"
-#elif defined(__linux__) || defined(__unix__) || defined(__APPLE__)
-#define CLEAR_SCREEN "clear"
-#endif
-
 typedef unsigned char UINT8;
 typedef unsigned short UINT16;
 
@@ -37,12 +31,14 @@ std::queue<void*> _audioQueue;
 int _audioChannels;
 int _audioSampleRate;
 
-
+// Envent message buffer
 UINT8 msg[6] = {0};
 // Serial object
 serialib serial;
 
 YAML::Node ppuc_config;
+
+bool opt_debug = false;
 
 void CALLBACK Game(PinmameGame* game) {
 	printf("Game(): name=%s, description=%s, manufacturer=%s, year=%s, flags=%lu, found=%d\n",
@@ -50,7 +46,7 @@ void CALLBACK Game(PinmameGame* game) {
 }
 
 void CALLBACK OnStateUpdated(int state) {
-	printf("OnStateUpdated(): state=%d\n", state);
+	if (opt_debug) printf("OnStateUpdated(): state=%d\n", state);
 
 	if (!state) {
 		exit(1);
@@ -72,7 +68,7 @@ void CALLBACK OnStateUpdated(int state) {
 }
 
 void CALLBACK OnDisplayAvailable(int index, int displayCount, PinmameDisplayLayout* p_displayLayout) {
-	printf("OnDisplayAvailable(): index=%d, displayCount=%d, type=%d, top=%d, left=%d, width=%d, height=%d, depth=%d, length=%d\n",
+    if (opt_debug) printf("OnDisplayAvailable(): index=%d, displayCount=%d, type=%d, top=%d, left=%d, width=%d, height=%d, depth=%d, length=%d\n",
 		index,
 		displayCount,
 		p_displayLayout->type,
@@ -85,7 +81,7 @@ void CALLBACK OnDisplayAvailable(int index, int displayCount, PinmameDisplayLayo
 }
 
 void CALLBACK OnDisplayUpdated(int index, void* p_displayData, PinmameDisplayLayout* p_displayLayout) {
-	printf("OnDisplayUpdated(): index=%d, type=%d, top=%d, left=%d, width=%d, height=%d, depth=%d, length=%d\n",
+    if (opt_debug) printf("OnDisplayUpdated(): index=%d, type=%d, top=%d, left=%d, width=%d, height=%d, depth=%d, length=%d\n",
 		index,
 		p_displayLayout->type,
 		p_displayLayout->top,
@@ -103,12 +99,13 @@ void CALLBACK OnDisplayUpdated(int index, void* p_displayData, PinmameDisplayLay
         Pin2dmdRenderRaw(p_displayLayout->width, p_displayLayout->height, (UINT8 *) p_displayData, 2);
     }
 	else {
+        // todo
 		//DumpAlphanumeric(index, (UINT16*)p_displayData, p_displayLayout);
 	}
 }
 
 int CALLBACK OnAudioAvailable(PinmameAudioInfo* p_audioInfo) {
-	printf("OnAudioAvailable(): format=%d, channels=%d, sampleRate=%.2f, framesPerSecond=%.2f, samplesPerFrame=%d, bufferSize=%d\n",
+    if (opt_debug) printf("OnAudioAvailable(): format=%d, channels=%d, sampleRate=%.2f, framesPerSecond=%.2f, samplesPerFrame=%d, bufferSize=%d\n",
 		p_audioInfo->format,
 		p_audioInfo->channels,
 		p_audioInfo->sampleRate,
@@ -191,11 +188,11 @@ int CALLBACK OnAudioUpdated(void* p_buffer, int samples) {
 }
 
 void CALLBACK OnSolenoidUpdated(int solenoid, int isActive) {
-	printf("OnSolenoidUpdated: solenoid=%d, isActive=%d\n", solenoid, isActive);
+    if (opt_debug) printf("OnSolenoidUpdated: solenoid=%d, isActive=%d\n", solenoid, isActive);
 }
 
 void CALLBACK OnMechAvailable(int mechNo, PinmameMechInfo* p_mechInfo) {
-	printf("OnMechAvailable: mechNo=%d, type=%d, length=%d, steps=%d, pos=%d, speed=%d\n",
+    if (opt_debug) printf("OnMechAvailable: mechNo=%d, type=%d, length=%d, steps=%d, pos=%d, speed=%d\n",
 		mechNo,
 		p_mechInfo->type,
 		p_mechInfo->length,
@@ -205,7 +202,7 @@ void CALLBACK OnMechAvailable(int mechNo, PinmameMechInfo* p_mechInfo) {
 }
 
 void CALLBACK OnMechUpdated(int mechNo, PinmameMechInfo* p_mechInfo) {
-	printf("OnMechUpdated: mechNo=%d, type=%d, length=%d, steps=%d, pos=%d, speed=%d\n",
+    if (opt_debug) printf("OnMechUpdated: mechNo=%d, type=%d, length=%d, steps=%d, pos=%d, speed=%d\n",
 		mechNo,
 		p_mechInfo->type,
 		p_mechInfo->length,
@@ -215,7 +212,7 @@ void CALLBACK OnMechUpdated(int mechNo, PinmameMechInfo* p_mechInfo) {
 }
 
 void CALLBACK OnConsoleDataUpdated(void* p_data, int size) {
-	printf("OnConsoleDataUpdated: size=%d\n", size);
+    if (opt_debug) printf("OnConsoleDataUpdated: size=%d\n", size);
 }
 
 int CALLBACK IsKeyPressed(PINMAME_KEYCODE keycode) {
@@ -230,46 +227,61 @@ void sendEvent(Event* event) {
     msg[4] = event->value;
     //     = (UINT8) 255;
 
-    if (serial.writeBytes(msg, 6)) printf("Sent Event.\n");
+    if (serial.writeBytes(msg, 6)) {
+        if (opt_debug) printf("Sent event %d %d %d.\n", event->sourceId, event->eventId, event->value);
+    }
+    else {
+        printf("Error: Could not send event %d %d %d.\n", event->sourceId, event->eventId, event->value);
+    }
 
     // delete the event and free the memory
     delete event;
 }
 
 int main (int argc, char **argv) {
-    char *config_file = NULL;
-    char *opt_serial = NULL;
+    const char *config_file = NULL;
+    const char *opt_rom = NULL;
+    const char *opt_serial = NULL;
 
     int c;
     // The options argument is a string that specifies the option characters that are valid for this program. An option
     // character in this string can be followed by a colon (‘:’) to indicate that it takes a required argument.
-    while ((c = getopt(argc, argv, "c:s:")) != -1) {
+    while ((c = getopt(argc, argv, "c:dhr:s:")) != -1) {
         switch (c) {
             case 'c':
                 config_file = optarg;
                 break;
+            case 'r':
+                opt_rom = optarg;
+                break;
             case 's':
                 opt_serial = optarg;
                 break;
-            case '?':
-                if (optopt == 'c')
-                    fprintf(stderr, "Option -%c requires the config file path as argument.\n", optopt);
-                else if (isprint(optopt))
-                    fprintf(stderr, "Unknown option `-%c'.\n", optopt);
-                else
-                    fprintf(stderr,
-                            "Unknown option character `\\x%x'.\n",
-                            optopt);
-                return 1;
+            case 'd':
+                opt_debug = true;
+                break;
+            case 'h':
+                printf("todo: provide help and document the command line options\n");
+                break;
             default:
                 abort();
         }
     }
 
-    ppuc_config = YAML::LoadFile(config_file);
-    std::string c_serial = ppuc_config["serialPort"].as<std::string>();
-    std::string c_rom = ppuc_config["rom"].as<std::string>();
+    if (!config_file) {
+        printf("No config file provided. Use option -c /path/to/config/file.\n");
+        return -1;
+    }
 
+    // Load config file. But options set via command line are preferred.
+    ppuc_config = YAML::LoadFile(config_file);
+    std::string c_rom = ppuc_config["rom"].as<std::string>();
+    if (!opt_rom) opt_rom = c_rom.c_str();
+    std::string c_serial = ppuc_config["serialPort"].as<std::string>();
+    if (!opt_serial) opt_serial = c_serial.c_str();
+    if (!opt_debug) opt_debug = ppuc_config["debug"].as<bool>();
+
+    // Initialize the sound device
     const ALCchar *defaultDeviceName = alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
     ALCdevice *device = alcOpenDevice(defaultDeviceName);
 
@@ -280,11 +292,11 @@ int main (int argc, char **argv) {
     alGenBuffers(MAX_AUDIO_BUFFERS, _audioBuffers);
 
     // Connection to serial port
-    char errorOpening = serial.openDevice(opt_serial ? opt_serial : c_serial.c_str(), 115200);
+    char errorOpening = serial.openDevice(opt_serial, 115200);
 
     // If connection fails, return the error code otherwise, display a success message
-    if (errorOpening!=1) {
-        printf("Unable to open serial device: %s\n", opt_serial ? opt_serial : c_serial.c_str());
+    if (errorOpening != 1) {
+        if (opt_debug) printf("Unable to open serial device: %s\n", opt_serial);
         return errorOpening;
     }
 
@@ -294,10 +306,9 @@ int main (int argc, char **argv) {
     msg[0] = (UINT8) 255;
     msg[5] = (UINT8) 255;
 
-    system(CLEAR_SCREEN);
 
     int pin2dmd = Pin2dmdInit();
-    printf("PIN2DMD: %d\n", pin2dmd);
+    if (opt_debug) printf("PIN2DMD: %d\n", pin2dmd);
 
     PinmameConfig config = {
             AUDIO_FORMAT_INT16,
@@ -329,7 +340,7 @@ int main (int argc, char **argv) {
 
     int changedLampStates[PinmameGetMaxLamps() * 2];
 
-	if (PinmameRun(c_rom.c_str()) == OK) {
+	if (PinmameRun(opt_rom) == OK) {
 		while (1) {
 			std::this_thread::sleep_for(std::chrono::microseconds(1000));
             int count = PinmameGetChangedLamps(changedLampStates);
@@ -337,7 +348,7 @@ int main (int argc, char **argv) {
                 UINT16 lampNo = changedLampStates[c++];
                 UINT8 lampState = changedLampStates[c++] == 0 ? 0 : 1;
 
-                printf("Lamp updated: lampNo=%d, lampState=%d\n",
+                if (opt_debug) printf("Lamp updated: lampNo=%d, lampState=%d\n",
                        lampNo,
                        lampState);
 
