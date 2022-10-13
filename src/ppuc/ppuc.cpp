@@ -244,8 +244,8 @@ void sendEvent(Event* event) {
 Event* receiveEvent() {
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
-    // Set a timeout of 0.5us whne waiting for an I/O board event.
-    while ((std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start)).count() < 500) {
+    // Set a timeout of 1ms when waiting for an I/O board event.
+    while ((std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start)).count() < 1000) {
         if (serial.available() >= 6) {
             UINT8 poll[6] = {0};
             if (serial.readBytes(poll, 6)) {
@@ -406,8 +406,8 @@ int main (int argc, char **argv) {
                                 if (opt_debug)
                                     printf("Switch update received: switchNo=%d, switchState=%d\n",
                                            event->eventId,
-                                           event->value * 255);
-                                PinmameSetSwitch(event->eventId, event->value * 255);
+                                           event->value);
+                                PinmameSetSwitch(event->eventId, event->value);
                                 break;
 
                             case EVENT_NULL:
