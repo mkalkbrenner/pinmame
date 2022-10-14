@@ -31,8 +31,10 @@ std::queue<void*> _audioQueue;
 int _audioChannels;
 int _audioSampleRate;
 
-// Envent message buffer
+// Event message buffer
 UINT8 msg[6] = {0};
+// Config Event message buffer
+UINT8 cmsg[11] = {0};
 // Serial object
 serialib serial;
 
@@ -224,7 +226,7 @@ int CALLBACK IsKeyPressed(PINMAME_KEYCODE keycode) {
 
 void sendEvent(Event* event) {
     //     = (UINT8) 255;
-    msg[1] = (UINT8) event->sourceId;
+    msg[1] = event->sourceId;
     msg[2] = event->eventId >> 8;
     msg[3] = event->eventId & 0xff;
     msg[4] = event->value;
@@ -235,6 +237,30 @@ void sendEvent(Event* event) {
     }
     else {
         printf("Error: Could not send event %d %d %d.\n", event->sourceId, event->eventId, event->value);
+    }
+
+    // delete the event and free the memory
+    delete event;
+}
+
+void sendEvent(ConfigEvent* event) {
+    //      = (UINT8) 255;
+    cmsg[1] = event->sourceId;
+    cmsg[2] = event->boardId;
+    cmsg[3] = event->topic;
+    cmsg[4] = event->key;
+    cmsg[5] = event->index;
+    cmsg[6] = event->value >> 24;
+    cmsg[7] = (event->value >> 16) & 0xff;
+    cmsg[8] = (event->value >> 8) & 0xff;
+    cmsg[9] = event->value  & 0xff;
+    //      = (UINT8) 255;
+
+    if (serial.writeBytes(msg, 11)) {
+        if (opt_debug) printf("Sent config event %d %d %d.\n", event->boardId, event->topic, event->key);
+    }
+    else {
+        printf("Error: Could not send event %d %d %d.\n", event->boardId, event->topic, event->key);
     }
 
     // delete the event and free the memory
@@ -320,6 +346,8 @@ int main (int argc, char **argv) {
     serial.clearDTR();
     msg[0] = (UINT8) 255;
     msg[5] = (UINT8) 255;
+    cmsg[0] = (UINT8) 255;
+    cmsg[10] = (UINT8) 255;
 
     // Wait for the serial communication to be established before continuing.
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -332,11 +360,30 @@ int main (int argc, char **argv) {
     }
 
     const YAML::Node& switches = ppuc_config["switches"];
+    UINT8 index = 0;
     for (YAML::Node n_switch : switches) {
         // Send switch configuration to I/O boards
-
-        // Sync initial switch states, for example coin door closed.
+        sendEvent(new ConfigEvent(
+                n_switch["board"].as<UINT8>(),
+                (UINT8) CONFIG_TOPIC_SWITCHES,
+                index,
+                (UINT8) CONFIG_TOPIC_SWITCHES_NUMBER,
+                n_switch["number"].as<UINT32>()
+                ));
+        sendEvent(new ConfigEvent(
+                n_switch["board"].as<UINT8>(),
+                (UINT8) CONFIG_TOPIC_SWITCHES,
+                index++,
+                (UINT8) CONFIG_TOPIC_SWITCHES_PORT,
+                n_switch["port"].as<UINT32>()
+                ));
     }
+
+    // Wait before continuing.
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    // Tell I/O boards to read initial switch states, for example coin door closed.
+    sendEvent(new Event(EVENT_READ_SWITCHES, 1));
 
     // Initialize the sound device
     const ALCchar *defaultDeviceName = alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);

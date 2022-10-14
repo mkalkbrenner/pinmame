@@ -23,8 +23,18 @@
 #define EVENT_NULL            78 // "N" NULL event
 #define EVENT_SOURCE_SOUND    79 // "O" sound command
 #define EVENT_POLL_EVENTS     80 // "P" Poll events command, mainly read switches
+#define EVENT_READ_SWITCHES   82 // "R" Read current state of all switches on i/o boards
 #define EVENT_SOURCE_SOLENOID 83 // "S" VPX/DOF/PUP includes flashers
 #define EVENT_SOURCE_SWITCH   87 // "W" VPX/DOF/PUP
+
+#define CONFIG_TOPIC_COILS    99  // "c"
+#define CONFIG_TOPIC_FLASHERS 102 // "f"
+#define CONFIG_TOPIC_LAMPS    108 // "l"
+#define CONFIG_TOPIC_MECHS    109 // "m"
+#define CONFIG_TOPIC_SWITCHES 115 // "s"
+
+#define CONFIG_TOPIC_SWITCHES_NUMBER 78 // "N"
+#define CONFIG_TOPIC_SWITCHES_PORT   80 // "P"
 
 typedef unsigned char UINT8;
 typedef unsigned short UINT16;
@@ -58,23 +68,22 @@ struct Event {
     }
 };
 
-#endif
+struct ConfigEvent {
+    UINT8 sourceId; // EVENT_CONFIGURATION
+    UINT8 boardId;  //
+    UINT8 topic;    // lamps
+    UINT8 index;    // 0, index of assignment
+    UINT8 key;      // ledType, assignment/brightness
+    UINT32 value;   // FFFF00FF
 
-/* Event examples
- *
- * EVENT_CONFIGURATION
- *   sourceId: "C"
- *   eventId:  I/O board number eventId&1111000000000000, max 16 boards
- *             kind of I/O port eventId&0000111100000000, 0 is solenoid
- *                                                        1 is switch
- *                                                        2 is lamp (light matrix) red
- *                                                        3 is lamp (light matrix) green
- *                                                        4 is lamp (light matrix) blue
- *                                                        5 is lamp (light matrix) white
- *                                                        6 is flasher red
- *                                                        7 is flasher green
- *                                                        8 is flasher blue
- *                                                        9 is flasher white
- *             number           eventId&0000000011111111, number in light matrix, switch matrix or number of high power output
- *   value:    0-255, PWM value for solenoids
- */
+    ConfigEvent(UINT8 b, UINT8 t, UINT8 i, UINT8 k, UINT32 v) {
+        sourceId = EVENT_CONFIGURATION;
+        boardId = b;
+        topic = t;
+        index = i;
+        key = k;
+        value = v;
+    }
+};
+
+#endif
