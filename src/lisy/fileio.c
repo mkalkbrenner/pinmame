@@ -198,8 +198,8 @@ lisy35_file_get_onedip(int dip_nr, char* dip_comment, char* dip_setting_filename
             fstream = fopen(dip_file_name, "r");
         } //second try
 
-        //check if first or second try where successful
-        //if it is still NULL both tries where not successful
+        //check if first or second try were successful
+        //if it is still NULL both tries were not successful
         //we read dips on LISY35 board
         if (fstream == NULL) {
             for (i = 0; i <= 3; i++) {
@@ -297,8 +297,8 @@ lisy80_file_get_onedip(int dip_nr, char* dip_comment, char* dip_setting_filename
             fstream = fopen(dip_file_name, "r");
         } //second try
 
-        //check if first or second try where successful
-        //if it is still NULL both tries where not successful
+        //check if first or second try were successful
+        //if it is still NULL both tries were not successful
         if (fstream == NULL) {
             sprintf(dip_file_name, "PINMAME default as no file specified");
             //copy filename where we were successful to give back to calling routine
@@ -389,8 +389,8 @@ lisy1_file_get_onedip(int dip_nr, char* dip_comment, char* dip_setting_filename,
             fstream = fopen(dip_file_name, "r");
         } //second try
 
-        //check if first or second try where successful
-        //if it is still NULL both tries where not successful
+        //check if first or second try were successful
+        //if it is still NULL both tries were not successful
         if (fstream == NULL) {
             sprintf(dip_file_name, "PINMAME default as no file specified");
             //copy filename where we were successful to give back to calling routine
@@ -473,7 +473,7 @@ lisy35_file_get_mpudips(int switch_nr, int debug, char* dip_setting_filename) {
 
         //construct the filename; using global var lisy80_gamenr
         sprintf(dip_file_name, "%s%03d%s", LISY35_DIPS_PATH, lisy35_game.gamenr, LISY35_DIPS_FILE);
-        //copy filename where we wer successful to give back to calling routine
+        //copy filename where we were successful to give back to calling routine
         strcpy(dip_setting_filename, dip_file_name);
 
         //try to read the file with game nr
@@ -488,8 +488,8 @@ lisy35_file_get_mpudips(int switch_nr, int debug, char* dip_setting_filename) {
             fstream = fopen(dip_file_name, "r");
         } //second try
 
-        //check if first or second try where successful
-        //if it is still NULL both tries where not successful,
+        //check if first or second try were successful
+        //if it is still NULL both tries were not successful,
         //so we give back settings from dip switches on LISY board
         if (fstream == NULL) {
             //we re-read the dips as they could have changed without powering of the pi
@@ -621,8 +621,8 @@ lisy80_file_get_mpudips(int switch_nr, int debug, char* dip_setting_filename) {
             fstream = fopen(dip_file_name, "r");
         } //second try
 
-        //check if first or second try where successful
-        //if it is still NULL both tries where not successful
+        //check if first or second try were successful
+        //if it is still NULL both tries were not successful
         if (fstream == NULL) {
             sprintf(dip_file_name, "PINMAME default as no file specified");
             //copy filename where we were successful to give back to calling routine
@@ -742,8 +742,8 @@ lisy1_file_get_mpudips(int switch_nr, int debug, char* dip_setting_filename) {
             fstream = fopen(dip_file_name, "r");
         } //second try
 
-        //check if first or second try where successful
-        //if it is still NULL both tries where not successful
+        //check if first or second try were successful
+        //if it is still NULL both tries were not successful
         if (fstream == NULL) {
             sprintf(dip_file_name, "PINMAME default as no file specified");
             //copy filename where we were successful to give back to calling routine
@@ -1837,8 +1837,8 @@ lisy200_file_get_mpudips(int switch_nr, int debug, char* dip_setting_filename) {
         //try to read
         fstream = fopen(dip_file_name, "r");
 
-        //check if first or second try where successful
-        //if it is still NULL both tries where not successful
+        //check if first or second try were successful
+        //if it is still NULL both tries were not successful
         if (fstream == NULL) {
             sprintf(dip_file_name, "PINMAME default as no file specified");
             //copy filename where we were successful to give back to calling routine
@@ -2078,8 +2078,8 @@ lisy200_file_get_onedip(int dip_nr, char* dip_comment, char* dip_setting_filenam
             fstream = fopen(dip_file_name, "r");
         } //second try
 
-        //check if first or second try where successful
-        //if it is still NULL both tries where not successful
+        //check if first or second try were successful
+        //if it is still NULL both tries were not successful
         //we read dips on LISY35 board
         if (fstream == NULL) {
             for (i = 0; i <= 3; i++) {
@@ -2291,4 +2291,154 @@ lisy_file_get_home_ss_general(void) {
     }
 
     return 0;
+}
+
+//read the csv file for lisy Home Starship org sound to coil mapping /lisy partition
+//give -1 in case we had an error
+//fill structure
+int
+lisy_file_get_home_ss_sound_mappings(int variant) {
+    char buffer[1024];
+    char* line;
+    char file_name[80];
+    int no;
+    int is_coil;
+    int first_line = 1;
+    FILE* fstream;
+    int i, dum;
+
+    //map to default no mapping / no activation
+    for (i = 0; i < 5; i++) {
+        lisy_home_ss_sound_map[i].mapped_to_coil = 0;
+    }
+
+    //COILS construct the filename
+    //coil ;coil Number;Comment
+    //do we use a variant for testing?
+    if (variant > 0)
+        sprintf(file_name, "%s%s_%02d.csv", LISYH_MAPPING_PATH, LISYH_SS_SOUND_MAPPING_FILE, variant);
+    else
+        sprintf(file_name, "%s%s.csv", LISYH_MAPPING_PATH, LISYH_SS_SOUND_MAPPING_FILE);
+
+    fstream = fopen(file_name, "r");
+    if (fstream == NULL) {
+        fprintf(stderr, "LISY_Home: opening %s failed, using defaults for sound\n", file_name);
+    } else {
+        first_line = 1;
+        fprintf(stderr, "LISY_Home: reading %s for sound mapping\n", file_name);
+        while ((line = fgets(buffer, sizeof(buffer), fstream)) != NULL) {
+            if (first_line) {
+                first_line = 0;
+                continue;
+            }                             //skip first line (Header)
+            no = atoi(strtok(line, ";")); //sound number
+            if (no > 5)
+                continue; //skip line if sound number is out of range
+            lisy_home_ss_sound_map[no].mapped_to_coil = atoi(strtok(NULL, ";"));
+            //debug
+            if (ls80dbg.bitv.sound) {
+                sprintf(debugbuf, "LISY HOME:  map sound %d to number:%d", no,
+                        lisy_home_ss_sound_map[no].mapped_to_coil);
+                lisy80_debug(debugbuf);
+            }
+
+        } //while
+        fclose(fstream);
+    }
+
+    return 0;
+}
+
+//read the csv file for attract opts on /lisy partition for lisy1
+//give -1 in case we had an error
+//give back commands and opts read from file
+int
+lisy1_file_get_attractopts(unsigned char command, unsigned char* cmd, unsigned char* num, unsigned char* opt) {
+
+    char attract_file_name[80];
+    char buffer[1024];
+    char* line;
+    char *cmdtok, *opttok;
+    int numtok;
+
+    int i;
+
+    static FILE* fstream;
+    static int first_line = 1;
+
+    if (command == LISY1_ATTRACT_INIT) {
+        //construct the filename; using global var lisy1_gamenr
+        sprintf(attract_file_name, "%s%03d%s", LISY1_ATTRACT_PATH, lisy1_game.gamenr, LISY1_ATTRACT_FILE);
+        //try to read the file with game nr
+        fstream = fopen(attract_file_name, "r");
+        if (fstream == NULL)
+            return -1;
+        else
+            return 0;
+    } else if (command == LISY1_ATTRACT_STEP) {
+        if ((line = fgets(buffer, sizeof(buffer), fstream)) == NULL) {
+            //EOL? try to rewind
+            rewind(fstream);
+            //next try
+            if ((line = fgets(buffer, sizeof(buffer), fstream)) == NULL)
+                return (-2);
+            first_line = 1;
+        }
+
+        if (first_line) {
+            first_line = 0; //skip first line (Header)
+            line = fgets(buffer, sizeof(buffer), fstream);
+        }
+        //first field is attract mode command
+        cmdtok = strdup(strtok(line, ";"));
+        //second field is number
+        numtok = atoi(strtok(NULL, ";"));
+        //thierd field is  opt
+        opttok = strdup(strtok(NULL, ";"));
+        //interpret line
+        if (strncmp(cmdtok, "time", 4) == 0) {
+            *cmd = LISY1_ATTRACT_CMD_TIME;
+            //time has option second 's' or millisecond 'ms'
+            if (strncmp(opttok, "s", 1) == 0)
+                *opt = LISY1_ATTRACT_CMD_TIME_OPT_S;
+            else if (strncmp(opttok, "ms", 2) == 0)
+                *opt = LISY1_ATTRACT_CMD_TIME_OPT_MS;
+            else {
+                if (ls80dbg.bitv.basic) {
+                    sprintf(debugbuf, "attract: unknown time option:%s\n", opttok);
+                    lisy80_debug(debugbuf);
+                }
+                return (-3);
+            }
+        } else if (strncmp(cmdtok, "lamp", 4) == 0) {
+            *cmd = LISY1_ATTRACT_CMD_LAMP;
+            //lamp has option on or off
+            if (strncmp(opttok, "on", 2) == 0)
+                *opt = LISY1_ATTRACT_CMD_LAMP_ON;
+            else if (strncmp(opttok, "off", 3) == 0)
+                *opt = LISY1_ATTRACT_CMD_LAMP_OFF;
+            else {
+                if (ls80dbg.bitv.basic) {
+                    sprintf(debugbuf, "attract: unknown lamp option:%s\n", opttok);
+                    lisy80_debug(debugbuf);
+                }
+                return (-4);
+            }
+        } else {
+            if (ls80dbg.bitv.basic) {
+                sprintf(debugbuf, "attract: unknown command:%s\n", cmdtok);
+                lisy80_debug(debugbuf);
+            }
+            return (-5);
+        }
+    } else //unknown command
+    {
+        fclose(fstream);
+        first_line = 1;
+        return (-6);
+    }
+
+    //OK, here we have valid command and opt
+    *num = numtok;
+    return (0);
 }
