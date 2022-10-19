@@ -36,7 +36,7 @@ jobs:
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
 
   deps:
-    name: Dependencies
+    name: Windows   Dependencies
     runs-on: windows-latest
     steps:
       - id: cache
@@ -45,11 +45,12 @@ jobs:
           path: deps
           key: ppuc-deps-1
       - if: steps.cache.outputs.cache-hit != 'true'
-        uses: lukka/run-vcpkg@v7.4
+        uses: lukka/run-vcpkg@v10
         with:
           vcpkgArguments: yaml-cpp openal-soft libusb
           vcpkgTriplet: x64-windows
           vcpkgDirectory: deps/vcpkg
+          vcpkgGitCommitId: ce99c947b64ea3c0e274e18cc3035ca727681089
 
   build:
     name: Build ppuc-${{ matrix.platform }}
