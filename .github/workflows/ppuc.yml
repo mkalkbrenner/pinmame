@@ -45,7 +45,7 @@ jobs:
           path: deps
           key: ppuc-deps-1
       - if: steps.cache.outputs.cache-hit != 'true'
-        uses: lukka/run-vcpkg@v10
+        uses: lukka/run-vcpkg@v7.4
         with:
           vcpkgArguments: yaml-cpp openal-soft libusb
           vcpkgTriplet: x64-windows
