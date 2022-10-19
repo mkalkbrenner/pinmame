@@ -1,0 +1,145 @@
+name: ppuc
+on:
+  push:
+
+env:
+  VERSION_START_SHA: e87be0e3cfa66411976ca04a72dd29e36c483966
+  UPX_ARTIFACT: 345209471
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  version:
+    name: Version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      revision: ${{ steps.version.outputs.revision }}
+      sha: ${{ steps.version.outputs.sha }}
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - id: version
+        run: |
+          VERSION=$(grep -Eo "[0-9\.]+" src/version.c | head -1)
+          REVISION=$(git rev-list ${{ env.VERSION_START_SHA }}..HEAD --count)
+          SHA="${GITHUB_SHA}"
+          SHA7="${SHA::7}"
+          TAG="${VERSION}-${REVISION}-${SHA7}"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "revision=${REVISION}" >> $GITHUB_OUTPUT
+          echo "sha=${SHA}" >> $GITHUB_OUTPUT
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+
+  deps:
+    name: Dependencies
+    runs-on: windows-latest
+    steps:
+      - id: cache
+        uses: actions/cache@v2
+        with:
+          path: deps
+          key: ppuc-deps-1
+      - if: steps.cache.outputs.cache-hit != 'true'
+        uses: lukka/run-vcpkg@v7.4
+        with:
+          vcpkgArguments: yaml-cpp openal libusb
+          vcpkgTriplet: x64-windows
+          vcpkgDirectory: deps/vcpkg
+          vcpkgGitCommitId: 47d2378c8181ece05ffc51acd2ed60d97e3c9a64
+
+  build:
+    name: Build ppuc-${{ matrix.platform }}
+    runs-on: ${{ matrix.os }}
+    needs: [ version, deps ]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: win-x64
+            platform-name: x64
+            libpinmame: libpinmame-${{ needs.version.outputs.version }}.dll
+            ppuc: ppuc.exe
+          - os: macos-latest
+            platform: osx-x64
+            libpinmame: libpinmame.${{ needs.version.outputs.version }}.dylib
+            ppuc: ppuc
+          - os: macos-latest
+            platform: osx-arm64
+            libpinmame: libpinmame.${{ needs.version.outputs.version }}.dylib
+            ppuc: ppuc
+          - os: ubuntu-18.04
+            platform: linux-x64
+            libpinmame: libpinmame.so.${{ needs.version.outputs.version }}
+            ppuc: ppuc
+    steps:
+      - uses: actions/checkout@v3
+      - if: matrix.os == 'windows-latest'
+        uses: actions/cache@v2
+        with:
+          path: deps
+          key: vpxpp-deps-1
+      - if: matrix.os == 'macos-latest'
+        run: |
+          brew install libopenal-dev libyaml-cpp-dev libusb-dev
+      - run: |
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            curl -sL -H "Authorization: Token ${{ secrets.GH_PAT }}" https://api.github.com/repos/upx/upx/actions/artifacts/${{ env.UPX_ARTIFACT }}/zip -o upx.zip
+            7z x upx.zip -oupx
+            rm upx.zip
+          fi
+      - name: Build ppuc-${{ matrix.platform }}
+        run: |
+          cp cmake/ppuc/CMakeLists_${{ matrix.platform }}.txt CMakeLists.txt
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            cmake -G "Visual Studio 17 2022" -A ${{ matrix.platform-name }} -B build
+            cmake --build build --config Release
+            if [[ "${{ matrix.platform }}" != "win-arm64" ]]; then 
+              ./upx/upx.exe --best --lzma build/Release/${{ matrix.libpinmame }}
+            fi
+          else
+            cmake -DCMAKE_BUILD_TYPE=Release -B build/Release
+            cmake --build build/Release
+            if [[ "${{ matrix.platform }}" == "linux-x64" ]]; then
+              upx --best --lzma build/Release/${{ matrix.libpinmame }}
+            fi
+          fi
+      - run: |
+          mkdir tmp
+          cp build/Release/${{ matrix.libpinmame }} tmp
+          if [[ "${{ matrix.platform }}" == "ios-arm64" ]]; then
+            cp build/Release/zlib-prefix/src/zlib-build/libz.a tmp
+          fi
+          if [[ "${{ matrix.ppuc }}" ]]; then
+            cp build/Release/${{ matrix.ppuc }} tmp
+          fi
+          cp release/license.txt tmp
+      - uses: actions/upload-artifact@v3
+        with:
+          name: libpinmame-${{ needs.version.outputs.tag }}-${{ matrix.platform }}
+          path: tmp
+
+  post-build:
+    runs-on: macos-latest
+    needs: [ version, build ]
+    name: Build libpinmame-osx
+    steps:
+      - uses: actions/download-artifact@v3
+      - run: |
+          mkdir tmp
+          cp libpinmame-${{ needs.version.outputs.tag }}-osx-x64/license.txt tmp 
+          lipo -create -output tmp/libpinmame.${{ needs.version.outputs.version }}.dylib \
+             libpinmame-${{ needs.version.outputs.tag }}-osx-x64/libpinmame.${{ needs.version.outputs.version }}.dylib \
+             libpinmame-${{ needs.version.outputs.tag }}-osx-arm64/libpinmame.${{ needs.version.outputs.version }}.dylib 
+          lipo -create -output tmp/ppuc \
+             libpinmame-${{ needs.version.outputs.tag }}-osx-x64/ppuc \
+             libpinmame-${{ needs.version.outputs.tag }}-osx-arm64/ppuc
+      - uses: actions/upload-artifact@v3
+        with:
+          name: libpinmame-${{ needs.version.outputs.tag }}-osx
+          path: tmp
