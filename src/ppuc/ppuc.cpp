@@ -249,7 +249,7 @@ void sendEvent(ConfigEvent* event) {
     cmsg[6] = event->value >> 24;
     cmsg[7] = (event->value >> 16) & 0xff;
     cmsg[8] = (event->value >> 8) & 0xff;
-    cmsg[9] = event->value  & 0xff;
+    cmsg[9] = event->value & 0xff;
     //      = (UINT8) 255;
 
     if (serial.writeBytes(msg, 11)) {
