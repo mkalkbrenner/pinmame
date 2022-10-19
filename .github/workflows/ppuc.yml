@@ -47,7 +47,7 @@ jobs:
       - if: steps.cache.outputs.cache-hit != 'true'
         uses: lukka/run-vcpkg@v7.4
         with:
-          vcpkgArguments: yaml-cpp openal libusb
+          vcpkgArguments: yaml-cpp openal-soft libusb
           vcpkgTriplet: x64-windows
           vcpkgDirectory: deps/vcpkg
           vcpkgGitCommitId: 47d2378c8181ece05ffc51acd2ed60d97e3c9a64
