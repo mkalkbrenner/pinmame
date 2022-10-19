@@ -663,7 +663,7 @@ target_link_libraries(ppuc LINK_PUBLIC
    pinmame
    ${LIBUSB_LIBRARIES}
    yaml-cpp
-   OpenAL::OpenAL
+   openal
 )
 
 target_include_directories(ppuc PUBLIC
