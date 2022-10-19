@@ -35,27 +35,10 @@ jobs:
           echo "sha=${SHA}" >> $GITHUB_OUTPUT
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
 
-  deps:
-    name: Windows   Dependencies
-    runs-on: windows-latest
-    steps:
-      - id: cache
-        uses: actions/cache@v2
-        with:
-          path: deps
-          key: ppuc-deps-1
-      - if: steps.cache.outputs.cache-hit != 'true'
-        uses: lukka/run-vcpkg@v7.4
-        with:
-          vcpkgArguments: yaml-cpp openal-soft libusb
-          vcpkgTriplet: x64-windows
-          vcpkgDirectory: deps/vcpkg
-          vcpkgGitCommitId: ce99c947b64ea3c0e274e18cc3035ca727681089
-
   build:
     name: Build ppuc-${{ matrix.platform }}
     runs-on: ${{ matrix.os }}
-    needs: [ version, deps ]
+    needs: [ version ]
     strategy:
       fail-fast: false
       matrix:
@@ -73,20 +56,25 @@ jobs:
             platform: osx-arm64
             libpinmame: libpinmame.${{ needs.version.outputs.version }}.dylib
             ppuc: ppuc
-          - os: ubuntu-18.04
+          - os: ubuntu-latest
             platform: linux-x64
             libpinmame: libpinmame.so.${{ needs.version.outputs.version }}
             ppuc: ppuc
     steps:
       - uses: actions/checkout@v3
-      - if: matrix.os == 'windows-latest'
-        uses: actions/cache@v2
-        with:
-          path: deps
-          key: vpxpp-deps-1
+      - if: matrix.os == 'ubuntu-latest'
+        run: |
+          apt install libopenal-dev libyaml-cpp-dev libusb-dev
       - if: matrix.os == 'macos-latest'
         run: |
-          brew install libopenal-dev libyaml-cpp-dev libusb-dev
+          brew install libusb yaml-cpp
+      - if: platform == 'windows-latest'
+        uses: lukka/run-vcpkg@v7.4
+        with:
+          vcpkgArguments: yaml-cpp openal-soft libusb
+          vcpkgTriplet: ${{ matrix.platform-name }}-windows
+          vcpkgDirectory: deps/vcpkg
+          vcpkgGitCommitId: ce99c947b64ea3c0e274e18cc3035ca727681089
       - run: |
           if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
             curl -sL -H "Authorization: Token ${{ secrets.GH_PAT }}" https://api.github.com/repos/upx/upx/actions/artifacts/${{ env.UPX_ARTIFACT }}/zip -o upx.zip
