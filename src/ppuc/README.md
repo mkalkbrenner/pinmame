@@ -48,7 +48,7 @@ These components are still in an early development stage and the documentation w
 
 Install required dependencies via homebrew:
 ```shell
-brew install libusb yaml-cpp
+brew install openal-soft libusb yaml-cpp
 ```
 
 Compile:

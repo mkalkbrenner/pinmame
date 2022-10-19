@@ -661,7 +661,11 @@ find_package(OpenAL)
 
 target_link_libraries(ppuc LINK_PUBLIC
    pinmame
-   libusb-1.0
+   ${LIBUSB_LIBRARIES}
    yaml-cpp
-   openal
+   OpenAL::OpenAL
+)
+
+target_include_directories(ppuc PUBLIC
+   ${LIBUSB_INCLUDE_DIRS}
 )
