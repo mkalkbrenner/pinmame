@@ -50,7 +50,6 @@ jobs:
           vcpkgArguments: yaml-cpp openal-soft libusb
           vcpkgTriplet: x64-windows
           vcpkgDirectory: deps/vcpkg
-          vcpkgGitCommitId: 47d2378c8181ece05ffc51acd2ed60d97e3c9a64
 
   build:
     name: Build ppuc-${{ matrix.platform }}
