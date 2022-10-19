@@ -14,7 +14,7 @@
 #include "yaml-cpp/yaml.h"
 
 #include "Event.h"
-#include "libpinmame.h"
+#include "../libpinmame/libpinmame.h"
 #include "pin2dmd/pin2dmd.h"
 #include "serialib/serialib.h"
 

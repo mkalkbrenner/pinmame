@@ -67,7 +67,7 @@ build/Release/ppuc -c src/ppuc/examples/t2.yml
 
 Install required dependencies via apt:
 ```shell
-apt install cmake zlib1g-dev libopenal-dev libyaml-cpp-dev libusb-dev
+apt install cmake zlib1g-dev libopenal-dev libyaml-cpp-dev libusb-1.0-0-dev
 ```
 
 Compile:

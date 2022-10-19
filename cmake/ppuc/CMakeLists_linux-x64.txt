@@ -612,7 +612,7 @@ find_package(OpenAL)
 
 target_link_libraries(ppuc LINK_PUBLIC
    pinmame
-   libusb-1.0
+   libusb-1.0.so
    yaml-cpp
    openal
 )
