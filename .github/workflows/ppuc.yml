@@ -71,7 +71,7 @@ jobs:
       - if: matrix.os == 'windows-latest'
         uses: lukka/run-vcpkg@v7.4
         with:
-          vcpkgArguments: yaml-cpp openal-soft libusb getopt
+          vcpkgArguments: yaml-cpp openal-soft libusb
           vcpkgTriplet: ${{ matrix.platform-name }}-windows
           vcpkgDirectory: deps/vcpkg
           vcpkgGitCommitId: ce99c947b64ea3c0e274e18cc3035ca727681089

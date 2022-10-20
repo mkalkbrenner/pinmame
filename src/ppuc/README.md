@@ -17,8 +17,12 @@ vital homebrew pinball community.
 ## Licence
 
 The code in this directory and all sub-directories is licenced under GPLv3, except if a different license is mentioned
-in a files header. Be aware of the fact that your own enhancements of ppuc need to be licenced under a compatible
-licence.
+in a file's header or in a sub-directory. Be aware of the fact that your own enhancements of ppuc need to be licenced
+under a compatible licence.
+
+Due to complicated dependency management on different platforms, these libriaries are included as copy:
+* [serialib](https://github.com/imabot2/serialib)
+* [cargs](https://github.com/likle/cargs)
 
 ## Documentation
 
@@ -27,7 +31,7 @@ These components are still in an early development stage and the documentation w
 ### Command Line Options
 
 * -c path
-    *  path to config file
+    * path to config file
     * required
 * -r rom name
     * rom to use, overwrites *rom* setting in config file
