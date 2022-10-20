@@ -36,7 +36,7 @@ jobs:
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
 
   build:
-    name: Build ppuc-${{ matrix.platform }}
+    name: PPUC ${{ matrix.platform }} ${{ matrix.base_image }}
     runs-on: ${{ matrix.os }}
     needs: [ version ]
     strategy:
@@ -66,6 +66,7 @@ jobs:
             base_image: none
           - os: ubuntu-latest
             platform: linux-arm64
+            ppuc: ppuc
             target: zero2_64
             cpu: cortex-a53
             cpu_info: raspberrypi_zero2_w_arm64
