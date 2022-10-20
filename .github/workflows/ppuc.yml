@@ -138,25 +138,5 @@ jobs:
             cp src/ppuc/LICENSE tmp
       - uses: actions/upload-artifact@v3
         with:
-          name: ppuc-${{ needs.version.outputs.tag }}-${{ matrix.platform }}
-          path: tmp
-
-  post-build:
-    runs-on: macos-latest
-    needs: [ version, build ]
-    name: Build libpinmame-osx
-    steps:
-      - uses: actions/download-artifact@v3
-      - run: |
-          mkdir tmp
-          cp libpinmame-${{ needs.version.outputs.tag }}-osx-x64/license.txt tmp 
-          lipo -create -output tmp/libpinmame.${{ needs.version.outputs.version }}.dylib \
-             libpinmame-${{ needs.version.outputs.tag }}-osx-x64/libpinmame.${{ needs.version.outputs.version }}.dylib \
-             libpinmame-${{ needs.version.outputs.tag }}-osx-arm64/libpinmame.${{ needs.version.outputs.version }}.dylib 
-          lipo -create -output tmp/ppuc \
-             libpinmame-${{ needs.version.outputs.tag }}-osx-x64/ppuc \
-             libpinmame-${{ needs.version.outputs.tag }}-osx-arm64/ppuc
-      - uses: actions/upload-artifact@v3
-        with:
-          name: libpinmame-${{ needs.version.outputs.tag }}-osx
+          name: ppuc-${{ needs.version.outputs.tag }}-${{ matrix.platform }}-${{ matrix.base_image }}
           path: tmp
