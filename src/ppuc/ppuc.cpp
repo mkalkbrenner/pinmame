@@ -457,8 +457,12 @@ int main (int argc, char *argv[]) {
     PinmameSetHandleKeyboard(0);
     PinmameSetHandleMechanics(0);
 
-    const int maxLampStates = PinmameGetMaxLamps() * 2;
-    int changedLampStates[maxLampStates];
+#if defined(_WIN32) || defined(_WIN64)
+    // Avoid compile error C2131. Use a larger constant value instead.
+    int changedLampStates[256];
+#else
+    int changedLampStates[PinmameGetMaxLamps() * 2];
+#endif
 
 	if (PinmameRun(opt_rom) == OK) {
         // Pinball machines were slower than modern CPUs. There's no need to update states too frequently at full speed.
