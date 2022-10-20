@@ -111,12 +111,9 @@ jobs:
       - if: matrix.base_image == 'none'
         run: |
           mkdir tmp
-          cp build/Release/${{ matrix.libpinmame }} tmp
-          if [[ "${{ matrix.platform }}" == "ios-arm64" ]]; then
-            cp build/Release/zlib-prefix/src/zlib-build/libz.a tmp
-          fi
           cp build/Release/${{ matrix.ppuc }} tmp
-          cp release/license.txt tmp
+          cp src/ppuc/README.md tmp
+          cp src/ppuc/LICENSE tmp
       - if: matrix.base_image != 'none'
         uses: pguyot/arm-runner-action@v2
         id: arm_runner_make
@@ -136,9 +133,9 @@ jobs:
             cmake -DCMAKE_BUILD_TYPE=Release -B build/Release
             cmake --build build/Release
             mkdir tmp
-            cp build/Release/${{ matrix.libpinmame }} tmp
             cp build/Release/${{ matrix.ppuc }} tmp
-            cp release/license.txt tmp
+            cp src/ppuc/README.md tmp
+            cp src/ppuc/LICENSE tmp
       - uses: actions/upload-artifact@v3
         with:
           name: ppuc-${{ needs.version.outputs.tag }}-${{ matrix.platform }}

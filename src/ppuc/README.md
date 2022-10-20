@@ -14,15 +14,21 @@ establish an open and affordable platform for that. Ideally people will publish 
 leverage and potentially improve them. We want to see a growing library of so-called *Pinball Power-Ups* (PPUs) and a
 vital homebrew pinball community.
 
-## Licence
+## Licences
 
 The code in this directory and all sub-directories is licenced under GPLv3, except if a different license is mentioned
 in a file's header or in a sub-directory. Be aware of the fact that your own enhancements of ppuc need to be licenced
 under a compatible licence.
 
-Due to complicated dependency management on different platforms, these libriaries are included as copy:
+Due to complicated dependency management on different platforms, these libraries are included as source code copy:
 * [serialib](https://github.com/imabot2/serialib)
 * [cargs](https://github.com/likle/cargs)
+
+PPUC uses
+* [libpinmame](https://github.com/vpinball/pinmame)
+* [libusb](https://libusb.info/)
+* [yaml-cpp](https://github.com/jbeder/yaml-cpp)
+* [OpenAL Soft](https://openal-soft.org/)
 
 ## Documentation
 
@@ -67,7 +73,7 @@ Run:
 build/Release/ppuc -c src/ppuc/examples/t2.yml
 ```
 
-#### Linux
+#### Linux (debian based)
 
 Install required dependencies via apt:
 ```shell
@@ -85,3 +91,7 @@ Run:
 ```shell
 sudo build/Release/ppuc -c src/ppuc/examples/t2.yml
 ```
+
+### Windows
+
+tbd
