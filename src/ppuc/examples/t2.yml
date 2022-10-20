@@ -48,6 +48,7 @@ boards:
     description: "IO board 3, doesn't send switch events"
     number: 3
     pollEvents: false
+    ledStripes:
 
 lamps:
   ledType: GBRW

@@ -457,7 +457,8 @@ int main (int argc, char *argv[]) {
     PinmameSetHandleKeyboard(0);
     PinmameSetHandleMechanics(0);
 
-    int changedLampStates[PinmameGetMaxLamps() * 2];
+    const int maxLampStates = PinmameGetMaxLamps() * 2;
+    int changedLampStates[maxLampStates];
 
 	if (PinmameRun(opt_rom) == OK) {
         // Pinball machines were slower than modern CPUs. There's no need to update states too frequently at full speed.
