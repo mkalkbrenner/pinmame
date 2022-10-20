@@ -665,9 +665,10 @@ target_link_libraries(ppuc LINK_PUBLIC
    pinmame
    ${LIBUSB_LIBRARIES}
    yaml-cpp
-   openal
+   ${OPENAL_LIBRARY}
 )
 
 target_include_directories(ppuc PUBLIC
    ${LIBUSB_INCLUDE_DIRS}
+   ${OPENAL_INCLUDE_DIR}
 )
