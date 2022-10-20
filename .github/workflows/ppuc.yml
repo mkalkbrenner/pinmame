@@ -117,7 +117,6 @@ jobs:
           cp build/Release/${{ matrix.ppuc }} tmp
           cp release/license.txt tmp
       - if: matrix.base_image != 'none'
-      - name: Make in chroot environment
         uses: pguyot/arm-runner-action@v2
         id: arm_runner_make
         with:
